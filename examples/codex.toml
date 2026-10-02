@@ -1,0 +1,3 @@
+[mcp_servers.geniusfitness]
+command = "npx"
+args = ["-y", "@pulsarinteractive/geniusfitness@0.1.0-beta.1", "mcp", "--context", "work"]

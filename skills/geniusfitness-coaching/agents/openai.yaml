@@ -1,0 +1,4 @@
+interface:
+  display_name: 'GeniusFitness coaching'
+  short_description: 'Maintain shared athlete programs with Coach access'
+  default_prompt: 'Use $geniusfitness-coaching for this GeniusFitness request.'

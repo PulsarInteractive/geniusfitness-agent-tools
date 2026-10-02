@@ -1,0 +1,20 @@
+{
+  "name": "geniusfitness-agents",
+  "interface": {
+    "displayName": "GeniusFitness agents"
+  },
+  "plugins": [
+    {
+      "name": "geniusfitness",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: 'GeniusFitness progress'
+  short_description: 'Review activity and authorized personal measurements'
+  default_prompt: 'Use $geniusfitness-progress for this GeniusFitness request.'

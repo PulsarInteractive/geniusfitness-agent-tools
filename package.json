@@ -1,0 +1,73 @@
+{
+  "name": "@pulsarinteractive/geniusfitness",
+  "version": "0.1.0-beta.1",
+  "private": false,
+  "description": "GeniusFitness CLI and MCP for training plans, exercise catalogues and progress",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "bin": {
+    "geniusfitness": "bin/geniusfitness.mjs"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "skills/",
+    "docs/",
+    "examples/",
+    "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "plugin.json",
+    "mcp.json",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    "LICENSES/"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "check": "node tools/check-package.mjs && node tools/check-public.mjs && node tools/check-plugin.mjs",
+    "prepublishOnly": "npm run verify",
+    "check:public": "node tools/check-public.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "verify": "npm run format:check && npm run lint && npm test && npm run check"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.1.0",
+    "open": "10.2.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@modelcontextprotocol/client": "2.1.0",
+    "ajv": "8.20.0",
+    "eslint": "10.11.0",
+    "globals": "17.12.0",
+    "prettier": "3.9.9"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "tag": "beta",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PulsarInteractive/geniusfitness-agent-tools.git"
+  },
+  "homepage": "https://github.com/PulsarInteractive/geniusfitness-agent-tools#readme",
+  "bugs": {
+    "url": "https://github.com/PulsarInteractive/geniusfitness-agent-tools/issues"
+  },
+  "keywords": [
+    "geniusfitness",
+    "mcp",
+    "cli",
+    "agent-skills",
+    "fitness"
+  ]
+}

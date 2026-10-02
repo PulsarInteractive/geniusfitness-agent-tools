@@ -1,0 +1,24 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "geniusfitness",
+  "version": "0.1.0-beta.1",
+  "description": "Manage training plans, exercise catalogues and activity progress with your own agents.",
+  "author": {
+    "name": "Pulsar Interactive"
+  },
+  "repository": "https://github.com/PulsarInteractive/geniusfitness-agent-tools",
+  "license": "MIT",
+  "keywords": ["fitness", "training", "exercises", "mcp"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "GeniusFitness",
+        "shortDescription": "Training plans and progress for your agents",
+        "developerName": "Pulsar Interactive",
+        "category": "Productivity",
+        "capabilities": ["Read", "Write"],
+        "defaultPrompt": ["Use GeniusFitness to review my training plan and recorded progress."]
+      }
+    }
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: 'GeniusFitness'
+  short_description: 'Manage training programs and catalogue exercises'
+  default_prompt: 'Use $geniusfitness for this GeniusFitness request.'
