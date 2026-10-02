@@ -13,9 +13,11 @@ Explain the chosen range and timezone. Fetch individual `sessions` or `runs` onl
 when their details are needed. An error, an omitted record or an incomplete page
 is not evidence of zero activity. Do not infer completion from a scheduled task.
 
-Personal measurements need explicit `health:read` or `health:write`; they are not
-preselected at login and are never granted by Coach access to a program. Read or
-write only the account and information authorized by the user’s task.
+Personal measurements need an approved `health:read` or `health:write` grant.
+The official CLI preselects requested health permissions on the consent page;
+the user can remove them. Coach access to a program never grants another
+account’s private measurements. Read or write only the account and information
+authorized by the user’s task.
 
 For a correction, first read the current record and inspect its command schema.
 Keep the original author and current revision. Prepare an immutable operation,

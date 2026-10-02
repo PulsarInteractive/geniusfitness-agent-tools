@@ -5,6 +5,13 @@ Sign in using the same Firebase-backed account as the app, select accessible
 programs and permissions, then approve. The browser returns a single-use code to
 a loopback listener; PKCE binds it to the terminal that started the request.
 
+For the official CLI, all current and future resources and every requested
+permission are preselected. You can uncheck “All” to choose individual programs
+or personal data, and remove permissions before approving. Opening the page
+grants nothing. Existing connections keep the permissions you already approved.
+Use `--scope 'programs:read exercises:read planning:read metrics:read'` to offer
+only those read permissions, for example.
+
 The terminal stores the resulting delegated session in a private context. It
 never receives your password. Your account and program permissions remain the
 ceiling on all agent activity.
@@ -16,8 +23,10 @@ merely by opening the page.
 
 ## Health and Coach permissions
 
-Health measurements are never preselected. Read access to programs does not
-include personal health data. Coach writes need separate `coaching:write` consent,
+The official CLI requests health permissions by default, and the consent page
+preselects them when requested. Remove `health:read` and `health:write` if you do
+not want to share your measurements. Read access to programs alone does not
+include personal health data. Coach writes need `coaching:write` consent,
 a current Coach subscription and the normal permissions on the shared program.
 A downgrade or revoked membership is checked on later operations, including a
 prepared write that has not committed yet.
