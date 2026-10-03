@@ -21,6 +21,23 @@ limit. Paid accounts remain bounded by their minute limits. Respect `Retry-After
 and retain the same operation when a write’s outcome is uncertain. Do not open
 extra contexts to work around a limit.
 
+Free monthly counters reset at the start of the next calendar month in UTC.
+Both monthly credits and monthly write capacity must be available. Minute limits
+are approximate traffic protection per service location, not exact global billing
+meters. Program, storage and attachment capacity are separate limits.
+
+## MCP and the built-in coach are separate
+
+MCP uses your chosen external AI tool. Its model subscription and token charges
+remain with that tool; request credits are not model tokens. The built-in Fitness
+coach has a separate account allowance. Exhausting either allowance does not
+remove saved training data or block ordinary app use under its own API limits.
+
+Each server request counts, including discovery, polling and a retry that reaches
+admission. A write can consume allowance before a later domain rule refuses it.
+Keep the same operation ID when retrying: this protects against duplicate changes,
+but does not make repeated network requests free.
+
 ## Data capacity
 
 | Personal data                     |   Free | Premium |   Coach |
