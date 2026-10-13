@@ -62,8 +62,10 @@ refused. Business-plan values can change before launch.
 | `health:read` / `health:write`       | The account’s private health measurements                    |
 | `coaching:write`                     | Additional approval for writes concerning another athlete    |
 
-Health permissions and all writes require deliberate selection on the consent
-page. Coach permission requires an active Coach subscription when used and never
+For the official CLI, all requested permissions and accessible resources are
+preselected, including requested health and write permissions. You can narrow
+them before approving. Nothing is granted until you confirm the consent page.
+Coach permission requires an active Coach subscription when used and never
 replaces program membership or grants another person’s private health data.
 
 ## Bounded reads
