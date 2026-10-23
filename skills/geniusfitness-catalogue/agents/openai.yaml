@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Build workouts using catalogue and custom exercises'
+  short_description: 'Build workouts using catalogue and custom exercises'
+  default_prompt: 'Use $geniusfitness-catalogue for this request.'

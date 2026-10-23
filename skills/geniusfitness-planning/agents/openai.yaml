@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Manage schedules and training plans'
+  short_description: 'Manage schedules and training plans'
+  default_prompt: 'Use $geniusfitness-planning for this request.'

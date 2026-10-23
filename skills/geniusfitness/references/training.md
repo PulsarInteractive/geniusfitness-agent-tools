@@ -50,8 +50,9 @@ required values. Tracking types include `WeightReps`, `BodyweightReps`,
 - `planning.create` schedules a workout for an approved program member.
   `schedule.create` maintains a recurring plan; `goal.create` maintains a goal.
 
-Prepare each operation before sending it. Preparation writes a private local
-journal without changing server data. Retain the resulting `operationId`.
+Prepare each operation before sending it. Local CLI/stdio preparation writes a
+private journal without changing server data. Hosted ChatGPT preparation returns
+an immutable command object instead; retain the full object for execution and retries. Retain the resulting `operationId`.
 Execute or retry that exact saved operation. A timeout can occur after a commit;
 a new ID would create another operation. For a revision conflict, reread the
 record, reconcile the user’s intent and prepare a new operation.
@@ -65,7 +66,9 @@ raise a quota or edit an inaccessible program.
 `session.create` and `run.create` record performed activity. Do not mark planned
 work as completed without evidence from the user or an authorized source. A
 finished session can complete its linked planning entry in the same server
-transaction. Editing or deleting a result does not undo historical completion.
+transaction. Editing a result does not change historical completion. Deleting the final
+matching finished result can reopen its linked plan under ordinary task rights;
+read back the affected planning as well as the result.
 
 Use `metrics summary` for bounded daily totals. Use detailed `sessions` or `runs`
 only when the task requires them. Personal health logs are independent and need

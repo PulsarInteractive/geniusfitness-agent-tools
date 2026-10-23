@@ -1,3 +1,4 @@
+import { workflow } from './workflows.mjs';
 import { readCatalog, readMetrics, readResources } from './fitness.mjs';
 import open, { apps } from 'open';
 import catalog from './command-catalog.mjs';
@@ -11,6 +12,7 @@ import { readChanges, watchChanges } from './changes.mjs';
 import { fail, safeError, exitCode } from './errors.mjs';
 
 export const commands = {
+  'workflow show': { summary: 'Read a reviewed workflow guide; no network.', options: ['topic'] },
   'auth login': {
     summary: 'Open browser sign-in and choose access. No tutorial or token to copy.',
     options: ['flow', 'browser', 'no-browser', 'scope', 'interactive'],
@@ -278,6 +280,8 @@ export async function main(
       data = await new AgentProfiles(client).restrict(await readCommandFile(options.file));
     } else if (command === 'profiles select') {
       data = await new AgentProfiles(client).select({ profileId: options.profile });
+    } else if (command === 'workflow show') {
+      data = workflow({ topic: options.topic });
     } else if (command === 'commands describe') {
       data = describeCommands();
     } else if (command === 'commands prepare') {

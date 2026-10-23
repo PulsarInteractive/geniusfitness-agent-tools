@@ -95,7 +95,7 @@
         },
         "archive": {
           "type": "string",
-          "enum": ["true", "false"]
+          "enum": ["active", "archived", "all"]
         }
       },
       "required": ["scope", "collection"],
@@ -1058,7 +1058,7 @@
         },
         "archive": {
           "type": "string",
-          "enum": ["true", "false"]
+          "enum": ["active", "archived", "all"]
         }
       },
       "required": ["scope", "collection"],
@@ -1105,7 +1105,7 @@
         },
         "archive": {
           "type": "string",
-          "enum": ["true", "false"]
+          "enum": ["active", "archived", "all"]
         }
       },
       "required": ["scope", "collection"],
@@ -1152,7 +1152,7 @@
         },
         "archive": {
           "type": "string",
-          "enum": ["true", "false"]
+          "enum": ["active", "archived", "all"]
         }
       },
       "required": ["scope", "collection"],
@@ -1199,7 +1199,7 @@
         },
         "archive": {
           "type": "string",
-          "enum": ["true", "false"]
+          "enum": ["active", "archived", "all"]
         }
       },
       "required": ["scope", "collection"],
@@ -1246,7 +1246,7 @@
         },
         "archive": {
           "type": "string",
-          "enum": ["true", "false"]
+          "enum": ["active", "archived", "all"]
         }
       },
       "required": ["scope", "collection"],
@@ -1254,5 +1254,22 @@
     },
     "scopes": ["programs:read"],
     "route": "resources"
+  },
+  {
+    "name": "fitness_workflow",
+    "title": "Workflow guides",
+    "description": "Read reviewed product instructions for a specific workflow before unfamiliar operations. Explains available commands, permissions, pagination and remote versus local retry behavior; does not read personal data or grant access.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "enum": ["connection", "mutations", "catalogue", "planning", "progress", "coaching"]
+        }
+      },
+      "required": ["topic"],
+      "additionalProperties": false
+    },
+    "scopes": []
   }
 ]
