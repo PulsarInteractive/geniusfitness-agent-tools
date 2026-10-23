@@ -47,7 +47,7 @@
   {
     "name": "fitness_resources",
     "title": "Read records",
-    "description": "Read a bounded page or exact record before modifying it. Preserve epoch/revision. Never crawl all collections. Use personal scope only for the connected owner; revoked access is unavailable.",
+    "description": "Read a bounded page or exact record before modifying it. Preserve epoch/revision. Never crawl all collections. Use personal scope only for the connected owner; revoked access is unavailable. Prefer the permission-specific read tools for new calls.",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -316,7 +316,7 @@
   {
     "name": "fitness_execute_command",
     "title": "Apply the approved edit",
-    "description": "Execute the exact command returned by prepare_command after user approval. This changes account data and may delete records. After timeout retry the SAME command; after conflict read the current record and ask before preparing a replacement. Permissions, subscription and quotas are checked on the server.",
+    "description": "Execute the exact command returned by prepare_command after user approval. This changes account data and may delete records. After timeout retry the SAME command; after conflict read the current record and ask before preparing a replacement. Permissions, subscription and quotas are checked on the server. Prefer the permission-specific edit tools for new calls; this generic entry point remains for existing clients.",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -415,5 +415,844 @@
     "route": "commands",
     "write": true,
     "destructive": true
+  },
+  {
+    "name": "fitness_edit_exercises",
+    "title": "Apply approved exercises changes",
+    "description": "Apply an exact immutable command returned by prepare_command for exercises, after user approval. Only the listed command kinds are accepted. Preserve operationId and all fields for retries. Existing account, resource, subscription and quota checks apply.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+        },
+        "issuedAt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["exercise.create", "exercise.delete", "exercise.import", "exercise.update"]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "expectedRevision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "maxProperties": 40
+        }
+      },
+      "required": [
+        "operationId",
+        "issuedAt",
+        "kind",
+        "scope",
+        "id",
+        "epoch",
+        "expectedRevision",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "scopes": ["exercises:write"],
+    "route": "commands",
+    "write": true,
+    "destructive": true
+  },
+  {
+    "name": "fitness_edit_health",
+    "title": "Apply approved health changes",
+    "description": "Apply an exact immutable command returned by prepare_command for health, after user approval. Only the listed command kinds are accepted. Preserve operationId and all fields for retries. Existing account, resource, subscription and quota checks apply.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+        },
+        "issuedAt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["health.create", "health.delete", "health.update"]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "expectedRevision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "maxProperties": 40
+        }
+      },
+      "required": [
+        "operationId",
+        "issuedAt",
+        "kind",
+        "scope",
+        "id",
+        "epoch",
+        "expectedRevision",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "scopes": ["health:write"],
+    "route": "commands",
+    "write": true,
+    "destructive": true
+  },
+  {
+    "name": "fitness_edit_metrics",
+    "title": "Apply approved metrics changes",
+    "description": "Apply an exact immutable command returned by prepare_command for metrics, after user approval. Only the listed command kinds are accepted. Preserve operationId and all fields for retries. Existing account, resource, subscription and quota checks apply.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+        },
+        "issuedAt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "run.create",
+            "run.delete",
+            "run.update",
+            "session.create",
+            "session.delete",
+            "session.update"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "expectedRevision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "maxProperties": 40
+        }
+      },
+      "required": [
+        "operationId",
+        "issuedAt",
+        "kind",
+        "scope",
+        "id",
+        "epoch",
+        "expectedRevision",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "scopes": ["metrics:write"],
+    "route": "commands",
+    "write": true,
+    "destructive": true
+  },
+  {
+    "name": "fitness_coach_metrics",
+    "title": "Coach: apply approved metrics changes",
+    "description": "Apply an approved metrics command to another athlete's authorized program. Requires an active Coach subscription, explicit coaching permission and current program membership. Prepare the exact command first; preserve it for retries. Never use this to widen access.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+        },
+        "issuedAt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "run.create",
+            "run.delete",
+            "run.update",
+            "session.create",
+            "session.delete",
+            "session.update"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "expectedRevision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "maxProperties": 40
+        }
+      },
+      "required": [
+        "operationId",
+        "issuedAt",
+        "kind",
+        "scope",
+        "id",
+        "epoch",
+        "expectedRevision",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "scopes": ["metrics:write", "coaching:write"],
+    "route": "commands",
+    "write": true,
+    "destructive": true
+  },
+  {
+    "name": "fitness_edit_planning",
+    "title": "Apply approved planning changes",
+    "description": "Apply an exact immutable command returned by prepare_command for planning, after user approval. Only the listed command kinds are accepted. Preserve operationId and all fields for retries. Existing account, resource, subscription and quota checks apply.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+        },
+        "issuedAt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "goal.create",
+            "goal.delete",
+            "goal.update",
+            "planning.create",
+            "planning.delete",
+            "planning.update",
+            "schedule.create",
+            "schedule.delete",
+            "schedule.update"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "expectedRevision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "maxProperties": 40
+        }
+      },
+      "required": [
+        "operationId",
+        "issuedAt",
+        "kind",
+        "scope",
+        "id",
+        "epoch",
+        "expectedRevision",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "scopes": ["planning:write"],
+    "route": "commands",
+    "write": true,
+    "destructive": true
+  },
+  {
+    "name": "fitness_coach_planning",
+    "title": "Coach: apply approved planning changes",
+    "description": "Apply an approved planning command to another athlete's authorized program. Requires an active Coach subscription, explicit coaching permission and current program membership. Prepare the exact command first; preserve it for retries. Never use this to widen access.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+        },
+        "issuedAt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "goal.create",
+            "goal.delete",
+            "goal.update",
+            "planning.create",
+            "planning.delete",
+            "planning.update",
+            "schedule.create",
+            "schedule.delete",
+            "schedule.update"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "expectedRevision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "maxProperties": 40
+        }
+      },
+      "required": [
+        "operationId",
+        "issuedAt",
+        "kind",
+        "scope",
+        "id",
+        "epoch",
+        "expectedRevision",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "scopes": ["planning:write", "coaching:write"],
+    "route": "commands",
+    "write": true,
+    "destructive": true
+  },
+  {
+    "name": "fitness_edit_programs",
+    "title": "Apply approved programs changes",
+    "description": "Apply an exact immutable command returned by prepare_command for programs, after user approval. Only the listed command kinds are accepted. Preserve operationId and all fields for retries. Existing account, resource, subscription and quota checks apply.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+        },
+        "issuedAt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "exercise.document.create",
+            "exercise.document.delete",
+            "exercise.document.update",
+            "program.create",
+            "program.delete",
+            "program.update",
+            "workout.create",
+            "workout.delete",
+            "workout.exercise.create",
+            "workout.exercise.delete",
+            "workout.exercise.update",
+            "workout.update"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "expectedRevision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "maxProperties": 40
+        }
+      },
+      "required": [
+        "operationId",
+        "issuedAt",
+        "kind",
+        "scope",
+        "id",
+        "epoch",
+        "expectedRevision",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "scopes": ["programs:write"],
+    "route": "commands",
+    "write": true,
+    "destructive": true
+  },
+  {
+    "name": "fitness_coach_programs",
+    "title": "Coach: apply approved programs changes",
+    "description": "Apply an approved programs command to another athlete's authorized program. Requires an active Coach subscription, explicit coaching permission and current program membership. Prepare the exact command first; preserve it for retries. Never use this to widen access.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+        },
+        "issuedAt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "exercise.document.create",
+            "exercise.document.delete",
+            "exercise.document.update",
+            "program.create",
+            "program.delete",
+            "program.update",
+            "workout.create",
+            "workout.delete",
+            "workout.exercise.create",
+            "workout.exercise.delete",
+            "workout.exercise.update",
+            "workout.update"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "expectedRevision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "maxProperties": 40
+        }
+      },
+      "required": [
+        "operationId",
+        "issuedAt",
+        "kind",
+        "scope",
+        "id",
+        "epoch",
+        "expectedRevision",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "scopes": ["programs:write", "coaching:write"],
+    "route": "commands",
+    "write": true,
+    "destructive": true
+  },
+  {
+    "name": "fitness_read_exercises",
+    "title": "Read exercises records",
+    "description": "Read one authorized page or exact record from the listed exercises collections. Preserve epoch/revision and follow nextAfter only when needed. This tool cannot change data. Existing resource access and quotas apply.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "collection": {
+          "type": "string",
+          "enum": ["exercises"]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "after": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "checkpoint": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "archive": {
+          "type": "string",
+          "enum": ["true", "false"]
+        }
+      },
+      "required": ["scope", "collection"],
+      "additionalProperties": false
+    },
+    "scopes": ["exercises:read"],
+    "route": "resources"
+  },
+  {
+    "name": "fitness_read_health",
+    "title": "Read health records",
+    "description": "Read one authorized page or exact record from the listed health collections. Preserve epoch/revision and follow nextAfter only when needed. This tool cannot change data. Existing resource access and quotas apply.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "collection": {
+          "type": "string",
+          "enum": ["health"]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "after": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "checkpoint": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "archive": {
+          "type": "string",
+          "enum": ["true", "false"]
+        }
+      },
+      "required": ["scope", "collection"],
+      "additionalProperties": false
+    },
+    "scopes": ["health:read"],
+    "route": "resources"
+  },
+  {
+    "name": "fitness_read_metrics",
+    "title": "Read metrics records",
+    "description": "Read one authorized page or exact record from the listed metrics collections. Preserve epoch/revision and follow nextAfter only when needed. This tool cannot change data. Existing resource access and quotas apply.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "collection": {
+          "type": "string",
+          "enum": ["runs", "sessions"]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "after": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "checkpoint": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "archive": {
+          "type": "string",
+          "enum": ["true", "false"]
+        }
+      },
+      "required": ["scope", "collection"],
+      "additionalProperties": false
+    },
+    "scopes": ["metrics:read"],
+    "route": "resources"
+  },
+  {
+    "name": "fitness_read_planning",
+    "title": "Read planning records",
+    "description": "Read one authorized page or exact record from the listed planning collections. Preserve epoch/revision and follow nextAfter only when needed. This tool cannot change data. Existing resource access and quotas apply.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "collection": {
+          "type": "string",
+          "enum": ["goals", "planning", "schedules"]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "after": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "checkpoint": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "archive": {
+          "type": "string",
+          "enum": ["true", "false"]
+        }
+      },
+      "required": ["scope", "collection"],
+      "additionalProperties": false
+    },
+    "scopes": ["planning:read"],
+    "route": "resources"
+  },
+  {
+    "name": "fitness_read_programs",
+    "title": "Read programs records",
+    "description": "Read one authorized page or exact record from the listed programs collections. Preserve epoch/revision and follow nextAfter only when needed. This tool cannot change data. Existing resource access and quotas apply.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "collection": {
+          "type": "string",
+          "enum": ["exerciseDocuments", "members", "programs", "workoutExercises", "workouts"]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "after": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "checkpoint": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "archive": {
+          "type": "string",
+          "enum": ["true", "false"]
+        }
+      },
+      "required": ["scope", "collection"],
+      "additionalProperties": false
+    },
+    "scopes": ["programs:read"],
+    "route": "resources"
   }
 ]
