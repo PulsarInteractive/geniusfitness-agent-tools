@@ -1,6 +1,6 @@
 {
   "name": "@pulsarinteractive/geniusfitness",
-  "version": "0.1.0-beta.3",
+  "version": "0.1.0-beta.4",
   "private": false,
   "description": "GeniusFitness CLI and MCP for training plans, exercise catalogues and progress",
   "type": "module",
