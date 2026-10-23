@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Correct CLI help to describe the official login's requested-permission defaults.
+
 ## 0.1.0-beta.5 — 2026-10-24
 
 - Add session analysis with measured time per set and exercise, real rest and missing-data coverage.
