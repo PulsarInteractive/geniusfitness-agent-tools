@@ -1,5 +1,5 @@
 import { workflow } from './workflows.mjs';
-import { readCatalog, readMetrics, readResources } from './fitness.mjs';
+import { readCatalog, readMetrics, readResources, readSessionAnalysis } from './fitness.mjs';
 import open, { apps } from 'open';
 import catalog from './command-catalog.mjs';
 import { CredentialStore } from './store.mjs';
@@ -50,6 +50,10 @@ export const commands = {
     summary:
       'Search the canonical exercise catalogue; reuse stable catalogKey values instead of duplicating exercises.',
     options: ['query', 'key', 'equipment', 'muscle', 'after', 'version'],
+  },
+  'sessions analyze': {
+    summary: 'Read one recorded session with set timing, rest and measurement coverage.',
+    options: ['scope', 'id', 'offset', 'revision'],
   },
   'metrics summary': {
     summary: 'Read daily activity totals for one authorized program, across at most 366 UTC days.',
@@ -326,6 +330,13 @@ export async function main(
             .map((key) => [key, options[key]]),
         ),
       );
+    } else if (command === 'sessions analyze') {
+      data = await readSessionAnalysis(client, {
+        scope: options.scope,
+        id: options.id,
+        ...(options.offset === undefined ? {} : { offset: Number(options.offset) }),
+        ...(options.revision === undefined ? {} : { revision: options.revision }),
+      });
     } else if (command === 'metrics summary') {
       data = await readMetrics(client, {
         scope: options.scope,

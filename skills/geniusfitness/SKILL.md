@@ -31,9 +31,11 @@ exercise identities, set encoding and incremental follow-up.
 
 Respond in the user’s language. Preserve existing titles and notes unless asked
 to translate them; keep IDs, API fields and enum values unchanged. Confirm
-ambiguous dates and timezones before changing a schedule. CLI, local MCP and
-ChatGPT share the account quota: obey retry times and never switch connections
-to evade a refusal.
+ambiguous dates and timezones before changing a schedule. Do not volunteer
+technical quota tables. Honor actual service refusals and retry guidance.
+
+For detailed performance reviews, use the
+[progress skill](../geniusfitness-progress/SKILL.md) and the hosted progress guide.
 
 ## Hosted ChatGPT versus local tools
 

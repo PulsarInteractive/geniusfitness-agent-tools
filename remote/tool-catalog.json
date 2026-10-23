@@ -149,6 +149,40 @@
     "route": "catalog"
   },
   {
+    "name": "fitness_session_analysis",
+    "title": "Analyze a training session",
+    "description": "Read recorded time per set and exercise, actual rest and measurement coverage for one session. Long timers may include interruptions; do not assume continuous effort or invent wearable measurements. Sets page at 50; continue with nextSetOffset as offset and the same revision.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "pattern": "^project:[A-Za-z0-9_-]{1,128}$",
+          "maxLength": 160
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+          "maxLength": 128
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]{0,15})$",
+          "maxLength": 16
+        }
+      },
+      "required": ["scope", "id"],
+      "additionalProperties": false
+    },
+    "scopes": ["metrics:read"],
+    "route": "session-analysis"
+  },
+  {
     "name": "fitness_metrics",
     "title": "Training progress",
     "description": "Read existing training metrics for one authorized program and an inclusive date range shorter than one year. Never invent workouts or health measurements.",

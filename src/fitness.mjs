@@ -45,6 +45,18 @@ export const catalogSchema = z
   })
   .strict()
   .refine((input) => !input.after || (!!input.version && !input.key));
+export const sessionAnalysisSchema = z
+  .object({
+    scope: z.string().regex(/^project:[A-Za-z0-9_-]{1,128}$/),
+    id: z.string().regex(/^[A-Za-z0-9_-]{1,128}$/),
+    offset: z.number().int().min(0).max(1000).optional(),
+    revision: revision.optional(),
+  })
+  .strict()
+  .refine((input) => !input.offset || input.revision !== undefined);
+export const readSessionAnalysis = (client, input) =>
+  client.get('session-analysis', checked(sessionAnalysisSchema, input));
+
 export const metricsSchema = z
   .object({
     scope: z.string().regex(/^project:[A-Za-z0-9_-]{1,128}$/),

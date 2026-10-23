@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-beta.5 — 2026-10-24
+
+- Add session analysis with measured time per set and exercise, real rest and missing-data coverage.
+- Page large session details with revision-checked continuation.
+- Improve progress-review guidance and distinguish timer intervals from physical effort.
+- Keep operational quota tables out of routine MCP introductions while preserving server controls.
+
 ## 0.1.0-beta.4 — 2026-10-23
 
 - Add on-demand workflow guides to hosted and local MCP and `workflow show` to the CLI.

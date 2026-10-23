@@ -15,7 +15,7 @@ test('remote catalogue has bounded explicit schemas and honest write annotations
     if (tool.write) {
       assert.equal(tool.destructive, true);
     }
-    assert.ok(!tool.route || /^[a-z]+(?:\/[a-z]+)?$/.test(tool.route));
+    assert.ok(!tool.route || /^[a-z]+(?:[-/][a-z]+)*$/.test(tool.route));
   }
   const execute = tools.find((t) => t.name.endsWith('_execute_command'));
   assert.equal(execute.write, true);
