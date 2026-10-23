@@ -1,0 +1,419 @@
+[
+  {
+    "name": "fitness_identity",
+    "title": "Connected account",
+    "description": "Read the connected account, permission grants and quotas. Start here; never ask for a password or token.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "scopes": [],
+    "route": "me"
+  },
+  {
+    "name": "fitness_capabilities",
+    "title": "Available actions",
+    "description": "Discover the current permitted collections and commands. Do not assume paid or coach access.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "scopes": [],
+    "route": "capabilities"
+  },
+  {
+    "name": "fitness_programs",
+    "title": "Find programs",
+    "description": "List one authorized page. Follow nextAfter even when the page is empty. Read only items relevant to the user request.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "after": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "scopes": ["programs:read"],
+    "route": "programs"
+  },
+  {
+    "name": "fitness_resources",
+    "title": "Read records",
+    "description": "Read a bounded page or exact record before modifying it. Preserve epoch/revision. Never crawl all collections. Use personal scope only for the connected owner; revoked access is unavailable.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "collection": {
+          "type": "string",
+          "enum": [
+            "exerciseDocuments",
+            "exercises",
+            "goals",
+            "health",
+            "members",
+            "planning",
+            "programs",
+            "runs",
+            "schedules",
+            "sessions",
+            "workoutExercises",
+            "workouts"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "after": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "checkpoint": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "archive": {
+          "type": "string",
+          "enum": ["true", "false"]
+        }
+      },
+      "required": ["scope", "collection"],
+      "additionalProperties": false
+    },
+    "scopes": [],
+    "route": "resources"
+  },
+  {
+    "name": "fitness_catalog",
+    "title": "Find exercises",
+    "description": "Search exercise catalogue; prefer stable catalog keys to creating duplicates. Continue with nextAfter and version.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "equipment": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "muscle": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "after": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "scopes": ["exercises:read"],
+    "route": "catalog"
+  },
+  {
+    "name": "fitness_metrics",
+    "title": "Training progress",
+    "description": "Read existing training metrics for one authorized program and an inclusive date range shorter than one year. Never invent workouts or health measurements.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "from": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10
+        },
+        "until": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10
+        }
+      },
+      "required": ["scope", "from", "until"],
+      "additionalProperties": false
+    },
+    "scopes": ["metrics:read"],
+    "route": "metrics"
+  },
+  {
+    "name": "fitness_command_help",
+    "title": "Explain an edit",
+    "description": "Read the allowed fields and value schemas before preparing an unfamiliar command. Missing access cannot be bypassed.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "exercise.create",
+            "exercise.delete",
+            "exercise.document.create",
+            "exercise.document.delete",
+            "exercise.document.update",
+            "exercise.import",
+            "exercise.update",
+            "goal.create",
+            "goal.delete",
+            "goal.update",
+            "health.create",
+            "health.delete",
+            "health.update",
+            "planning.create",
+            "planning.delete",
+            "planning.update",
+            "program.create",
+            "program.delete",
+            "program.update",
+            "run.create",
+            "run.delete",
+            "run.update",
+            "schedule.create",
+            "schedule.delete",
+            "schedule.update",
+            "session.create",
+            "session.delete",
+            "session.update",
+            "workout.create",
+            "workout.delete",
+            "workout.exercise.create",
+            "workout.exercise.delete",
+            "workout.exercise.update",
+            "workout.update"
+          ]
+        }
+      },
+      "required": ["kind"],
+      "additionalProperties": false
+    },
+    "scopes": []
+  },
+  {
+    "name": "fitness_prepare_command",
+    "title": "Prepare an edit",
+    "description": "Prepare an immutable command without changing account data. Read the current epoch and revision first (null revision for creation). Keep the exact returned command for execution and retries. Confirm intended changes with the user.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "exercise.create",
+            "exercise.delete",
+            "exercise.document.create",
+            "exercise.document.delete",
+            "exercise.document.update",
+            "exercise.import",
+            "exercise.update",
+            "goal.create",
+            "goal.delete",
+            "goal.update",
+            "health.create",
+            "health.delete",
+            "health.update",
+            "planning.create",
+            "planning.delete",
+            "planning.update",
+            "program.create",
+            "program.delete",
+            "program.update",
+            "run.create",
+            "run.delete",
+            "run.update",
+            "schedule.create",
+            "schedule.delete",
+            "schedule.update",
+            "session.create",
+            "session.delete",
+            "session.update",
+            "workout.create",
+            "workout.delete",
+            "workout.exercise.create",
+            "workout.exercise.delete",
+            "workout.exercise.update",
+            "workout.update"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "expectedRevision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "maxProperties": 40
+        }
+      },
+      "required": ["kind", "scope", "id", "epoch", "expectedRevision", "data"],
+      "additionalProperties": false
+    },
+    "scopes": [],
+    "idempotent": false
+  },
+  {
+    "name": "fitness_execute_command",
+    "title": "Apply the approved edit",
+    "description": "Execute the exact command returned by prepare_command after user approval. This changes account data and may delete records. After timeout retry the SAME command; after conflict read the current record and ask before preparing a replacement. Permissions, subscription and quotas are checked on the server.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+        },
+        "issuedAt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "exercise.create",
+            "exercise.delete",
+            "exercise.document.create",
+            "exercise.document.delete",
+            "exercise.document.update",
+            "exercise.import",
+            "exercise.update",
+            "goal.create",
+            "goal.delete",
+            "goal.update",
+            "health.create",
+            "health.delete",
+            "health.update",
+            "planning.create",
+            "planning.delete",
+            "planning.update",
+            "program.create",
+            "program.delete",
+            "program.update",
+            "run.create",
+            "run.delete",
+            "run.update",
+            "schedule.create",
+            "schedule.delete",
+            "schedule.update",
+            "session.create",
+            "session.delete",
+            "session.update",
+            "workout.create",
+            "workout.delete",
+            "workout.exercise.create",
+            "workout.exercise.delete",
+            "workout.exercise.update",
+            "workout.update"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "expectedRevision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "maxProperties": 40
+        }
+      },
+      "required": [
+        "operationId",
+        "issuedAt",
+        "kind",
+        "scope",
+        "id",
+        "epoch",
+        "expectedRevision",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "scopes": [],
+    "route": "commands",
+    "write": true,
+    "destructive": true
+  }
+]

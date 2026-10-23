@@ -55,3 +55,7 @@ geniusfitness mcp --context default
 
 MIT © Pulsar Interactive. This repository contains the public agent client and
 skills; the GeniusFitness application and service implementation are separate.
+
+## ChatGPT
+
+Connect the hosted service with OAuth: [setup and examples](docs/CHATGPT.md). Your computer does not need to run the CLI. Account permissions and quotas still apply. [Official directory publication](docs/OPENAI_PUBLICATION.md) is a separate review.
