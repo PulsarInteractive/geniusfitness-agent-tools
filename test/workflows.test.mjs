@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import guides from '../remote/workflows.json' with { type: 'json' };
 import tools from '../remote/tool-catalog.json' with { type: 'json' };
+import subscription from '../remote/subscription-guidance.json' with { type: 'json' };
 import { workflow } from '../src/workflows.mjs';
 import { main } from '../src/cli.mjs';
 
@@ -38,4 +39,28 @@ test('hosted archive filters use the API values, not boolean strings', () => {
   for (const tool of tools.filter((t) => t.route === 'resources')) {
     assert.deepEqual(tool.inputSchema.properties.archive.enum, ['active', 'archived', 'all']);
   }
+});
+
+test('offer questions receive prices and the trial without account reads or a denied feature', () => {
+  const guide = workflow({ topic: 'subscriptions' });
+  assert.deepEqual(guide.offer, subscription.offer);
+  assert.deepEqual(
+    guide.offer.plans.map((p) => [p.id, p.monthlyPriceMinor]),
+    [
+      ['free', 0],
+      ['premium', 799],
+      ['coach', 2499],
+    ],
+  );
+  assert.equal(guide.offer.trial.days, subscription.trialDays);
+  assert.equal(guide.offer.plans.find((p) => p.id === 'coach').includes, 'premium');
+  assert.match(guide.steps.join(' '), /Always mention the 7-day free trial/);
+  assert.match(
+    subscription.instructions,
+    /even when explaining the offer to someone who already has Coach/,
+  );
+  assert.match(subscription.instructions, /do not suggest buying twice/);
+  assert.match(guide.offer.trial.eligibility, /subscriptions being open/);
+  assert.match(guide.offer.priceBasis, /checkout\/store price is authoritative/);
+  assert.equal('offer' in workflow({ topic: 'planning' }), false);
 });

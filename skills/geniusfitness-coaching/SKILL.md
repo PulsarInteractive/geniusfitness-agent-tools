@@ -36,3 +36,30 @@ that program, with the same athlete ID. Read `fitness_workflow` topic
 permissions, the athlete's explicit sharing with this coach, and their sharing
 with authorized connectors. Never widen consent or read their personal scope.
 A permission denial is not an empty workout. Honor revocation immediately.
+
+## Student subscriptions and repeatable examples
+
+Coach has no commercial student-seat limit. Each student needs their own Premium
+or Coach plan for detailed muscle and workout observations. Their Free account
+can still follow a shared plan and share basic recent results. Do not confuse
+ordinary storage/program quotas with student seats or ask the coach to pay twice.
+
+Read `fitness_workflow` topic `coaching` for the complete examples:
+
+- “Schedule this student's workout every Wednesday at 18:00, Europe/Brussels.”
+  Discover the recurring-rule schema, use the student's real ID, preserve timezone,
+  preview the change and read it back after the authorized write.
+- “Analyze X's exercises over the last two weeks.” Set the exact 14 inclusive UTC
+  dates and `athleteId`. Unfiltered program totals can include other participants.
+  Read detailed muscle evidence only when the student's entitlement permits it.
+
+After a downgrade or revoked sharing, a previous successful read is not permission
+to read again. Report unavailable information distinctly from zero progress.
+
+## Recorded calories
+
+When `fitness_workout_vitals` returns `energy`, keep its measured interval with
+the kilocalorie value. It can cover only part of a session. Do not divide this
+workout total into invented set calories or add overlapping device totals. Null
+means unavailable. The athlete must separately enable calorie collection; the
+existing recipient permissions and their Premium entitlement still apply.

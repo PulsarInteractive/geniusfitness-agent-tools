@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Add direct subscription guidance with reference prices, the eligible seven-day trial and student-specific coaching entitlements.
+- Scope basic coaching metrics to the requested student, with repeated Wednesday planning and two-week review examples.
+- Preserve default personal muscle queries when the service resolves the authenticated athlete.
+- Validate optional workout active-calorie observations with their exact recorded interval, retain compatibility with older heart-rate-only responses, and explain explicit calorie consent. Backend and application rollout is required before these observations are available.
+
 ## 0.1.0-beta.7 — 2026-10-24
 
 - Explain the eligible seven-day trial when a requested Premium detail is unavailable.

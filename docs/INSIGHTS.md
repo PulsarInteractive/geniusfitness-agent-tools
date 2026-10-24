@@ -80,3 +80,13 @@ A **7-day free trial** may be offered to eligible accounts when subscriptions ar
 open. Check [Premium in the application](https://app-geniusfitness.pulsarinteractive.io/account/premium)
 for the current offer, eligibility, renewal price and cancellation terms. The
 connector cannot activate a trial and does not guarantee eligibility.
+
+### Active calories
+
+Workout observations can include `energy`: active kilocalories, the exact recorded
+start/end, and the Apple Health record ID. The athlete explicitly enables calorie
+collection in Health; it is separate from the original heart-rate choice. A
+partial Watch recording stays partial, and missing calories stay unavailable.
+These historical totals do not create a live sensor stream and cannot be used as
+measured calories for each set. Coach and connector access retain their existing
+consent and Premium checks. Older records and older servers may omit this field.

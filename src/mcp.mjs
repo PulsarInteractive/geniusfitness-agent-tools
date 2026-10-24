@@ -95,7 +95,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_workflow',
-    'Read a reviewed workflow guide before unfamiliar operations; no account data or network access.',
+    'Read product and workflow guides. For plans, prices, Premium benefits or trials use topic subscriptions and include the conditional 7-day trial; no Internet search or account data needed.',
     workflowSchema,
     workflow,
   );
@@ -148,7 +148,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_workout_vitals',
-    'Premium/Coach recorded heart-rate minutes. Requires metrics:read, health:read and explicit athlete sharing. Optional athleteId requires Coach and a currently shared athlete-owned program. Missing observations remain missing; never infer effort or a diagnosis.',
+    'Premium/Coach recorded heart-rate minutes and optional active kcal for the exact observed workout interval, never per-set estimates. Requires metrics:read, health:read and explicit athlete sharing. Optional athleteId requires Coach and a currently shared athlete-owned program. Missing observations remain missing; never infer effort or a diagnosis.',
     workoutVitalsSchema,
     (input) => readWorkoutVitals(client, input),
   );

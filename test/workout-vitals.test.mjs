@@ -102,3 +102,28 @@ test('authenticated client routes derived insights and never reuses sensitive re
   });
   assert.equal(calls, 4, 'Every sensitive request must revalidate its current grant');
 });
+
+test('active calories retain their measured interval; older servers and BPM-only data remain compatible', async () => {
+  const energy = {
+    kilocalories: 218.75,
+    startedAt: '2026-10-24T10:10:00Z',
+    endedAt: '2026-10-24T10:50:00Z',
+    sourceRecordId: '8a20daa0-7841-4c24-8256-756dc5710f22',
+  };
+  const page = { ...result, minutes: [], energy };
+  assert.deepEqual((await readWorkoutVitals({ get: async () => page }, input)).energy, energy);
+  for (const invalid of [
+    { ...page, availability: 'unrecorded' },
+    { ...page, energy: null },
+    { ...page, energy: { ...energy, kilocalories: -1 } },
+    { ...page, energy: { ...energy, startedAt: '2026-10-24T09:59:00Z' } },
+    { ...page, energy: { ...energy, endedAt: '2026-10-24T11:01:00Z' } },
+    { ...page, energy: { ...energy, endedAt: energy.startedAt } },
+    { ...page, energy: { ...energy, patientNote: 'unexpected' } },
+  ]) {
+    await assert.rejects(readWorkoutVitals({ get: async () => invalid }, input), {
+      code: 'invalid_response',
+    });
+  }
+  assert.deepEqual(await readWorkoutVitals({ get: async () => result }, input), result);
+});

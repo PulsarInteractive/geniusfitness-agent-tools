@@ -150,8 +150,8 @@
   },
   {
     "name": "fitness_workout_vitals",
-    "title": "Workout heart-rate observations",
-    "description": "Premium/Coach heart-rate summaries by minute for one recorded session. Requires health:read, metrics:read and explicit athlete connector sharing; another athlete also requires Coach, current program access and their named coach consent. Missing minutes are unmeasured, not zero. Match actual timestamps to sets; never infer continuous effort, recovery or diagnosis.",
+    "title": "Workout heart rate and active calories",
+    "description": "Premium/Coach heart-rate summaries by minute and optional recorded active kcal for one session. Energy requires the athlete’s separate calorie collection choice; preserve its observed interval, which may be partial. Never infer calories per set or combine overlapping sources. Requires health:read, metrics:read and explicit athlete connector sharing; another athlete also requires Coach, current program access and their named coach consent. Missing minutes are unmeasured, not zero. Match actual timestamps to sets; never infer continuous effort, recovery or diagnosis. For a student, their own Premium or Coach entitlement is required; the coach’s paid plan does not upgrade the student.",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -177,7 +177,7 @@
   {
     "name": "fitness_muscle_insights",
     "title": "Muscle training insights",
-    "description": "Premium/Coach muscle training evidence: weekly sets, external resistance volume, entered kg × reps, durations, timer coverage and catalogue attribution. Optional athleteId selects a currently shared athlete-owned program and requires Coach. Follow nextAfter with epoch/checkpoint and unchanged dates/athlete. Not measured growth, force or recovery; missing attribution stays unknown.",
+    "description": "Premium/Coach muscle training evidence: weekly sets, external resistance volume, entered kg × reps, durations, timer coverage and catalogue attribution. Optional athleteId selects a currently shared athlete-owned program and requires Coach. Follow nextAfter with epoch/checkpoint and unchanged dates/athlete. Not measured growth, force or recovery; missing attribution stays unknown. For a student, their own Premium or Coach entitlement is required; the coach’s paid plan does not upgrade the student.",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -256,7 +256,7 @@
   {
     "name": "fitness_metrics",
     "title": "Training progress",
-    "description": "Read existing training metrics for one authorized program and an inclusive date range shorter than one year. Never invent workouts or health measurements.",
+    "description": "Read basic daily totals for an authorized program and bounded inclusive UTC dates. Pass athleteId for one student in their own shared program (requires Coach); otherwise totals cover all visible participants and must not be presented as individual progress.",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -274,6 +274,10 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 10
+        },
+        "athleteId": {
+          "type": "string",
+          "maxLength": 128
         }
       },
       "required": ["scope", "from", "until"],
@@ -1362,8 +1366,8 @@
   },
   {
     "name": "fitness_workflow",
-    "title": "Workflow guides",
-    "description": "Read reviewed product instructions for a specific workflow before unfamiliar operations. Explains available commands, permissions, pagination and remote versus local retry behavior; does not read personal data or grant access.",
+    "title": "Product and workflow guides",
+    "description": "Read product information and workflow instructions directly from GeniusFitness. For plans, Premium benefits, pricing, value or the 7-day trial, use topic subscriptions: it includes reference prices, benefits and eligibility caveats without an Internet search. Other topics explain permissions and operations. Does not read personal data, activate a trial or grant access.",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -1376,7 +1380,8 @@
             "planning",
             "progress",
             "coaching",
-            "workout-vitals"
+            "workout-vitals",
+            "subscriptions"
           ]
         }
       },

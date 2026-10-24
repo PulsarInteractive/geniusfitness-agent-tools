@@ -59,7 +59,8 @@ export const commands = {
     options: ['query', 'key', 'equipment', 'muscle', 'after', 'version'],
   },
   'workouts vitals': {
-    summary: 'Premium/Coach observed heart-rate minutes with explicit athlete consent.',
+    summary:
+      'Premium/Coach observed heart-rate minutes and recorded active kcal, with explicit athlete consent.',
     options: ['scope', 'sessionId', 'athleteId'],
   },
   'muscles insights': {
@@ -72,7 +73,7 @@ export const commands = {
   },
   'metrics summary': {
     summary: 'Read daily activity totals for one authorized program, across at most 366 UTC days.',
-    options: ['scope', 'from', 'until'],
+    options: ['scope', 'from', 'until', 'athleteId'],
   },
   'programs list': {
     summary: 'Read a bounded program page; follow nextAfter even for an empty page.',
@@ -372,6 +373,7 @@ export async function main(
       });
     } else if (command === 'metrics summary') {
       data = await readMetrics(client, {
+        ...(options.athleteId === undefined ? {} : { athleteId: options.athleteId }),
         scope: options.scope,
         from: options.from,
         until: options.until,

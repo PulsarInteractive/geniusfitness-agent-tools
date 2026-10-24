@@ -1,5 +1,65 @@
 {
   "trialDays": 7,
   "url": "https://app-geniusfitness.pulsarinteractive.io/account/premium",
-  "instructions": "When a requested Premium-only feature is unavailable, explain that feature once and offer the available basic data. A 7-day free trial may be offered to eligible accounts when subscriptions are open. Direct the user to https://app-geniusfitness.pulsarinteractive.io/account/premium to check the current offering, eligibility, renewal price and cancellation terms. Never promise eligibility, start a trial, or activate paid access from the connector. Do not use health measurements to target an upgrade."
+  "instructions": "When the user explicitly asks about GeniusFitness plans, Premium benefits, prices, whether upgrading is worthwhile, or a trial, read fitness_workflow with topic subscriptions and answer directly from its product facts; Internet browsing is unnecessary for those facts. Always include the 7-day free trial in an offer explanation, subject to eligibility and subscriptions being open, even when explaining the offer to someone who already has Coach. In that case explain that Premium benefits are already included; do not suggest buying twice or claim an existing subscriber is trial-eligible. When a requested Premium-only feature is unavailable, explain that feature once, mention the conditional trial and offer the available basic data. A 7-day free trial may be offered to eligible accounts when subscriptions are open. Direct the user to https://app-geniusfitness.pulsarinteractive.io/account/premium for the actual localized offering, eligibility, renewal price and cancellation terms, not as a substitute for answering the question. Never promise eligibility, start a trial, or activate paid access from the connector. Do not use health measurements to target an upgrade.",
+  "offer": {
+    "reviewedOn": "2026-10-24",
+    "currency": "EUR",
+    "billingInterval": "month",
+    "priceBasis": "Reference monthly EUR catalogue; localized checkout/store price is authoritative. This guide does not prove checkout is open.",
+    "trial": {
+      "days": 7,
+      "eligibility": "Account/store eligibility and subscriptions being open are required. Existing Premium or Coach access does not imply trial eligibility.",
+      "activation": "Only in the application checkout, with the displayed renewal price and cancellation terms; never from a connector command."
+    },
+    "plans": [
+      {
+        "id": "free",
+        "name": "Free",
+        "monthlyPriceMinor": 0,
+        "benefits": [
+          "Plan and record workouts, with exercise catalogue and custom exercises.",
+          "Review available recent results, weights, repetitions and basic progress.",
+          "Use the basic muscle overview and authorized basic CLI/MCP tools."
+        ]
+      },
+      {
+        "id": "premium",
+        "name": "Premium",
+        "monthlyPriceMinor": 799,
+        "includes": "free",
+        "benefits": [
+          "Detailed muscle training analysis: completed work sets, catalogue attribution, recorded external load and comparable periods.",
+          "Advanced muscle analysis within 24 calendar months of available stored records, subject to account capacity.",
+          "Authorized agents can use the same detailed muscle evidence.",
+          "Optional recorded workout heart-rate observations when data exists and collection and recipient consent allow access."
+        ]
+      },
+      {
+        "id": "coach",
+        "name": "Coach",
+        "monthlyPriceMinor": 2499,
+        "includes": "premium",
+        "benefits": [
+          "Manage another athlete’s shared program and planning with current permissions.",
+          "Use the coach connector tools for authorized student programs.",
+          "No commercial student-seat limit. Detailed muscle and workout observations require each student’s own Premium or Coach subscription and separate consent where applicable."
+        ]
+      }
+    ],
+    "limitations": [
+      "ChatGPT/model subscriptions are separate; the GeniusFitness subscription does not include an external model subscription.",
+      "A subscription never grants health consent or access to another athlete by itself.",
+      "Coach has no commercial student-seat limit; do not promise unlimited history, programs or storage. Advanced muscle history is bounded to 24 calendar months.",
+      "Do not advertise a feature as exclusively paid unless live capabilities or the service confirms that restriction.",
+      "Recorded training distribution is not measured muscle growth, recovery or a medical diagnosis."
+    ],
+    "url": "https://app-geniusfitness.pulsarinteractive.io/account/premium",
+    "coaching": {
+      "studentLimit": null,
+      "studentDetailedInsightsRequire": "Student Premium or Coach, plus current program and recipient permissions",
+      "freeStudents": "Can follow a shared program and share basic recent results; the coach does not pay per student.",
+      "capacity": "Ordinary program, storage and API quotas still apply; no commercial student-seat quota."
+    }
+  }
 }

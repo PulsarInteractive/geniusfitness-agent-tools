@@ -206,6 +206,12 @@ test('muscle insights preserve athlete/period/checkpoint and never turn denied o
     },
   };
   assert.deepEqual(await readMuscleInsights(client, query), page);
+  // The service resolves an omitted athlete to the authenticated user. It
+  // still returns that user's ID; omission must not be treated as a mismatch.
+  const ownQuery = { ...query };
+  delete ownQuery.athleteId;
+  const ownPage = { ...page, athleteId: 'connected-owner' };
+  assert.deepEqual(await readMuscleInsights({ get: async () => ownPage }, ownQuery), ownPage);
   for (const patch of [
     { from: '2026-02-30' },
     { until: '2026-09-01' },
@@ -247,4 +253,27 @@ test('muscle insights preserve athlete/period/checkpoint and never turn denied o
     ),
     (error) => error === denied,
   );
+});
+
+test('athlete metrics preserve the requested identity and reject whole-program or other-student replies', async () => {
+  const query = {
+    scope: 'project:training',
+    from: '2026-10-11',
+    until: '2026-10-24',
+    athleteId: 'student',
+  };
+  const page = { ...query, epoch: 'epoch', checkpoint: '8', days: [] };
+  const client = {
+    get: async (name, input) => {
+      assert.equal(name, 'metrics');
+      assert.equal(input.athleteId, 'student');
+      return page;
+    },
+  };
+  assert.equal((await readMetrics(client, query)).athleteId, 'student');
+  for (const athleteId of [undefined, 'other']) {
+    await assert.rejects(readMetrics({ get: async () => ({ ...page, athleteId }) }, query), {
+      code: 'invalid_response',
+    });
+  }
 });

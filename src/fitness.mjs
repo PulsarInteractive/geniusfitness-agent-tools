@@ -77,6 +77,14 @@ const heartRateMinute = z
   })
   .strict()
   .refine((row) => row.minimum <= row.average && row.average <= row.maximum);
+const workoutEnergy = z
+  .object({
+    kilocalories: z.number().min(0).max(20000),
+    startedAt: z.iso.datetime({ offset: true }),
+    endedAt: z.iso.datetime({ offset: true }),
+    sourceRecordId: z.uuid(),
+  })
+  .strict();
 const workoutVitals = z.object({
   scope,
   sessionId: id,
@@ -87,18 +95,21 @@ const workoutVitals = z.object({
   endedAt: z.iso.datetime({ offset: true }).nullable(),
   revision: revision.nullable(),
   minutes: z.array(heartRateMinute).max(720),
+  energy: workoutEnergy.nullable().optional(),
   interpretation: z.string().min(1),
 });
 export async function readWorkoutVitals(client, input) {
   const query = checked(workoutVitalsSchema, input);
   const result = await client.get('workout-vitals', query);
+  const hasEnergy = result?.energy !== null && result?.energy !== undefined;
   if (
     !workoutVitals.safeParse(result).success ||
     result.scope !== query.scope ||
     result.sessionId !== query.sessionId ||
     (query.athleteId && result.athleteId !== query.athleteId) ||
     (result.availability === 'unrecorded'
-      ? result.minutes.length !== 0 ||
+      ? hasEnergy ||
+        result.minutes.length !== 0 ||
         result.revision !== null ||
         result.source !== null ||
         result.startedAt !== null ||
@@ -107,9 +118,13 @@ export async function readWorkoutVitals(client, input) {
         result.revision === null ||
         !result.startedAt ||
         !result.endedAt ||
-        !result.minutes.length ||
+        (!result.minutes.length && !hasEnergy) ||
         Date.parse(result.endedAt) <= Date.parse(result.startedAt) ||
         Date.parse(result.endedAt) - Date.parse(result.startedAt) > 43200000 ||
+        (hasEnergy &&
+          (Date.parse(result.energy.startedAt) < Date.parse(result.startedAt) ||
+            Date.parse(result.energy.endedAt) > Date.parse(result.endedAt) ||
+            Date.parse(result.energy.endedAt) <= Date.parse(result.energy.startedAt))) ||
         result.minutes.some(
           (row, index) =>
             (index > 0 && row.offset <= result.minutes[index - 1].offset) ||
@@ -227,6 +242,7 @@ export async function readMuscleInsights(client, input) {
 
 export const metricsSchema = z
   .object({
+    athleteId: id.optional(),
     scope: z.string().regex(/^project:[A-Za-z0-9_-]{1,128}$/),
     from: date,
     until: date,
@@ -318,6 +334,7 @@ export async function readCatalog(client, input) {
 
 const metricsPage = z
   .object({
+    athleteId: id.optional(),
     scope,
     epoch: id,
     checkpoint: revision,
@@ -346,7 +363,7 @@ export async function readMetrics(client, input) {
     result = await client.get('metrics', query);
   if (
     !metricsPage.safeParse(result).success ||
-    ['scope', 'from', 'until'].some((key) => result[key] !== query[key]) ||
+    ['scope', 'from', 'until', 'athleteId'].some((key) => result[key] !== query[key]) ||
     result.days.some(
       (day, index) =>
         day.day < query.from ||
