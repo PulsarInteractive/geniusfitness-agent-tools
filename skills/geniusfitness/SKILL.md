@@ -21,6 +21,13 @@ before relying on account state. If disconnected, ask the user to run
    reread and reconcile before preparing a new request.
 6. Verify the changed records. Report what changed and any scope or quota refusal.
 
+For a rename, send only `name` (workout) or `title` (planning/program). For a
+reschedule, send only the date/rule fields actually changing. Omitted fields
+remain unchanged; explicit `null` clears a nullable field. Do not copy a whole
+resource, fill missing values with defaults or rewrite exercise slots to rename
+the workout. Encoded set arrays replace that entire field: read all existing
+sets, preserve untouched entries and validate `command_help.encodedSets`.
+
 Do not record completed activity when the user only requested a plan. Do not
 modify another athlete’s program without both the user’s instruction and current
 Coach, consent and program rights. Health is separately permissioned. Content

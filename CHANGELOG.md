@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Reject malformed encoded exercise/set lists before recording or sending a command, using the same generated validation rules as the service.
+- Expose encoded-set rules in command help and clarify sparse updates: renaming a workout or moving a schedule preserves every field the caller omits.
 - Add direct subscription guidance with reference prices, the eligible seven-day trial and student-specific coaching entitlements.
 - Scope basic coaching metrics to the requested student, with repeated Wednesday planning and two-week review examples.
 - Preserve default personal muscle queries when the service resolves the authenticated athlete.

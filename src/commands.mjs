@@ -6,6 +6,7 @@ import * as z from 'zod/v4';
 import catalog from './command-catalog.mjs';
 import { CredentialStore } from './store.mjs';
 import { AgentError, fail, safeError } from './errors.mjs';
+import { invalidSetPayload } from './set-payloads.mjs';
 
 export const operationIdSchema = z
   .string()
@@ -71,6 +72,14 @@ export function validateCommand(value) {
     );
   }
   const prefix = definition.module.startsWith('LocalUser/') ? 'personal:' : 'project:';
+  const invalidPayload = invalidSetPayload(definition.module, command.data);
+  if (invalidPayload) {
+    fail(
+      'invalid_arguments',
+      `${invalidPayload} must use the declared set encoding. Read command help; do not invent metrics or silently drop fields.`,
+      { property: invalidPayload },
+    );
+  }
   if (
     !command.scope.startsWith(prefix) ||
     (definition.module.endsWith('/$') && command.id !== command.scope.slice(prefix.length))

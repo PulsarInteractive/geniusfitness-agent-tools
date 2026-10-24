@@ -1,6 +1,7 @@
 import * as z from 'zod/v4';
 import catalog from './command-catalog.mjs';
 import { fail } from './errors.mjs';
+import { setPayloadSpec } from './set-payloads.mjs';
 
 const id = z
   .string()
@@ -455,9 +456,12 @@ export function commandHelp(kind) {
     kind,
     ...definition,
     dataSchema: { type: 'object', properties, required, additionalProperties: false },
+    ...(setPayloadSpec(definition.module) && !definition.delete
+      ? { encodedSets: setPayloadSpec(definition.module) }
+      : {}),
     workflow: definition.create
       ? 'Use a new stable ID and null expectedRevision; read the scope epoch first. program.create uses its UUID as initial epoch and needs all-resources consent.'
-      : 'Read the current record and use its revision. Preserve the prepared operation after an uncertain response.',
+      : 'Read the current record and use its revision. Send only fields requested to change; omission preserves stored values, null explicitly clears a nullable field. JSON strings and arrays replace that field as a whole. Preserve the prepared operation after an uncertain response.',
     coach:
       'Other athletes’ programs need current Coach subscription, coaching:write and ordinary program access.',
   };

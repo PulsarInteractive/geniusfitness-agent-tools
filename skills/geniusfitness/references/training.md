@@ -35,6 +35,19 @@ required values. Tracking types include `WeightReps`, `BodyweightReps`,
 
 ## Change a workout safely
 
+An update is a partial field patch. Rename a workout with `{ "name": "New name" }`
+and its current revision; do not resubmit its description, mode, exercises or
+planning. Move one planned occurrence with `dueDate`; change a recurring rule
+with the intended weekday/start/timezone fields. These are different operations:
+moving one occurrence does not authorize changing all future weeks. Preserve the
+student owner and workout reference. Read back both requested changes and the
+unchanged context.
+
+An encoded set list is one field, not a per-element patch. When changing a set,
+read the full list first and preserve the other sets. `command_help.encodedSets`
+describes accepted keys, ranges and unique performed-set identities. Rejection
+means fix the intended request, not strip arbitrary fields until it passes.
+
 - `program.create` creates a program with a new UUID. Use that UUID as `id`,
   as the suffix of `scope: project:<id>`, and as initial `epoch`. Supply `title`
   and `icon`. Creation requires consent covering future resources.

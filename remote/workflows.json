@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "version": "2026-10-24.2",
+  "version": "2026-10-24.3",
   "topics": {
     "connection": {
       "title": "Connection, permissions and language",
@@ -16,6 +16,7 @@
       "title": "Reliable edits and automatic application updates",
       "steps": [
         "Discover the command and its field schema, then read the current record revision and scope epoch. Use expectedRevision null only when creating a new record. Preserve the intent and scope requested by the user.",
+        "Updates are partial field patches. For a workout rename send only name; for a planning title use title. Omitted fields remain unchanged; explicit null clears a nullable field. Reschedule one occurrence with its dueDate, or the recurring rule with its intended weekday/start/timezone fields. Preserve athlete owner, training references, notes and exercise slots. Never resubmit a whole record or populate missing fields with defaults.",
         "Local CLI/stdio MCP: prepare stores an immutable operation in a private local journal. Execute or retry the saved operation ID. Hosted ChatGPT MCP: prepare returns a command object and applied:false; it does not write a local journal. Pass that exact command to the permission-specific edit tool.",
         "After a timeout or an uncertain outcome, retry the same immutable operation, including operationId, issuedAt, revision and data. Do not generate a fresh create request. After a definitive revision conflict, reread, reconcile intent and prepare a new operation. Never force overwrite or loop on permanent denial.",
         "Read back the changed records and affected collections. A successful command is a server commit, not proof that another device has already rendered it. The open application receives normal realtime version hints and fetches canonical changes through its existing sync subscriptions. Do not add an assistant polling loop or ask the user to refresh as the normal workflow.",
@@ -29,6 +30,7 @@
         "Read the connected account personal exercises and reuse an existing exercise with that catalogKey. Use exercise.import only for a missing entry, in personal:<ownerId>. The server copies catalogue metadata. Use exercise.create for a genuinely custom movement absent from the catalogue.",
         "Read the chosen program workouts and workoutExercises. Add workout.exercise.create with training set to the workout ID and element set to the personal exercise ID, not the catalogue key. Inspect command_help for the exact fields and allowed exerciseType values.",
         "targetSets is a JSON string in the application format. A normal weight/repetition set is {\"t\":\"n\",\"r\":8,\"w\":40}; three such sets use a JSON array of three objects. Weight, repetitions, units and restSeconds must match the user request. Do not substitute prose or invent unsupported tracking fields.",
+        "command_help includes encodedSets rules for targetSets and performedSets. These JSON strings replace their whole field: read and preserve every untouched set before an edit. Reject unknown keys, invalid numeric values and duplicate performed-set identities. Do not invent BPM/calories inside set records or silently discard fields to force a request through.",
         "Exercise instructions use exercise.document.create/update and the stable record ID exdoc_<exercise ID>. Read existing instructions before replacing them. Custom exercise changes and catalogue imports require exercises:write; workout slots require programs:write."
       ]
     },

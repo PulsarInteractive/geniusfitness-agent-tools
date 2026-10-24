@@ -59,9 +59,12 @@ geniusfitness workouts vitals --scope project:PROGRAM_ID --sessionId SESSION_ID 
 
 The result contains real minute offsets, sample counts and observed minimum,
 maximum and mean BPM. Missing minutes stay absent; `unrecorded` is not zero.
-Use the session’s start and recorded set completion/timer information to compare
-intervals. One minute can span effort, rest and an interruption. Long timers do
-not prove continuous exercise. These are observations, not medical advice or a
+Use the session’s start and recorded set completion information to locate these
+observations in time. Do not subtract set-timer seconds from completion timestamps
+to reconstruct a start: explicit pauses are excluded from that timer, and historical
+records do not contain every pause boundary. A minute can span multiple exercises,
+rest or an interruption; this is not an exact heart-rate measurement per set.
+Long timers do not prove continuous exercise. These are observations, not medical advice or a
 measurement of recovery. Read again after consent changes; do not persist a
 separate agent cache of wearable data.
 

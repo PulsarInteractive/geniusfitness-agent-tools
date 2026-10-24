@@ -1597,6 +1597,149 @@ export default {
       }
     }
   },
+  "setPayloads": {
+    "performed": {
+      "fields": {
+        "at": {
+          "kind": "integer",
+          "max": 4102444800,
+          "min": 0
+        },
+        "d": {
+          "kind": "integer",
+          "max": 2147483647,
+          "min": 0
+        },
+        "dist": {
+          "kind": "number",
+          "max": 1000000,
+          "min": 0
+        },
+        "done": {
+          "kind": "boolean"
+        },
+        "ed": {
+          "kind": "boolean"
+        },
+        "es": {
+          "kind": "integer",
+          "max": 2147483647,
+          "min": 0
+        },
+        "ex": {
+          "kind": "identifier",
+          "max": 128,
+          "min": 1
+        },
+        "i": {
+          "kind": "integer",
+          "max": 1000,
+          "min": 1
+        },
+        "pr": {
+          "kind": "boolean"
+        },
+        "r": {
+          "kind": "integer",
+          "max": 100000,
+          "min": 0
+        },
+        "ra": {
+          "kind": "integer",
+          "max": 2147483647,
+          "min": 0
+        },
+        "rd": {
+          "kind": "integer",
+          "max": 1000,
+          "min": 1
+        },
+        "rpe": {
+          "kind": "number",
+          "max": 10,
+          "min": 0
+        },
+        "rt": {
+          "kind": "integer",
+          "max": 2147483647,
+          "min": 0
+        },
+        "skip": {
+          "kind": "boolean"
+        },
+        "t": {
+          "kind": "enum",
+          "values": [
+            "n",
+            "w",
+            "f",
+            "d"
+          ]
+        },
+        "ut": {
+          "kind": "boolean"
+        },
+        "w": {
+          "kind": "number",
+          "max": 100000,
+          "min": 0
+        }
+      },
+      "identity": [
+        "ex",
+        "i",
+        "rd"
+      ],
+      "maxCharacters": 16000,
+      "maxRows": 1000,
+      "required": [
+        "ex",
+        "i"
+      ]
+    },
+    "target": {
+      "fields": {
+        "d": {
+          "kind": "integer",
+          "max": 2147483647,
+          "min": 0
+        },
+        "dist": {
+          "kind": "number",
+          "max": 1000000,
+          "min": 0
+        },
+        "r": {
+          "kind": "integer",
+          "max": 100000,
+          "min": 0
+        },
+        "rest": {
+          "kind": "integer",
+          "max": 600,
+          "min": 0
+        },
+        "t": {
+          "kind": "enum",
+          "values": [
+            "n",
+            "w",
+            "f",
+            "d"
+          ]
+        },
+        "w": {
+          "kind": "number",
+          "max": 100000,
+          "min": 0
+        }
+      },
+      "identity": [],
+      "maxCharacters": 4000,
+      "maxRows": 100,
+      "required": []
+    }
+  },
   "changes": {
     "pollIntervalSeconds": 5,
     "maxWatchSeconds": 60
