@@ -256,7 +256,7 @@
   {
     "name": "fitness_metrics",
     "title": "Training progress",
-    "description": "Read basic daily totals for an authorized program and bounded inclusive UTC dates. Pass athleteId for one student in their own shared program (requires Coach); otherwise totals cover all visible participants and must not be presented as individual progress.",
+    "description": "Read basic daily totals for an authorized program and bounded inclusive UTC dates. Pass athleteId for one student in their own shared program (requires Coach); otherwise totals cover all visible participants and must not be presented as individual progress. History is checked against current subscriptions: four weeks for Free, up to 24 calendar months for Premium. A mixed total cannot extend a Free athlete history using the coach subscription; choose a recent range or specify an eligible athlete.",
     "inputSchema": {
       "type": "object",
       "properties": {

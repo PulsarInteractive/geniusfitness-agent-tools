@@ -72,7 +72,8 @@ export const commands = {
     options: ['scope', 'id', 'offset', 'revision'],
   },
   'metrics summary': {
-    summary: 'Read daily activity totals for one authorized program, across at most 366 UTC days.',
+    summary:
+      'Read daily activity totals for one authorized program within current history access: four weeks for Free, up to 24 calendar months for Premium. Specify athleteId for individual progress.',
     options: ['scope', 'from', 'until', 'athleteId'],
   },
   'programs list': {

@@ -93,6 +93,50 @@ test('metric dates are bounded and wrong-scope, duplicate or out-of-range days n
   }
 });
 
+test('Premium metric histories can span two years without truncating the daily evidence', async () => {
+  const query = {
+    scope: 'project:training',
+    athleteId: 'student',
+    from: '2024-10-24',
+    until: '2026-10-24',
+  };
+  const days = Array.from({ length: 500 }, (_, i) => ({
+    day: new Date(Date.parse(query.from) + i * 86400000).toISOString().slice(0, 10),
+    sessions: 1,
+    runs: 0,
+    durationSeconds: 1200,
+    distanceMeters: 0,
+  }));
+  const result = await readMetrics(
+    {
+      get: async (path, sent) => {
+        assert.equal(path, 'metrics');
+        assert.deepEqual(sent, query);
+        return { ...query, epoch: 'epoch', checkpoint: '8', days };
+      },
+    },
+    query,
+  );
+  assert.equal(result.days.length, 500);
+});
+
+test('a server history refusal cannot be reported as empty or reused Premium progress', async () => {
+  const refusal = Object.assign(new Error('Recent dates required'), {
+    code: 'history_outside_plan',
+  });
+  await assert.rejects(
+    readMetrics(
+      {
+        get: async () => {
+          throw refusal;
+        },
+      },
+      { scope: 'project:training', athleteId: 'student', from: '2024-10-24', until: '2026-10-24' },
+    ),
+    (error) => error === refusal,
+  );
+});
+
 test('resource pages preserve exact record IDs, scope separation and revision context', async () => {
   const query = { scope: 'project:training', collection: 'workouts', id: 'day.one' };
   assert.equal(

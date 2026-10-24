@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Accept up to 24 calendar months of basic metric history and preserve more than a year of daily evidence. The server checks current requester and athlete subscriptions; mixed program totals cannot extend a Free student history. Requires the corresponding backend rollout.
+
 - Reject malformed encoded exercise/set lists before recording or sending a command, using the same generated validation rules as the service.
 - Expose encoded-set rules in command help and clarify sparse updates: renaming a workout or moving a schedule preserves every field the caller omits.
 - Add direct subscription guidance with reference prices, the eligible seven-day trial and student-specific coaching entitlements.

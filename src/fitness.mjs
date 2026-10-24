@@ -251,7 +251,7 @@ export const metricsSchema = z
   .strict()
   .refine((input) => {
     const days = (Date.parse(input.until) - Date.parse(input.from)) / 86400000;
-    return days >= 0 && days < 366;
+    return days >= 0 && days <= 731;
   });
 export const resourcesSchema = z
   .object({
@@ -353,7 +353,7 @@ const metricsPage = z
           })
           .strict(),
       )
-      .max(366),
+      .max(732),
   })
   .strict();
 

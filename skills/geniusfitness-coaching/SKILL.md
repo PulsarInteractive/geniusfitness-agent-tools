@@ -58,6 +58,9 @@ Read `fitness_workflow` topic `coaching` for the complete examples:
 - “Analyze X's exercises over the last two weeks.” Set the exact 14 inclusive UTC
   dates and `athleteId`. Unfiltered program totals can include other participants.
   Read detailed muscle evidence only when the student's entitlement permits it.
+  Free history covers the last four weeks; Premium covers up to 24 calendar
+  months. The coach subscription does not extend a Free student history, even
+  through a mixed program total. Use supported recent dates after a refusal.
 
 After a downgrade or revoked sharing, a previous successful read is not permission
 to read again. Report unavailable information distinctly from zero progress.

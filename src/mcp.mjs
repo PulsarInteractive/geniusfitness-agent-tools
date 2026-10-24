@@ -166,7 +166,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_metrics',
-    'Read daily totals for one authorized program, not individual health measurements. Use a UTC date range of at most 366 days.',
+    'Read basic daily totals for one authorized program. Pass athleteId for individual progress; otherwise totals include all visible participants. Free includes the last four weeks; Premium history is up to 24 calendar months, checked by the server for the requester and represented athletes. A coach subscription cannot extend a Free student history.',
     metricsSchema,
     (input) => readMetrics(client, input),
   );
