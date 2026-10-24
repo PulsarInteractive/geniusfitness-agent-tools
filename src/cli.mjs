@@ -1,5 +1,12 @@
 import { workflow } from './workflows.mjs';
-import { readCatalog, readMetrics, readResources, readSessionAnalysis } from './fitness.mjs';
+import {
+  readWorkoutVitals,
+  readCatalog,
+  readMetrics,
+  readResources,
+  readMuscleInsights,
+  readSessionAnalysis,
+} from './fitness.mjs';
 import open, { apps } from 'open';
 import catalog from './command-catalog.mjs';
 import { CredentialStore } from './store.mjs';
@@ -50,6 +57,14 @@ export const commands = {
     summary:
       'Search the canonical exercise catalogue; reuse stable catalogKey values instead of duplicating exercises.',
     options: ['query', 'key', 'equipment', 'muscle', 'after', 'version'],
+  },
+  'workouts vitals': {
+    summary: 'Premium/Coach observed heart-rate minutes with explicit athlete consent.',
+    options: ['scope', 'sessionId', 'athleteId'],
+  },
+  'muscles insights': {
+    summary: 'Premium/Coach muscle evidence with catalogue attribution and explicit coverage.',
+    options: ['scope', 'from', 'until', 'athleteId', 'after', 'epoch', 'checkpoint'],
   },
   'sessions analyze': {
     summary: 'Read one recorded session with set timing, rest and measurement coverage.',
@@ -323,6 +338,24 @@ export async function main(
             });
     } else if (command === 'catalog search') {
       data = await readCatalog(
+        client,
+        Object.fromEntries(
+          commands[command].options
+            .filter((key) => options[key] !== undefined)
+            .map((key) => [key, options[key]]),
+        ),
+      );
+    } else if (command === 'workouts vitals') {
+      data = await readWorkoutVitals(
+        client,
+        Object.fromEntries(
+          commands[command].options
+            .filter((key) => options[key] !== undefined)
+            .map((key) => [key, options[key]]),
+        ),
+      );
+    } else if (command === 'muscles insights') {
+      data = await readMuscleInsights(
         client,
         Object.fromEntries(
           commands[command].options

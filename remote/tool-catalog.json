@@ -149,6 +149,77 @@
     "route": "catalog"
   },
   {
+    "name": "fitness_workout_vitals",
+    "title": "Workout heart-rate observations",
+    "description": "Premium/Coach heart-rate summaries by minute for one recorded session. Requires health:read, metrics:read and explicit athlete connector sharing; another athlete also requires Coach, current program access and their named coach consent. Missing minutes are unmeasured, not zero. Match actual timestamps to sets; never infer continuous effort, recovery or diagnosis.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "pattern": "^project:[A-Za-z0-9_-]{1,128}$"
+        },
+        "sessionId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,128}$"
+        },
+        "athleteId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,128}$"
+        }
+      },
+      "required": ["scope", "sessionId"],
+      "additionalProperties": false
+    },
+    "scopes": ["metrics:read", "health:read"],
+    "route": "workout-vitals"
+  },
+  {
+    "name": "fitness_muscle_insights",
+    "title": "Muscle training insights",
+    "description": "Premium/Coach muscle training evidence: weekly sets, external resistance volume, entered kg × reps, durations, timer coverage and catalogue attribution. Optional athleteId selects a currently shared athlete-owned program and requires Coach. Follow nextAfter with epoch/checkpoint and unchanged dates/athlete. Not measured growth, force or recovery; missing attribution stays unknown.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "pattern": "^project:[A-Za-z0-9_-]{1,128}$"
+        },
+        "from": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "until": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "after": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "checkpoint": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]{0,15})$"
+        },
+        "athleteId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+          "description": "Omit for your own records. Another athlete requires Coach and current access to their own program."
+        }
+      },
+      "required": ["scope", "from", "until"],
+      "additionalProperties": false
+    },
+    "scopes": ["metrics:read", "exercises:read"],
+    "route": "muscle-insights"
+  },
+  {
     "name": "fitness_session_analysis",
     "title": "Analyze a training session",
     "description": "Read recorded time per set and exercise, actual rest and measurement coverage for one session. Long timers may include interruptions; do not assume continuous effort or invent wearable measurements. Sets page at 50; continue with nextSetOffset as offset and the same revision.",
@@ -1298,7 +1369,15 @@
       "properties": {
         "topic": {
           "type": "string",
-          "enum": ["connection", "mutations", "catalogue", "planning", "progress", "coaching"]
+          "enum": [
+            "connection",
+            "mutations",
+            "catalogue",
+            "planning",
+            "progress",
+            "coaching",
+            "workout-vitals"
+          ]
         }
       },
       "required": ["topic"],

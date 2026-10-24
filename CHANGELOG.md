@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Add explicitly consented workout heart-rate summaries for Premium/Coach, with bounded reads and named athlete access.
+- Verify actual MCP dispatch for session analysis and wearable reads; preserve privacy refusals and unknown measurements.
+
+- Premium muscle insights command and MCP tool, with bounded evidence and explicit measurement limits.
+
 - Correct CLI help to describe the official login's requested-permission defaults.
 
 ## 0.1.0-beta.5 — 2026-10-24
@@ -31,6 +36,8 @@
 - Upgrade the MCP server SDK to 2.3.1 with published security fixes.
 
 ## Unreleased
+
+- Premium muscle insights command and MCP tool, with bounded evidence and explicit measurement limits.
 
 - Browser PKCE and device login using the GeniusFitness account and explicit consent.
 - Bounded programs, exercise catalogue, planning, results and private health reads.

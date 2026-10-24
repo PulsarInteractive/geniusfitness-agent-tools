@@ -24,8 +24,10 @@ measured. Do not fill missing history with defaults or deduct an inferred absenc
 Give a concise comparison and one or two useful next actions tied to the data.
 Reading progress does not authorize editing the plan. For a coach, use only the
 student's currently shared program; personal health requires separate consent.
-No tool currently returns historical Watch BPM correlated with a set. Do not claim
-to have measured heart-rate recovery or draw medical conclusions from timing.
+Use `fitness_workout_vitals` only when heart-rate observations are relevant and
+authorized. Read the `workout-vitals` workflow first. Match its minute offsets
+to the session start and actual set timestamps; missing time remains unmeasured.
+Do not claim measured recovery or draw medical conclusions from these observations.
 
 Do not present technical quota tables or advertise an upgrade during an ordinary
 review. If an actual feature-access response limits the requested analysis,
@@ -38,3 +40,18 @@ fabricate a completed workout or overwrite newer data. Deleting the last finishe
 result can reopen its linked planned workout under ordinary task permissions;
 read back the plan too. Personal measurements need the specific health permission
 and the user's instruction; program sharing alone never grants it.
+
+## Muscle detail
+
+Use `fitness_muscle_insights` (CLI `muscles insights`) for Premium muscle evidence.
+For a student pass `athleteId` and their own shared program; this requires Coach
+and current access. Check capabilities and live access; never reconstruct
+a denied advanced view by crawling raw history. Continue bounded pages with the
+same dates, epoch and checkpoint. Missing catalogue attribution remains unknown.
+Keep primary and secondary sets separate. Use `externalResistanceVolumeKg` for
+type-aware volume with the documented weight convention, and retain entered kg ×
+reps as raw evidence. Exercise seconds,
+elapsed timers and rest are distinct quantities. These are training observations,
+not measurements of hypertrophy, muscle force or recovery. Suggest Premium only
+when its specific unavailable feature is relevant; do not use health measurements
+for personalized marketing.

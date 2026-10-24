@@ -53,8 +53,20 @@ test('duplicate set identities do not inflate totals; distinct circuit rounds re
   const result = sessionAnalysis(
     record([set({ es: 10, rd: 1 }), set({ es: 30, rd: 1 }), set({ es: 20, rd: 2 })]),
   );
-  assert.equal(result.recordedSetTime.seconds, 30);
+  assert.equal(result.recordedSetTime.seconds, 50);
   assert.deepEqual(result.warnings, ['duplicate_set_key']);
+});
+test('a final correction can undo or skip a previously recorded set', () => {
+  const result = sessionAnalysis(
+    record([
+      set({ es: 100 }),
+      set({ done: false }),
+      set({ i: 2, es: 200 }),
+      set({ i: 2, skip: true }),
+    ]),
+  );
+  assert.equal(result.totalSets, 2);
+  assert.deepEqual(result.recordedSetTime, { seconds: null, measuredSets: 0, eligibleSets: 0 });
 });
 test('malformed, oversized and non-array sets are explicit missing evidence', () => {
   for (const value of ['{', '{}', 'x'.repeat(16001)]) {

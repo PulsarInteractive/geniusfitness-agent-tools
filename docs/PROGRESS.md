@@ -39,7 +39,8 @@ geniusfitness sessions analyze --scope project:PROGRAM_ID --id SESSION_ID \
 
 This requires `metrics:read` and current access to the program. Coach access is
 limited to shared programs and does not include an athlete's private health.
-Historical Watch BPM is not part of this session analysis. A live watch display
+Watch BPM is not embedded in this session analysis; authorized observations
+have a separate [wearable read](INSIGHTS.md). A live watch display
 does not mean that a heart-rate time series was saved or shared with the agent.
 
 Operational limits are enforced by the service. Ordinary training reviews focus

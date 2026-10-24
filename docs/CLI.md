@@ -14,6 +14,8 @@ for protocol messages.
 | `catalog search`                       | Find catalogue exercises by query, key, equipment or muscle      |
 | `resources list`                       | One collection or exact record                                   |
 | `metrics summary`                      | Daily program totals within a date range                         |
+| `muscles insights`                     | Premium/Coach bounded per-exercise muscle evidence               |
+| `workouts vitals`                      | Consented Premium/Coach minute heart-rate observations           |
 | `changes list`, `changes watch`        | Bounded incremental follow-up                                    |
 | `commands describe`                    | Local command catalogue and envelope schemas                     |
 | `commands prepare`                     | Persist a draft with one immutable operation ID                  |
@@ -48,3 +50,6 @@ origins are available only with an explicit local-testing option.
 | 5         | Conflict requiring reconciliation |
 | 6         | Rate or usage limit               |
 | 7         | Transient failure                 |
+
+See [Insights](INSIGHTS.md) for the exact commands, consent requirements and
+interpretation of missing measurements.

@@ -47,8 +47,7 @@ export function sessionAnalysis(record, offset = 0) {
     rows = [];
     warnings.push('invalid_recorded_sets');
   }
-  const seen = new Set();
-  const sets = [];
+  const latest = new Map();
   for (const row of rows) {
     if (
       !row ||
@@ -65,11 +64,15 @@ export function sessionAnalysis(record, offset = 0) {
       continue;
     }
     const key = JSON.stringify([row.ex, row.i, row.rd ?? null]);
-    if (seen.has(key)) {
+    if (latest.has(key)) {
       warnings.push('duplicate_set_key');
-      continue;
     }
-    seen.add(key);
+    // Corrections use the last occurrence, including an undone or skipped set.
+    // Keep insertion order stable for paging and match muscle analytics.
+    latest.set(key, row);
+  }
+  const sets = [];
+  for (const row of latest.values()) {
     const completed = row.done === true,
       skipped = row.skip === true,
       untimed = row.ut === true;

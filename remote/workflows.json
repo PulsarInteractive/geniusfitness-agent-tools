@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "version": "2026-10-23.2",
+  "version": "2026-10-24.1",
   "topics": {
     "connection": {
       "title": "Connection, permissions and language",
@@ -53,7 +53,8 @@
         "Session analysis exposes recordedSetElapsedSeconds, recordedRestSeconds, targetRestSeconds, completion time and measurement coverage. The set timer is not proof of continuous physical effort. A longTimerObservation marks a timer of at least ten minutes; it may indicate an interruption but does not prove an absence. Ask when the distinction affects advice.",
         "Missing timing is unknown, not zero. A disabled timer was deliberately not measured. exerciseDurationSeconds is the timed-exercise value and is not a substitute for elapsed set time. Do not subtract inferred pauses or reconstruct missing BPM. Existing session records do not contain historical Watch BPM per set.",
         "Explain the useful finding first, with one or two next actions supported by records. A review does not authorize changing the training plan. Do not display technical quota tables. If a real feature-access response blocks a requested view, explain the specific Premium benefit once and still use the available recent data. Do not claim a paywall exists without a current response or use health data to target an upgrade.",
-        "The analysis returns up to 50 sets per page with totalSets and nextSetOffset. Continue with offset=nextSetOffset and the returned revision; after a revision conflict restart from the first page. Exercise summaries cover the whole recorded session and state measurement coverage. Never call a partial set page the full session."
+        "The analysis returns up to 50 sets per page with totalSets and nextSetOffset. Continue with offset=nextSetOffset and the returned revision; after a revision conflict restart from the first page. Exercise summaries cover the whole recorded session and state measurement coverage. Never call a partial set page the full session.",
+        "For per-muscle evidence use fitness_muscle_insights when available in capabilities. This advanced analysis is Premium/Coach only, within 24 calendar months and stored-data capacity. For a student pass athleteId with their own shared program: Coach and current membership are required. Follow all exercise pages with unchanged dates and the returned epoch/checkpoint; restart after a context conflict. Group catalogue primary and secondary involvement separately. Recorded volume is entered kg × repetitions; externalResistanceVolumeKg additionally applies the declared exercise type and weight convention. Neither is measured muscle force: never add seconds, assumed body mass or unspecified per-hand multipliers. Explain unmapped custom exercises and missing timings. A refusal is not zero progress: offer available basic recent results, and mention the specific Premium feature once without pressure. Health data must never be used to target an upgrade."
       ]
     },
     "coaching": {
@@ -64,6 +65,17 @@
         "In ChatGPT use fitness_coach_programs, fitness_coach_planning or fitness_coach_metrics for the corresponding authorized edit. They use the same domain commands and quotas as the normal edit tools.",
         "Read the program workout, slots and intended owner before editing. Personal exercise imports belong to the connected account. Do not assume coaching permits writing another user personal exercise or health scope. Reuse only exercise references the domain accepts for the shared program.",
         "Read bounded sessions/runs and summaries for the shared program. Never infer access to a student private health logs. If membership, consent or subscription is revoked, stop dependent operations and report the refusal; cached content and an old successful command do not grant current access."
+      ]
+    },
+    "workout-vitals": {
+      "title": "Observed heart rate and explicit sharing",
+      "steps": [
+        "Use workout-vitals for a specific recorded session only when useful to the user request. Detailed observations require Premium or Coach, and health:read plus metrics:read. Subscription does not imply health consent.",
+        "The athlete enables collection in Health and separately permits authorized connectors. For another athlete, pass athleteId with their shared program scope: current Coach access and that athlete’s named coach consent are also required. Never ask the agent to change these choices for them.",
+        "Minutes are relative to startedAt in UTC. Align them with actual session-analysis timestamps, not list positions or assumed workout durations. Missing minutes remain unknown. Report observation coverage; a low or high reading cannot diagnose fatigue, injury or readiness.",
+        "Long set timers can contain interruptions. Present recorded timing and observed heart rate separately; do not claim that a timer proves continuous effort.",
+        "On a Premium refusal, explain briefly which detailed insight is unavailable and continue with the basic recent training data. Mention the eligible trial only in context. Never claim upgrading enables unauthorized access.",
+        "After revoked sharing, discard observations from reusable agent caches and do not retry through another tool. Already transmitted messages cannot be recalled."
       ]
     }
   }

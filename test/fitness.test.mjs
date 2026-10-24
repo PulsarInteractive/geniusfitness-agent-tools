@@ -178,3 +178,73 @@ test('CLI catalogue and metrics reads use the configured authenticated API and s
   assert.equal(JSON.parse(stdout).data.items[0].key, 'ex.0001');
   assert.ok(!stdout.includes('gfa1.'));
 });
+
+test('muscle insights preserve athlete/period/checkpoint and never turn denied or malformed data into an empty review', async () => {
+  const { readMuscleInsights } = await import('../src/fitness.mjs');
+  const query = {
+    scope: 'project:training',
+    athleteId: 'student',
+    from: '2026-10-01',
+    until: '2026-10-24',
+  };
+  const page = {
+    ...query,
+    epoch: 'epoch',
+    checkpoint: '4',
+    availableFrom: '2024-10-24',
+    timezone: 'UTC',
+    premiumOnly: true,
+    methodology: 'Measured observations',
+    exercises: [],
+    nextAfter: null,
+  };
+  const client = {
+    get: async (name, input) => {
+      assert.equal(name, 'muscle-insights');
+      assert.deepEqual(input, query);
+      return page;
+    },
+  };
+  assert.deepEqual(await readMuscleInsights(client, query), page);
+  for (const patch of [
+    { from: '2026-02-30' },
+    { until: '2026-09-01' },
+    { athleteId: '../owner' },
+    { after: 'x' },
+    { scope: 'personal:owner' },
+  ]) {
+    await assert.rejects(
+      readMuscleInsights(
+        { get: () => assert.fail('Invalid input must not call server') },
+        { ...query, ...patch },
+      ),
+      { code: 'invalid_arguments' },
+    );
+  }
+  for (const patch of [
+    { athleteId: 'other' },
+    { scope: 'project:other' },
+    { from: '2026-10-02' },
+    { availableFrom: '2026-10-20' },
+    { nextAfter: 'missing' },
+    { premiumOnly: false },
+  ]) {
+    await assert.rejects(readMuscleInsights({ get: async () => ({ ...page, ...patch }) }, query), {
+      code: 'invalid_response',
+    });
+  }
+  const denied = Object.assign(new Error('Premium required'), {
+    code: 'premium_muscle_insights_required',
+  });
+  await assert.rejects(
+    readMuscleInsights(
+      {
+        get: async () => {
+          throw denied;
+        },
+      },
+      query,
+    ),
+    (error) => error === denied,
+  );
+});

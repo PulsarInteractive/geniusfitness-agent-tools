@@ -25,8 +25,9 @@ For timing and measurement coverage, see [Understand a training session](PROGRES
 
 ## Boundaries that remain important
 
-The athlete must share the program through the application. Coach access never
-exposes another account’s private health or personal exercise library. The
+The athlete must share the program through the application. Coach access alone never
+exposes another account’s private health. Wearable observations require the
+athlete’s separate named-coach consent and, for an agent, connector consent. The
 connector reads stored health measurements; it does not connect directly to
 Apple Health on a phone. A completed session is a fact, not a planning template.
 Deleting the final finished result can reopen its linked plan under ordinary task
@@ -34,3 +35,6 @@ permissions. Read back affected planning after that operation.
 
 Writes do not manage subscriptions, billing or permission grants. The account’s
 [limits](LIMITS.md) apply across ChatGPT, CLI and local MCP together.
+
+See [Muscle insights and wearable observations](INSIGHTS.md) for Premium evidence,
+measurement limits and the athlete-controlled sharing workflow.

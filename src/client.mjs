@@ -179,6 +179,8 @@ export class AgentClient {
         'catalog',
         'metrics',
         'session-analysis',
+        'muscle-insights',
+        'workout-vitals',
       ].includes(resource)
     ) {
       fail('invalid_arguments', 'Unknown delegated resource.');

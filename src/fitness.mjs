@@ -57,6 +57,174 @@ export const sessionAnalysisSchema = z
 export const readSessionAnalysis = (client, input) =>
   client.get('session-analysis', checked(sessionAnalysisSchema, input));
 
+export const workoutVitalsSchema = z
+  .object({
+    scope: z.string().regex(/^project:[A-Za-z0-9_-]{1,128}$/),
+    sessionId: z.string().regex(/^[A-Za-z0-9_-]{1,128}$/),
+    athleteId: z
+      .string()
+      .regex(/^[A-Za-z0-9_-]{1,128}$/)
+      .optional(),
+  })
+  .strict();
+const heartRateMinute = z
+  .object({
+    offset: z.number().int().min(0).max(719),
+    count: z.number().int().min(1).max(3600),
+    minimum: z.number().min(1).max(400),
+    maximum: z.number().min(1).max(400),
+    average: z.number().min(1).max(400),
+  })
+  .strict()
+  .refine((row) => row.minimum <= row.average && row.average <= row.maximum);
+const workoutVitals = z.object({
+  scope,
+  sessionId: id,
+  athleteId: id,
+  availability: z.enum(['available', 'unrecorded']),
+  source: z.enum(['AppleHealth', 'HealthConnect']).nullable(),
+  startedAt: z.iso.datetime({ offset: true }).nullable(),
+  endedAt: z.iso.datetime({ offset: true }).nullable(),
+  revision: revision.nullable(),
+  minutes: z.array(heartRateMinute).max(720),
+  interpretation: z.string().min(1),
+});
+export async function readWorkoutVitals(client, input) {
+  const query = checked(workoutVitalsSchema, input);
+  const result = await client.get('workout-vitals', query);
+  if (
+    !workoutVitals.safeParse(result).success ||
+    result.scope !== query.scope ||
+    result.sessionId !== query.sessionId ||
+    (query.athleteId && result.athleteId !== query.athleteId) ||
+    (result.availability === 'unrecorded'
+      ? result.minutes.length !== 0 ||
+        result.revision !== null ||
+        result.source !== null ||
+        result.startedAt !== null ||
+        result.endedAt !== null
+      : !result.source ||
+        result.revision === null ||
+        !result.startedAt ||
+        !result.endedAt ||
+        !result.minutes.length ||
+        Date.parse(result.endedAt) <= Date.parse(result.startedAt) ||
+        Date.parse(result.endedAt) - Date.parse(result.startedAt) > 43200000 ||
+        result.minutes.some(
+          (row, index) =>
+            (index > 0 && row.offset <= result.minutes[index - 1].offset) ||
+            row.offset * 60000 >= Date.parse(result.endedAt) - Date.parse(result.startedAt),
+        ))
+  ) {
+    throw fail('invalid_response', 'The service returned inconsistent workout observations.');
+  }
+  return result;
+}
+
+export const muscleInsightsSchema = z
+  .object({
+    scope: z.string().regex(/^project:[A-Za-z0-9_-]{1,128}$/),
+    athleteId: z
+      .string()
+      .regex(/^[A-Za-z0-9_-]{1,128}$/)
+      .optional(),
+    from: date,
+    until: date,
+    after: z.string().min(1).max(160).optional(),
+    epoch: z.string().min(1).max(64).optional(),
+    checkpoint: revision.optional(),
+  })
+  .strict()
+  .refine(
+    (input) =>
+      input.from <= input.until &&
+      (!input.after || (!!input.epoch && input.checkpoint !== undefined)),
+  );
+const observed = z.number().nonnegative();
+const muscleWeek = z.object({
+  week: date,
+  sets: observed.int(),
+  repetitions: observed,
+  recordedVolumeKg: observed,
+  externalResistanceVolumeKg: observed.nullable(),
+  exerciseSeconds: observed,
+});
+const musclePage = z.object({
+  scope,
+  athleteId: id,
+  epoch: id,
+  checkpoint: revision,
+  from: date,
+  until: date,
+  availableFrom: date,
+  timezone: z.literal('UTC'),
+  premiumOnly: z.literal(true),
+  methodology: z.string().min(1),
+  nextAfter: id.nullable(),
+  exercises: z
+    .array(
+      z.object({
+        exerciseId: id,
+        name: z.string().nullable(),
+        catalogKey: z.string().nullable(),
+        primaryMuscle: z.string().nullable(),
+        secondaryMuscles: z.array(z.string()).max(22),
+        attribution: z.enum(['catalogue', 'unmapped']),
+        exerciseType: z.string().nullable(),
+        weightConvention: z.enum(['total', 'perImplement', 'perSide']),
+        externalResistanceVolumeKg: observed.nullable(),
+        sets: observed.int(),
+        sessions: observed.int(),
+        repetitions: observed,
+        recordedVolumeKg: observed,
+        maxRecordedWeightKg: observed,
+        exerciseSeconds: observed,
+        timedSets: observed.int(),
+        recordedSetElapsedSeconds: observed.nullable(),
+        restMeasuredSets: observed.int(),
+        recordedRestSeconds: observed.nullable(),
+        lastTrained: date,
+        weeks: z.array(muscleWeek).max(106),
+      }),
+    )
+    .max(10),
+});
+
+export async function readMuscleInsights(client, input) {
+  const query = checked(muscleInsightsSchema, input),
+    result = await client.get('muscle-insights', query);
+  if (
+    !musclePage.safeParse(result).success ||
+    ['scope', 'from', 'until'].some((key) => result[key] !== query[key]) ||
+    ['athleteId', 'epoch', 'checkpoint'].some(
+      (key) => query[key] !== undefined && result[key] !== query[key],
+    ) ||
+    result.availableFrom > result.from ||
+    (result.nextAfter !== null && result.nextAfter !== result.exercises.at(-1)?.exerciseId) ||
+    result.exercises.some(
+      (item, index) =>
+        (query.after && item.exerciseId <= query.after) ||
+        (index > 0 && item.exerciseId <= result.exercises[index - 1].exerciseId) ||
+        item.timedSets > item.sets ||
+        item.restMeasuredSets > item.sets ||
+        item.lastTrained < query.from ||
+        item.lastTrained > query.until ||
+        item.weeks.some(
+          (week, i) =>
+            (i > 0 && week.week <= item.weeks[i - 1].week) ||
+            week.week > query.until ||
+            Date.parse(week.week) < Date.parse(query.from) - 6 * 86400000,
+        ),
+    )
+  ) {
+    fail(
+      'invalid_response',
+      'The muscle-insights response does not match the requested athlete, period or page. Do not interpret it as progress.',
+    );
+  }
+  return result;
+}
+
 export const metricsSchema = z
   .object({
     scope: z.string().regex(/^project:[A-Za-z0-9_-]{1,128}$/),
