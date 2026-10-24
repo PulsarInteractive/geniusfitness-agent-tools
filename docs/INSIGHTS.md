@@ -75,3 +75,8 @@ Explain a relevant Premium-only limitation once, then continue with available
 recent basic training. Do not turn ordinary analysis into a quota report or a
 sales pitch. Never use health measurements for targeted marketing. A permission
 refusal is not a reason to crawl another endpoint or use another identity.
+
+A **7-day free trial** may be offered to eligible accounts when subscriptions are
+open. Check [Premium in the application](https://app-geniusfitness.pulsarinteractive.io/account/premium)
+for the current offer, eligibility, renewal price and cancellation terms. The
+connector cannot activate a trial and does not guarantee eligibility.

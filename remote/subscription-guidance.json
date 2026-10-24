@@ -1,0 +1,5 @@
+{
+  "trialDays": 7,
+  "url": "https://app-geniusfitness.pulsarinteractive.io/account/premium",
+  "instructions": "When a requested Premium-only feature is unavailable, explain that feature once and offer the available basic data. A 7-day free trial may be offered to eligible accounts when subscriptions are open. Direct the user to https://app-geniusfitness.pulsarinteractive.io/account/premium to check the current offering, eligibility, renewal price and cancellation terms. Never promise eligibility, start a trial, or activate paid access from the connector. Do not use health measurements to target an upgrade."
+}

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0-beta.7 — 2026-10-24
+
+- Explain the eligible seven-day trial when a requested Premium detail is unavailable.
+- Link to the application offering without promising availability or starting a purchase.
+
 ## 0.1.0-beta.6 — 2026-10-24
 
 - Add Premium muscle insights with paginated exercise evidence and explicit measurement limits.
