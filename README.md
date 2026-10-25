@@ -59,3 +59,17 @@ skills; the GeniusFitness application and service implementation are separate.
 ## ChatGPT
 
 Connect the hosted service with OAuth: [setup and examples](docs/CHATGPT.md). Your computer does not need to run the CLI. Account permissions and quotas still apply. [Official directory publication](docs/OPENAI_PUBLICATION.md) is a separate review.
+
+### Reuse a coach catalogue workout
+
+Use `fitness_workout_copy_preview` (CLI: `workouts copy-preview`) with the
+coach-owned source program/workout and the student's destination program.
+Prepare `workout.copy` with the returned source fingerprint and target epoch.
+The student owns an independent copy, including exercise definitions.
+
+For a later update, preview the saved `copyOrigin` with `targetTraining`, then
+confirm `workout.sync` using both fingerprints and the target revision. The
+student's prescription customizations are replaced; schedules, completed
+results, progress and health measurements are preserved. No automatic sync.
+Current Coach entitlement, the student's planning grant, source reads and
+destination writes are rechecked by the server.

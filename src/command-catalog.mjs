@@ -359,6 +359,22 @@ export default {
       "module": "Project/SportSessionLog",
       "permission": "metrics:write"
     },
+    "workout.copy": {
+      "create": true,
+      "fields": [
+        "sourceScope",
+        "sourceTraining",
+        "sourceFingerprint"
+      ],
+      "inputSchema": "GeniusTasker.Contracts.WorkoutCopyData",
+      "module": "Project/SportTraining",
+      "permission": "programs:write",
+      "requiredFields": [
+        "sourceScope",
+        "sourceTraining",
+        "sourceFingerprint"
+      ]
+    },
     "workout.create": {
       "create": true,
       "fields": [
@@ -406,6 +422,23 @@ export default {
       ],
       "module": "Project/SportTrainingExercise",
       "permission": "programs:write"
+    },
+    "workout.sync": {
+      "fields": [
+        "sourceScope",
+        "sourceTraining",
+        "sourceFingerprint",
+        "targetFingerprint"
+      ],
+      "inputSchema": "GeniusTasker.Contracts.WorkoutCopyData",
+      "module": "Project/SportTraining",
+      "permission": "programs:write",
+      "requiredFields": [
+        "sourceScope",
+        "sourceTraining",
+        "sourceFingerprint",
+        "targetFingerprint"
+      ]
     },
     "workout.update": {
       "fields": [
@@ -596,6 +629,8 @@ export default {
         "targetSets",
         "restSeconds",
         "order",
+        "exerciseSnapshot",
+        "copySourceId",
         "creator",
         "created",
         "updated"
@@ -611,6 +646,7 @@ export default {
         "estimatedMinutes",
         "mode",
         "capMinutes",
+        "copyOrigin",
         "creator",
         "created",
         "updated"
@@ -1497,6 +1533,19 @@ export default {
       }
     },
     "Project/SportTraining": {
+      "sourceScope": {
+        "pattern": "^project:[A-Za-z0-9_-]{1,128}$",
+        "type": "string"
+      },
+      "sourceTraining": {
+        "maxLength": 128,
+        "minLength": 1,
+        "type": "string"
+      },
+      "sourceFingerprint": {
+        "pattern": "^[a-f0-9]{64}$",
+        "type": "string"
+      },
       "name": {
         "type": "string",
         "minLength": 3,
@@ -1553,6 +1602,10 @@ export default {
         "default": 0,
         "format": "int32",
         "type": "integer"
+      },
+      "targetFingerprint": {
+        "pattern": "^[a-f0-9]{64}$",
+        "type": "string"
       }
     },
     "Project/SportTrainingExercise": {

@@ -1,5 +1,6 @@
 import { workflow } from './workflows.mjs';
 import {
+  readWorkoutCopyPreview,
   readWorkoutVitals,
   readCatalog,
   readMetrics,
@@ -57,6 +58,11 @@ export const commands = {
     summary:
       'Search the canonical exercise catalogue; reuse stable catalogKey values instead of duplicating exercises.',
     options: ['query', 'key', 'equipment', 'muscle', 'after', 'version'],
+  },
+  'workouts copy-preview': {
+    summary:
+      'Compare a coach catalogue workout with a student copy before an explicit copy or confirmed sync.',
+    options: ['sourceScope', 'sourceTraining', 'targetScope', 'targetTraining'],
   },
   'workouts vitals': {
     summary:
@@ -340,6 +346,15 @@ export async function main(
             });
     } else if (command === 'catalog search') {
       data = await readCatalog(
+        client,
+        Object.fromEntries(
+          commands[command].options
+            .filter((key) => options[key] !== undefined)
+            .map((key) => [key, options[key]]),
+        ),
+      );
+    } else if (command === 'workouts copy-preview') {
+      data = await readWorkoutCopyPreview(
         client,
         Object.fromEntries(
           commands[command].options

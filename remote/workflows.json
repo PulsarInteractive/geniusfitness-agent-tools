@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "version": "2026-10-25.1",
+  "version": "2026-10-25.2",
   "topics": {
     "connection": {
       "title": "Connection, permissions and language",
@@ -72,7 +72,9 @@
         "Coach has no commercial student-seat limit. Following a shared plan and sharing basic recent results remain useful for Free students. Detailed muscle and workout observations require the student’s own Premium or Coach entitlement; the coach’s subscription never upgrades that student. On athlete_premium_required explain whose entitlement is missing, then continue with available basic data. Never ask the coach to buy Premium twice.",
         "For “schedule X every Wednesday”, resolve X and their shared program, read current rules to avoid duplication, inspect schedule.create fields and prepare a Weekly rule with weekDay Wednesday, interval 7, the real workout and student owner IDs, startTime and the requested IANA timezone. Preview it for approval, execute through the coaching planning tool, then read back the rule and occurrences. A timezone must not be guessed. Do not create seven unrelated one-off plans.",
         "For “analyze X’s exercises over the last two weeks”, resolve the student and exact 14 inclusive UTC dates. Pass athleteId to fitness_metrics: without it totals describe the entire program, not that person. For a paid student use fitness_muscle_insights with the same athlete and dates; follow every page and separate primary/secondary muscle tags. Identify real sessions/exercises, weights, reps, recorded timing and missing coverage. Compare like-for-like evidence, never diagnose or infer continuous effort from a long timer. A read-only review does not authorize changing the plan.",
-        "Basic metric history follows the current requester and athlete subscriptions: Free includes the last four weeks; Premium includes up to 24 calendar months of available records. For an individual analysis, pass athleteId. An unfiltered program total cannot use the coach subscription to unlock an older Free athlete history. On a history refusal, choose supported recent dates or the intended eligible athlete; never report the refusal as zero activity."
+        "Basic metric history follows the current requester and athlete subscriptions: Free includes the last four weeks; Premium includes up to 24 calendar months of available records. For an individual analysis, pass athleteId. An unfiltered program total cannot use the coach subscription to unlock an older Free athlete history. On a history refusal, choose supported recent dates or the intended eligible athlete; never report the refusal as zero activity.",
+        "Reuse the coach’s own prepared workout with fitness_workout_copy_preview (sourceScope, sourceTraining, targetScope). Read command_help for workout.copy and submit its returned source fingerprint, target epoch, a new workout ID and null expectedRevision. The student receives an independent prescription and copied exercise definitions; no access to the coach’s private library is granted.",
+        "A copy stores read-only copyOrigin. When its source changes, preview again with targetTraining. Offer synchronization only explicitly: workout.sync uses the preview sourceFingerprint, targetFingerprint and targetRevision. Confirm replacement of student exercise/set/rest customizations before execution. Plans, recorded sessions, progress and health observations are preserved. After a source or target conflict, read a fresh preview and obtain a new confirmation; never silently retry with newer fingerprints."
       ]
     },
     "workout-vitals": {

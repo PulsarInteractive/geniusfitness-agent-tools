@@ -329,7 +329,9 @@
             "workout.exercise.create",
             "workout.exercise.delete",
             "workout.exercise.update",
-            "workout.update"
+            "workout.update",
+            "workout.copy",
+            "workout.sync"
           ]
         }
       },
@@ -381,7 +383,9 @@
             "workout.exercise.create",
             "workout.exercise.delete",
             "workout.exercise.update",
-            "workout.update"
+            "workout.update",
+            "workout.copy",
+            "workout.sync"
           ]
         },
         "scope": {
@@ -473,7 +477,9 @@
             "workout.exercise.create",
             "workout.exercise.delete",
             "workout.exercise.update",
-            "workout.update"
+            "workout.update",
+            "workout.copy",
+            "workout.sync"
           ]
         },
         "scope": {
@@ -996,7 +1002,9 @@
             "workout.exercise.create",
             "workout.exercise.delete",
             "workout.exercise.update",
-            "workout.update"
+            "workout.update",
+            "workout.copy",
+            "workout.sync"
           ]
         },
         "scope": {
@@ -1077,7 +1085,9 @@
             "workout.exercise.create",
             "workout.exercise.delete",
             "workout.exercise.update",
-            "workout.update"
+            "workout.update",
+            "workout.copy",
+            "workout.sync"
           ]
         },
         "scope": {
@@ -1389,5 +1399,35 @@
       "additionalProperties": false
     },
     "scopes": []
+  },
+  {
+    "name": "fitness_workout_copy_preview",
+    "title": "Compare a coach workout and student copy",
+    "description": "Read a selected workout from the connected coach’s own catalogue and compare an optional student copy. Requires current Coach, planning rights, source program/exercise reads and target program/coaching writes. Use returned fingerprints with workout.copy or workout.sync. Obtain confirmation before sync: student prescription customizations are replaced; history, planning and health records are preserved. Never match source by name or auto-sync.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "sourceScope": {
+          "type": "string",
+          "pattern": "^project:[A-Za-z0-9_-]{1,128}$"
+        },
+        "sourceTraining": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,128}$"
+        },
+        "targetScope": {
+          "type": "string",
+          "pattern": "^project:[A-Za-z0-9_-]{1,128}$"
+        },
+        "targetTraining": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,128}$"
+        }
+      },
+      "required": ["sourceScope", "sourceTraining", "targetScope"],
+      "additionalProperties": false
+    },
+    "scopes": ["programs:read", "programs:write", "exercises:read", "coaching:write"],
+    "route": "workout-copy-preview"
   }
 ]

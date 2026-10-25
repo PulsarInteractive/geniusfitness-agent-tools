@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Copy a coach-owned prepared workout into an independent student prescription, then preview and explicitly confirm later synchronization using source and destination fingerprints. Includes CLI, local MCP, hosted MCP tool catalogue and permission-aware coaching guidance. Requires the matching backend and application rollout.
+
 - Keep recorded personal-record flags in session analysis and accept optional canonical session XP from the service; session points are distinct from capped account rewards. Optional exercise observation arrays remain compatible with older servers.
 
 - Preserve exercise heart-rate averages with exact observed intervals and native provenance, independently of calorie collection. Validate bounds and non-overlap; missing values remain absent. Requires the corresponding application and backend rollout.

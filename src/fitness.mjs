@@ -58,6 +58,57 @@ export const sessionAnalysisSchema = z
 export const readSessionAnalysis = (client, input) =>
   client.get('session-analysis', checked(sessionAnalysisSchema, input));
 
+export const workoutCopyPreviewSchema = z
+  .object({
+    sourceScope: z.string().regex(/^project:[A-Za-z0-9_-]{1,128}$/),
+    sourceTraining: z.string().regex(/^[A-Za-z0-9_-]{1,128}$/),
+    targetScope: z.string().regex(/^project:[A-Za-z0-9_-]{1,128}$/),
+    targetTraining: z
+      .string()
+      .regex(/^[A-Za-z0-9_-]{1,128}$/)
+      .optional(),
+  })
+  .strict()
+  .refine((input) => input.sourceScope !== input.targetScope);
+const copyPreviewResult = z
+  .object({
+    sourceScope: z.string(),
+    sourceTraining: z.string(),
+    sourceName: z.string(),
+    sourceFingerprint: z.string().regex(/^[a-f0-9]{64}$/),
+    targetScope: z.string(),
+    targetTraining: z.string().nullable(),
+    targetFingerprint: z
+      .string()
+      .regex(/^[a-f0-9]{64}$/)
+      .nullable(),
+    targetRevision: revision.nullable(),
+    targetEpoch: z.string().min(1),
+    changed: z.boolean(),
+    exerciseCount: z.number().int().min(0).max(100),
+  })
+  .strict();
+export async function readWorkoutCopyPreview(client, input) {
+  const query = checked(workoutCopyPreviewSchema, input);
+  const result = copyPreviewResult.safeParse(await client.get('workout-copy-preview', query));
+  if (
+    !result.success ||
+    result.data.sourceScope !== query.sourceScope ||
+    result.data.sourceTraining !== query.sourceTraining ||
+    result.data.targetScope !== query.targetScope ||
+    result.data.targetTraining !== (query.targetTraining ?? null) ||
+    (query.targetTraining
+      ? result.data.targetFingerprint === null || result.data.targetRevision === null
+      : result.data.targetFingerprint !== null || result.data.targetRevision !== null)
+  ) {
+    fail(
+      'invalid_response',
+      'The workout copy preview does not match the requested source and destination.',
+    );
+  }
+  return result.data;
+}
+
 export const workoutVitalsSchema = z
   .object({
     scope: z.string().regex(/^project:[A-Za-z0-9_-]{1,128}$/),

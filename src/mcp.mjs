@@ -2,6 +2,8 @@ import subscriptionGuidance from '../remote/subscription-guidance.json' with { t
 import { agentPresentation } from './presentation.mjs';
 import { workflow, workflowSchema } from './workflows.mjs';
 import {
+  workoutCopyPreviewSchema,
+  readWorkoutCopyPreview,
   workoutVitalsSchema,
   readWorkoutVitals,
   catalogSchema,
@@ -145,6 +147,12 @@ export function createMcpServer(client) {
     'Search exercise metadata with stable IDs, equipment and muscle filters. Prefer catalogue imports; follow nextAfter with the returned version.',
     catalogSchema,
     (input) => readCatalog(client, input),
+  );
+  register(
+    'fitness_workout_copy_preview',
+    'Inspect a workout from the connected coach’s own catalogue before copying it into a student program, or compare an existing copy with its source. Requires Coach, source programs:read and personal exercises:read, target programs:write and coaching:write plus current student planning permission. Use the returned source fingerprint, target epoch/revision and optional target fingerprint with workout.copy or workout.sync. Never match sources by name. Sync replaces the prescription, including student customizations; obtain explicit confirmation before executing it. Recorded history and health data are preserved. No automatic synchronization.',
+    workoutCopyPreviewSchema,
+    (input) => readWorkoutCopyPreview(client, input),
   );
   register(
     'fitness_workout_vitals',
