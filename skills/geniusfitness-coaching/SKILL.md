@@ -72,3 +72,14 @@ the kilocalorie value. It can cover only part of a session. Do not divide this
 workout total into invented set calories or add overlapping device totals. Null
 means unavailable. The athlete must separately enable calorie collection; the
 existing recipient permissions and their Premium entitlement still apply.
+
+Measured per-exercise values are available in `energy.exerciseIntervals` (exercise
+and set identity, effort/rest phase, observed duration, kcal and native source)
+and `exerciseHeartRates` (native average BPM with exact unpaused intervals).
+These arrays are optional: older sessions or incomplete synchronization can lack
+them. Sum only non-overlapping supplied calorie intervals; never derive an
+exercise average from minute averages. Heart-rate collection is independent of
+calorie collection. Match exercise IDs with `fitness_session_analysis` for reps,
+load, duration/distance, RPE, target and actual rest, completion and record flags.
+Its optional `sessionXp` is the current session score, not proof of the capped
+reward credited to the account. All set pages use the same pinned revision.
