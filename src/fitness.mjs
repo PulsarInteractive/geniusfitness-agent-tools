@@ -97,7 +97,7 @@ const workoutEnergy = z
     startedAt: z.iso.datetime({ offset: true }),
     endedAt: z.iso.datetime({ offset: true }),
     sourceRecordId: z.uuid(),
-    exerciseIntervals: z.array(exerciseEnergyInterval).max(512).optional(),
+    exerciseIntervals: z.array(exerciseEnergyInterval).max(512).nullable().optional(),
   })
   .strict()
   .refine((energy) => {
@@ -176,7 +176,7 @@ const workoutVitals = z.object({
   revision: revision.nullable(),
   minutes: z.array(heartRateMinute).max(720),
   energy: workoutEnergy.nullable().optional(),
-  exerciseHeartRates: z.array(exerciseHeartRate).max(128).optional(),
+  exerciseHeartRates: z.array(exerciseHeartRate).max(128).nullable().optional(),
   interpretation: z.string().min(1),
 });
 export async function readWorkoutVitals(client, input) {

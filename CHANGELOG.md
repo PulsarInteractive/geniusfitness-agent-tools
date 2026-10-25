@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Keep recorded personal-record flags in session analysis and accept optional canonical session XP from the service; session points are distinct from capped account rewards. Optional exercise observation arrays remain compatible with older servers.
+
 - Preserve exercise heart-rate averages with exact observed intervals and native provenance, independently of calorie collection. Validate bounds and non-overlap; missing values remain absent. Requires the corresponding application and backend rollout.
 
 - Preserve optional measured exercise/set activity intervals in workout calories, including effort/rest, durations and native provenance. Reject overlapping or inconsistent measurements. Requires the corresponding application and backend rollout.

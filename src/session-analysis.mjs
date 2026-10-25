@@ -92,6 +92,7 @@ export function sessionAnalysis(record, offset = 0) {
       completed,
       skipped,
       corrected: row.ed === true,
+      isPersonalRecord: row.pr === true,
       completedAt: completed && !skipped ? stamp(row.at) : null,
       timing: untimed ? 'disabled' : elapsed === null && rest === null ? 'unrecorded' : 'recorded',
       recordedSetElapsedSeconds: elapsed,
