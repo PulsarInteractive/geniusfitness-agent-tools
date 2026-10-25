@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Preserve sessions and immutable command journals on temporary edge refusals. Respect numeric and HTTP-date Retry-After deadlines across CLI restarts, with positive jitter and no automatic replay. Recognized API permission refusals keep their existing behavior.
+
 ## 0.1.0-beta.7 — 2026-10-24
 
 - Explain the eligible seven-day trial when a requested Premium detail is unavailable.
