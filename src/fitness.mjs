@@ -78,14 +78,50 @@ const heartRateMinute = z
   })
   .strict()
   .refine((row) => row.minimum <= row.average && row.average <= row.maximum);
+const exerciseEnergyInterval = z
+  .object({
+    exerciseId: z.string().min(1).max(128),
+    setIndex: z.number().int().min(1).max(10000),
+    round: z.number().int().min(1).max(10000).nullable(),
+    phase: z.enum(['effort', 'rest']),
+    kilocalories: z.number().min(0).max(20000).nullable(),
+    durationSeconds: z.number().min(0).max(43200),
+    startedAt: z.iso.datetime({ offset: true }),
+    endedAt: z.iso.datetime({ offset: true }),
+    sourceActivityId: z.uuid(),
+  })
+  .strict();
 const workoutEnergy = z
   .object({
     kilocalories: z.number().min(0).max(20000),
     startedAt: z.iso.datetime({ offset: true }),
     endedAt: z.iso.datetime({ offset: true }),
     sourceRecordId: z.uuid(),
+    exerciseIntervals: z.array(exerciseEnergyInterval).max(512).optional(),
   })
-  .strict();
+  .strict()
+  .refine((energy) => {
+    let previous = Date.parse(energy.startedAt),
+      total = 0;
+    const ids = new Set();
+    for (const interval of energy.exerciseIntervals ?? []) {
+      const start = Date.parse(interval.startedAt),
+        end = Date.parse(interval.endedAt),
+        id = interval.sourceActivityId.toLowerCase();
+      if (
+        start < previous ||
+        end <= start ||
+        end > Date.parse(energy.endedAt) ||
+        interval.durationSeconds > (end - start) / 1000 + 0.01 ||
+        ids.has(id)
+      )
+        return false;
+      previous = end;
+      total += interval.kilocalories ?? 0;
+      ids.add(id);
+    }
+    return total <= energy.kilocalories + 0.01;
+  });
 const workoutVitals = z.object({
   scope,
   sessionId: id,

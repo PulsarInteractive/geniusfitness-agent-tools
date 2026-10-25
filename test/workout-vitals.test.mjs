@@ -127,3 +127,38 @@ test('active calories retain their measured interval; older servers and BPM-only
   }
   assert.deepEqual(await readWorkoutVitals({ get: async () => result }, input), result);
 });
+
+test('exercise intervals retain provenance in connector output and reject overlapping measurements', async () => {
+  const interval = {
+    exerciseId: 'squat',
+    setIndex: 1,
+    round: null,
+    phase: 'effort',
+    kilocalories: 7.25,
+    durationSeconds: 30,
+    startedAt: '2026-10-24T10:10:00Z',
+    endedAt: '2026-10-24T10:10:30Z',
+    sourceActivityId: 'a820daa0-7841-4c24-8256-756dc5710f22',
+  };
+  const energy = {
+    kilocalories: 200,
+    startedAt: result.startedAt,
+    endedAt: result.endedAt,
+    sourceRecordId: 'c820daa0-7841-4c24-8256-756dc5710f22',
+    exerciseIntervals: [interval],
+  };
+  const value = { ...result, energy };
+  assert.deepEqual((await readWorkoutVitals({ get: async () => value }, input)).energy, energy);
+  for (const intervals of [
+    [interval, interval],
+    [{ ...interval, durationSeconds: 31 }],
+    [{ ...interval, kilocalories: 201 }],
+  ]) {
+    await assert.rejects(() =>
+      readWorkoutVitals(
+        { get: async () => ({ ...value, energy: { ...energy, exerciseIntervals: intervals } }) },
+        input,
+      ),
+    );
+  }
+});
