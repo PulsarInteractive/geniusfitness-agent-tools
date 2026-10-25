@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Preserve exercise heart-rate averages with exact observed intervals and native provenance, independently of calorie collection. Validate bounds and non-overlap; missing values remain absent. Requires the corresponding application and backend rollout.
+
 - Preserve optional measured exercise/set activity intervals in workout calories, including effort/rest, durations and native provenance. Reject overlapping or inconsistent measurements. Requires the corresponding application and backend rollout.
 
 - Accept up to 24 calendar months of basic metric history and preserve more than a year of daily evidence. The server checks current requester and athlete subscriptions; mixed program totals cannot extend a Free student history. Requires the corresponding backend rollout.

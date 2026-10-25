@@ -148,7 +148,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_workout_vitals',
-    'Premium/Coach recorded heart-rate minutes and optional active kcal for the exact observed workout interval. energy.exerciseIntervals supplies measured exercise/set activity intervals, distinguishing effort and rest; missing intervals are unmeasured, never allocate the total. Requires metrics:read, health:read and explicit athlete sharing. Optional athleteId requires Coach and a currently shared athlete-owned program. Missing observations remain missing; never infer effort or a diagnosis.',
+    'Premium/Coach recorded heart-rate minutes and optional active kcal for the exact observed workout interval. energy.exerciseIntervals supplies measured exercise/set activity intervals, distinguishing effort and rest; missing intervals are unmeasured, never allocate the total. exerciseHeartRates provides the native BPM average over each exercise’s observed unpaused intervals, independently of calories; do not average averages or infer missing BPM. Requires metrics:read, health:read and explicit athlete sharing. Optional athleteId requires Coach and a currently shared athlete-owned program. Missing observations remain missing; never infer effort or a diagnosis.',
     workoutVitalsSchema,
     (input) => readWorkoutVitals(client, input),
   );

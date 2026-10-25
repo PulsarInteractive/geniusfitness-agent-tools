@@ -51,10 +51,21 @@ test('workout observations validate identity, bounds and explicit missing values
 });
 test('real MCP invocation dispatches session analysis and wearable tools to their correct handlers', async () => {
   const calls = [];
+  const observed = {
+    ...result,
+    exerciseHeartRates: [
+      {
+        exerciseId: 'squat',
+        averageBpm: 117.5,
+        sourceRecordId: '8a20daa0-7841-4c24-8256-756dc5710f22',
+        intervals: [{ startedAt: '2026-10-24T10:10:00Z', endedAt: '2026-10-24T10:11:00Z' }],
+      },
+    ],
+  };
   const server = createMcpServer({
     get: async (name, args) => {
       calls.push([name, args]);
-      return name === 'workout-vitals' ? result : { scope: args.scope, id: args.id };
+      return name === 'workout-vitals' ? observed : { scope: args.scope, id: args.id };
     },
   });
   const client = new Client({ name: 'fixture', version: '1' });
@@ -69,6 +80,10 @@ test('real MCP invocation dispatches session analysis and wearable tools to thei
     assert.notEqual(analyzed.isError, true, JSON.stringify(analyzed));
     const vitals = await client.callTool({ name: 'fitness_workout_vitals', arguments: input });
     assert.notEqual(vitals.isError, true, JSON.stringify(vitals));
+    assert.deepEqual(
+      JSON.parse(vitals.content.find((row) => row.type === 'text').text).exerciseHeartRates,
+      observed.exerciseHeartRates,
+    );
     assert.deepEqual(calls, [
       ['session-analysis', { scope: 'project:p', id: 's' }],
       ['workout-vitals', input],
@@ -159,6 +174,37 @@ test('exercise intervals retain provenance in connector output and reject overla
         { get: async () => ({ ...value, energy: { ...energy, exerciseIntervals: intervals } }) },
         input,
       ),
+    );
+  }
+});
+
+test('exercise BPM survives without energy and rejects overlapping or invented coverage', async () => {
+  const hearts = [
+    {
+      exerciseId: 'squat',
+      averageBpm: 117.5,
+      sourceRecordId: '8a20daa0-7841-4c24-8256-756dc5710f22',
+      intervals: [{ startedAt: '2026-10-24T10:10:00Z', endedAt: '2026-10-24T10:11:00Z' }],
+    },
+  ];
+  const observed = { ...result, minutes: [], energy: null, exerciseHeartRates: hearts };
+  assert.deepEqual(await readWorkoutVitals({ get: async () => observed }, input), observed);
+  for (const patch of [
+    { availability: 'unrecorded' },
+    { exerciseHeartRates: [...hearts, ...hearts] },
+    { exerciseHeartRates: [{ ...hearts[0], averageBpm: 401 }] },
+    { exerciseHeartRates: [...hearts, { ...hearts[0], exerciseId: 'row' }] },
+    {
+      exerciseHeartRates: [
+        {
+          ...hearts[0],
+          intervals: [{ startedAt: '2026-10-24T09:00:00Z', endedAt: '2026-10-24T10:11:00Z' }],
+        },
+      ],
+    },
+  ]) {
+    await assert.rejects(() =>
+      readWorkoutVitals({ get: async () => ({ ...observed, ...patch }) }, input),
     );
   }
 });

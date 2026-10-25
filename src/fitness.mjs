@@ -114,14 +114,57 @@ const workoutEnergy = z
         end > Date.parse(energy.endedAt) ||
         interval.durationSeconds > (end - start) / 1000 + 0.01 ||
         ids.has(id)
-      )
+      ) {
         return false;
+      }
       previous = end;
       total += interval.kilocalories ?? 0;
       ids.add(id);
     }
     return total <= energy.kilocalories + 0.01;
   });
+const exerciseHeartRate = z
+  .object({
+    exerciseId: z.string().min(1).max(128),
+    averageBpm: z.number().min(1).max(400),
+    sourceRecordId: z.uuid(),
+    intervals: z
+      .array(
+        z
+          .object({
+            startedAt: z.iso.datetime({ offset: true }),
+            endedAt: z.iso.datetime({ offset: true }),
+          })
+          .strict(),
+      )
+      .min(1)
+      .max(512),
+  })
+  .strict();
+function validExerciseHearts(rows, start, end) {
+  const ids = new Set(),
+    coverage = [];
+  let source;
+  for (const row of rows ?? []) {
+    if (ids.has(row.exerciseId) || (source && source !== row.sourceRecordId.toLowerCase())) {
+      return false;
+    }
+    ids.add(row.exerciseId);
+    source = row.sourceRecordId.toLowerCase();
+    let previous = Date.parse(start);
+    for (const interval of row.intervals) {
+      const first = Date.parse(interval.startedAt),
+        last = Date.parse(interval.endedAt);
+      if (first < previous || last <= first || last > Date.parse(end)) {
+        return false;
+      }
+      coverage.push([first, last]);
+      previous = last;
+    }
+  }
+  coverage.sort((a, b) => a[0] - b[0]);
+  return !coverage.some((row, i) => i > 0 && row[0] < coverage[i - 1][1]);
+}
 const workoutVitals = z.object({
   scope,
   sessionId: id,
@@ -133,6 +176,7 @@ const workoutVitals = z.object({
   revision: revision.nullable(),
   minutes: z.array(heartRateMinute).max(720),
   energy: workoutEnergy.nullable().optional(),
+  exerciseHeartRates: z.array(exerciseHeartRate).max(128).optional(),
   interpretation: z.string().min(1),
 });
 export async function readWorkoutVitals(client, input) {
@@ -146,6 +190,7 @@ export async function readWorkoutVitals(client, input) {
     (query.athleteId && result.athleteId !== query.athleteId) ||
     (result.availability === 'unrecorded'
       ? hasEnergy ||
+        (result.exerciseHeartRates?.length ?? 0) > 0 ||
         result.minutes.length !== 0 ||
         result.revision !== null ||
         result.source !== null ||
@@ -155,13 +200,14 @@ export async function readWorkoutVitals(client, input) {
         result.revision === null ||
         !result.startedAt ||
         !result.endedAt ||
-        (!result.minutes.length && !hasEnergy) ||
+        (!result.minutes.length && !hasEnergy && !result.exerciseHeartRates?.length) ||
         Date.parse(result.endedAt) <= Date.parse(result.startedAt) ||
         Date.parse(result.endedAt) - Date.parse(result.startedAt) > 43200000 ||
         (hasEnergy &&
           (Date.parse(result.energy.startedAt) < Date.parse(result.startedAt) ||
             Date.parse(result.energy.endedAt) > Date.parse(result.endedAt) ||
             Date.parse(result.energy.endedAt) <= Date.parse(result.energy.startedAt))) ||
+        !validExerciseHearts(result.exerciseHeartRates, result.startedAt, result.endedAt) ||
         result.minutes.some(
           (row, index) =>
             (index > 0 && row.offset <= result.minutes[index - 1].offset) ||
