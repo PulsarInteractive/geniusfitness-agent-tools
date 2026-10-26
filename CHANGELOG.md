@@ -2,8 +2,6 @@
 
 ## Unreleased
 
-- Preserve sessions and immutable command journals on temporary edge refusals. Respect numeric and HTTP-date Retry-After deadlines across CLI restarts, with positive jitter and no automatic replay. Recognized API permission refusals keep their existing behavior.
-
 - Copy a coach-owned prepared workout into an independent student prescription, then preview and explicitly confirm later synchronization using source and destination fingerprints. Includes CLI, local MCP, hosted MCP tool catalogue and permission-aware coaching guidance. Requires the matching backend and application rollout.
 
 - Keep recorded personal-record flags in session analysis and accept optional canonical session XP from the service; session points are distinct from capped account rewards. Optional exercise observation arrays remain compatible with older servers.
@@ -20,6 +18,12 @@
 - Scope basic coaching metrics to the requested student, with repeated Wednesday planning and two-week review examples.
 - Preserve default personal muscle queries when the service resolves the authenticated athlete.
 - Validate optional workout active-calorie observations with their exact recorded interval, retain compatibility with older heart-rate-only responses, and explain explicit calorie consent. Backend and application rollout is required before these observations are available.
+
+## 0.1.0-beta.8 — 2026-10-26
+
+- Update the transitive URI parser to its patched 3.1.9 release.
+
+- Preserve sessions and immutable command journals on temporary edge refusals. Respect numeric and HTTP-date Retry-After deadlines across CLI restarts, with positive jitter and no automatic replay. Recognized API permission refusals keep their existing behavior.
 
 ## 0.1.0-beta.7 — 2026-10-24
 
