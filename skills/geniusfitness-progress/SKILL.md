@@ -54,13 +54,15 @@ For a student pass `athleteId` and their own shared program; this requires Coach
 and current access. Check capabilities and live access; never reconstruct
 a denied advanced view by crawling raw history. Continue bounded pages with the
 same dates, epoch and checkpoint. Missing catalogue attribution remains unknown.
-Keep primary and secondary sets separate. A field named
-`externalResistanceVolumeKg` does not itself establish the historical load unit.
-Only compare load-based aggregates when the contributing observations have
-verified, consistent units and the documented weight convention. Otherwise state
-that coverage is incomplete and use comparable non-load observations instead.
-Exercise seconds,
-elapsed timers and rest are distinct quantities. These are training observations,
+Keep primary and secondary sets separate. For `loadUnitPolicy: explicit_kg_lb_v1`,
+aggregates normalize explicit kg/lb to kg (1 lb = 0.45359237 kg); session analysis
+preserves the entered number and unit. Check `loadMeasuredSets` and
+`volumeMeasuredSets` against `sets` for each exercise and week. Incomplete
+coverage makes the respective total null, never zero. Do not compare incomplete
+periods as a decline in work. The external-resistance volume additionally uses
+the declared exercise type and load convention. A legacy server without this
+policy cannot establish kg values. Exercise seconds, elapsed timers and rest
+remain distinct. These are training observations,
 not measurements of hypertrophy, muscle force or recovery. Suggest Premium only
 when its specific unavailable feature is relevant; do not use health measurements
 for personalized marketing.

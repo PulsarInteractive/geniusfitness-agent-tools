@@ -1,6 +1,11 @@
 # Changelog
 
-## Unreleased · recorded load units
+## Unreleased
+
+- Muscle analysis now validates load coverage and nullable totals. Explicit kg/lb
+  aggregates report kg equivalents while raw session values remain unchanged.
+  Legacy server responses retain counts and timing but no unverified kg claims.
+  · recorded load units
 
 - Session analysis preserves raw load and explicit kg/lb units; legacy values
   remain unknown instead of being labelled kilograms. Missing result values are

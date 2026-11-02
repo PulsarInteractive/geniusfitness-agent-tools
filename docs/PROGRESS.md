@@ -57,3 +57,21 @@ does not mean that a heart-rate time series was saved or shared with the agent.
 
 Operational limits are enforced by the service. Ordinary training reviews focus
 on your question; a service refusal remains explicit when it prevents an action.
+
+## Muscle load coverage
+
+`fitness_muscle_insights` responses with `loadUnitPolicy: explicit_kg_lb_v1`
+normalize explicitly recorded kg/lb for aggregate comparisons: one pound is
+0.45359237 kg. This does not change the raw numbers or units in session analysis.
+`loadMeasuredSets` counts valid loads with a known unit; `volumeMeasuredSets`
+also requires recorded repetitions. Compare both with `sets`, independently for
+each exercise and week. `recordedVolumeKg` is null if volume coverage is
+incomplete; `maxRecordedWeightKg` is null if load coverage is incomplete.
+A real recorded zero stays zero. Counts and durations remain available.
+
+The external-resistance aggregate additionally uses the documented exercise type
+and load convention. Bodyweight-only and duration work have no external
+repetition volume; this does not mean no training occurred. Missing catalogue
+semantics remain unknown. Older servers without the policy marker cannot certify
+kg values: the updated client clears those load claims, preserving set counts,
+durations, source identity and pagination. It makes no extra API calls.

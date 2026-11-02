@@ -297,7 +297,9 @@ const muscleWeek = z.object({
   week: date,
   sets: observed.int(),
   repetitions: observed,
-  recordedVolumeKg: observed,
+  recordedVolumeKg: observed.nullable(),
+  loadMeasuredSets: observed.int().optional(),
+  volumeMeasuredSets: observed.int().optional(),
   externalResistanceVolumeKg: observed.nullable(),
   exerciseSeconds: observed,
 });
@@ -312,6 +314,7 @@ const musclePage = z.object({
   timezone: z.literal('UTC'),
   premiumOnly: z.literal(true),
   methodology: z.string().min(1),
+  loadUnitPolicy: z.literal('explicit_kg_lb_v1').optional(),
   nextAfter: id.nullable(),
   exercises: z
     .array(
@@ -328,8 +331,10 @@ const musclePage = z.object({
         sets: observed.int(),
         sessions: observed.int(),
         repetitions: observed,
-        recordedVolumeKg: observed,
-        maxRecordedWeightKg: observed,
+        recordedVolumeKg: observed.nullable(),
+        maxRecordedWeightKg: observed.nullable(),
+        loadMeasuredSets: observed.int().optional(),
+        volumeMeasuredSets: observed.int().optional(),
         exerciseSeconds: observed,
         timedSets: observed.int(),
         recordedSetElapsedSeconds: observed.nullable(),
@@ -341,6 +346,32 @@ const musclePage = z.object({
     )
     .max(10),
 });
+
+function validLoadCoverage(row, exerciseType) {
+  const loads = row.loadMeasuredSets,
+    volumes = row.volumeMeasuredSets;
+  const nonLoad = [
+    'BodyweightReps',
+    'AssistedBodyweight',
+    'Duration',
+    'DurationWeight',
+    'DistanceDuration',
+    'WeightDistance',
+  ].includes(exerciseType);
+  return (
+    Number.isSafeInteger(loads) &&
+    Number.isSafeInteger(volumes) &&
+    volumes >= 0 &&
+    volumes <= loads &&
+    loads <= row.sets &&
+    (row.recordedVolumeKg !== null) === (volumes === row.sets) &&
+    (!Object.hasOwn(row, 'maxRecordedWeightKg') ||
+      (row.maxRecordedWeightKg !== null) === (loads === row.sets)) &&
+    (volumes === row.sets ||
+      row.externalResistanceVolumeKg === null ||
+      (nonLoad && row.externalResistanceVolumeKg === 0))
+  );
+}
 
 export async function readMuscleInsights(client, input) {
   const query = checked(muscleInsightsSchema, input),
@@ -359,6 +390,8 @@ export async function readMuscleInsights(client, input) {
         (index > 0 && item.exerciseId <= result.exercises[index - 1].exerciseId) ||
         item.timedSets > item.sets ||
         item.restMeasuredSets > item.sets ||
+        (result.loadUnitPolicy === 'explicit_kg_lb_v1' &&
+          !validLoadCoverage(item, item.exerciseType)) ||
         item.lastTrained < query.from ||
         item.lastTrained > query.until ||
         item.weeks.some(
@@ -374,7 +407,44 @@ export async function readMuscleInsights(client, input) {
       'The muscle-insights response does not match the requested athlete, period or page. Do not interpret it as progress.',
     );
   }
-  return result;
+  if (result.loadUnitPolicy === 'explicit_kg_lb_v1') {
+    if (
+      result.exercises.some((item) =>
+        item.weeks.some((week) => !validLoadCoverage(week, item.exerciseType)),
+      )
+    ) {
+      fail(
+        'invalid_response',
+        'Muscle load coverage is inconsistent. Do not interpret it as progress.',
+      );
+    }
+    return result;
+  }
+  if (!result.exercises.length) {
+    return result;
+  }
+  // Older servers labelled unverified values as kg. Retain counts and timing,
+  // but never certify those historical unit labels or mutate cached responses.
+  return {
+    ...result,
+    methodology:
+      'Legacy server: load units are unverified; kg volume and maximum load are unavailable. Set counts, durations, source identity and pagination are preserved. Read session analysis for recorded observations.',
+    exercises: result.exercises.map((item) => ({
+      ...item,
+      recordedVolumeKg: null,
+      maxRecordedWeightKg: null,
+      externalResistanceVolumeKg: null,
+      loadMeasuredSets: undefined,
+      volumeMeasuredSets: undefined,
+      weeks: item.weeks.map((week) => ({
+        ...week,
+        recordedVolumeKg: null,
+        externalResistanceVolumeKg: null,
+        loadMeasuredSets: undefined,
+        volumeMeasuredSets: undefined,
+      })),
+    })),
+  };
 }
 
 export const metricsSchema = z
