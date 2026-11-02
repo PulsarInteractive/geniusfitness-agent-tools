@@ -69,3 +69,22 @@ test('bad preparation never calls the network or creates a valid operation', asy
   });
   assert.equal(calls, 0);
 });
+
+test('explicit load units are bounded and cannot be arbitrary labels or fabricated wearable data', () => {
+  for (const wu of ['kg', 'lb']) {
+    assert.equal(
+      invalidSetPayload('Project/SportSessionLog', {
+        performedSets: JSON.stringify([{ ex: 'squat', i: 1, w: 0, wu }]),
+      }),
+      null,
+    );
+  }
+  for (const wu of ['stone', 'KG', 'unknown', '', 1, null]) {
+    assert.equal(
+      invalidSetPayload('Project/SportSessionLog', {
+        performedSets: JSON.stringify([{ ex: 'squat', i: 1, w: 40, wu }]),
+      }),
+      'performedSets',
+    );
+  }
+});

@@ -28,6 +28,18 @@ skipped sets and corrections remain distinct. Old sessions are not filled with
 invented measurements. An exercise's duration value is not substituted for a
 missing elapsed timer.
 
+`recordedLoad` preserves the entered number. `recordedLoadUnit` is `kg`, `lb`, or
+`unknown`; it is known only when recorded with the set. `weightKg` remains a
+compatibility field and is populated only for explicit kilograms. Pounds are
+not silently converted. A current exercise preference does not establish an old
+session's unit. Compare only compatible recorded units and load conventions.
+
+Older sessions without an explicit unit keep the raw number with `unknown`.
+When connected to an older server, the client removes the unproven `weightKg`
+label and reports `legacy_load_units_unavailable`. Old zero-filled results become
+unknown because absence and measured zero cannot be distinguished in that
+response. New explicit zeros are retained. This does not rewrite stored history.
+
 Set details page at 50 entries. Continue with `nextSetOffset` as `offset` and the
 same `revision`. If the session changes, restart the read. Exercise totals and
 coverage describe the recorded session; one page is not the whole set inventory.

@@ -168,7 +168,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_session_analysis',
-    'Read one session with recorded time per set and exercise, actual rest, personal-record flags and missing-measurement coverage. Optional sessionXp contains canonical uncapped session points, not the capped account reward. Long timers may include interruptions; never infer continuous effort or unrecorded heart rate.',
+    'Read one session with recorded time per set and exercise, actual rest, personal-record flags and missing-measurement coverage. Optional sessionXp contains canonical uncapped session points, not the capped account reward. Long timers may include interruptions; never infer continuous effort or unrecorded heart rate. Use recordedLoad and recordedLoadUnit together: kg or lb only when explicitly stored. weightKg is null for pounds or unknown units; missing values are null, not zero. Never assume an older weightKg label proved kilograms or compare unknown load conventions.',
     sessionAnalysisSchema,
     (input) => readSessionAnalysis(client, input),
   );

@@ -9,7 +9,13 @@ Read `fitness_workflow` with `topic: progress`. Identify the program and athlete
 then request a bounded period. For details use `fitness_session_analysis` with
 the session's real ID, or `geniusfitness sessions analyze --scope project:ID --id ID --json`.
 
-Compare the same exercise and units across sessions. Separate warmups, skipped
+Compare the same exercise, recorded units and load convention across sessions.
+Use `recordedLoad` with `recordedLoadUnit`; unknown is not kg. `weightKg` is only
+populated for explicit kg and must not be used to infer units for legacy data.
+Do not resolve historical units from today's exercise setting or silently convert
+pounds. Missing scalar results are null; an explicitly recorded zero remains zero.
+When an older server response reports `legacy_load_units_unavailable`, describe
+that limitation and avoid a load-based comparison or progression recommendation. Separate warmups, skipped
 sets, corrected results and pending sets from completed work. Repetitions,
 weights, distance and RPE have different meanings; do not collapse them into an
 unsupported fitness score. Resolve exercise IDs through the existing exercise
@@ -48,9 +54,12 @@ For a student pass `athleteId` and their own shared program; this requires Coach
 and current access. Check capabilities and live access; never reconstruct
 a denied advanced view by crawling raw history. Continue bounded pages with the
 same dates, epoch and checkpoint. Missing catalogue attribution remains unknown.
-Keep primary and secondary sets separate. Use `externalResistanceVolumeKg` for
-type-aware volume with the documented weight convention, and retain entered kg ×
-reps as raw evidence. Exercise seconds,
+Keep primary and secondary sets separate. A field named
+`externalResistanceVolumeKg` does not itself establish the historical load unit.
+Only compare load-based aggregates when the contributing observations have
+verified, consistent units and the documented weight convention. Otherwise state
+that coverage is incomplete and use comparable non-load observations instead.
+Exercise seconds,
 elapsed timers and rest are distinct quantities. These are training observations,
 not measurements of hypertrophy, muscle force or recovery. Suggest Premium only
 when its specific unavailable feature is relevant; do not use health measurements

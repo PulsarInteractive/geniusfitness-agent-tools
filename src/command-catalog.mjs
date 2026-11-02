@@ -1757,6 +1757,13 @@ export default {
           "kind": "number",
           "max": 100000,
           "min": 0
+        },
+        "wu": {
+          "kind": "enum",
+          "values": [
+            "kg",
+            "lb"
+          ]
         }
       },
       "identity": [

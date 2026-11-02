@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "version": "2026-10-25.2",
+  "version": "2026-11-02.1",
   "topics": {
     "connection": {
       "title": "Connection, permissions and language",
@@ -48,6 +48,7 @@
       "title": "Recent performance and personal health",
       "steps": [
         "Use fitness_metrics for bounded daily totals in the selected authorized program. Read sessions for real IDs, then fitness_session_analysis for the relevant session details. Resolve exercise IDs through the existing library. Compare the same movement, units and athlete; do not mix warmups, pending or skipped sets with completed work.",
+        "For session loads, read recordedLoad with recordedLoadUnit (kg, lb or unknown). weightKg is populated only for explicit kg; no silent conversion. Legacy units are unknown even when an older server called the value weightKg. Do not infer past units from current exercise settings. Missing values stay null and explicit zero is retained; old zero-filled responses cannot prove a measurement. Compare compatible units and load conventions only.",
         "Follow pagination and distinguish empty data from inaccessible, omitted or partial data. Do not describe a partial page as the full history or infer a personal record from incomplete records.",
         "Read personal health records only with health:read, in the connected owner personal scope. This covers stored measurements; it does not provide live access to Apple Health or another athlete private health data.",
         "Use session/run/health create or update only for actual user-supplied or authorized results. A finished session can complete a planning occurrence atomically. Editing a result does not re-complete or reopen planning. Deleting the last matching finished result can reopen its linked plan when current task permissions permit; read back affected planning as well as the result.",

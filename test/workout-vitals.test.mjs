@@ -208,3 +208,32 @@ test('exercise BPM survives without energy and rejects overlapping or invented c
     );
   }
 });
+
+test('the actual MCP tool never presents an old server load as confirmed kilograms', async () => {
+  const server = createMcpServer({
+    get: async () => ({
+      scope: 'project:p',
+      epoch: 'e',
+      checkpoint: '2',
+      analysis: { id: 's', revision: '2', warnings: [], sets: [{ weightKg: 80, repetitions: 8 }] },
+    }),
+  });
+  const client = new Client({ name: 'unit-fixture', version: '1' }),
+    [a, b] = InMemoryTransport.createLinkedPair();
+  await server.connect(a);
+  await client.connect(b);
+  try {
+    const result = await client.callTool({
+      name: 'fitness_session_analysis',
+      arguments: { scope: 'project:p', id: 's' },
+    });
+    assert.notEqual(result.isError, true);
+    const set = JSON.parse(result.content.find((r) => r.type === 'text').text).analysis.sets[0];
+    assert.equal(set.weightKg, null);
+    assert.equal(set.recordedLoad, 80);
+    assert.equal(set.recordedLoadUnit, 'unknown');
+  } finally {
+    await client.close();
+    await server.close();
+  }
+});

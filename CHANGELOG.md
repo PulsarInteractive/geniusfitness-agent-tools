@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased · recorded load units
+
+- Session analysis preserves raw load and explicit kg/lb units; legacy values
+  remain unknown instead of being labelled kilograms. Missing result values are
+  no longer filled with zero.
+- CLI/MCP handle older server responses conservatively and retain source identity.
+- Progress guidance documents mixed/unknown units and historical limitations.
+
 ## Unreleased
 
 - Preserve optional run elevation coverage alongside measured gain. Missing altitude remains distinct from zero; imports and summaries retain partial or unknown coverage. Requires the matching application/backend rollout.

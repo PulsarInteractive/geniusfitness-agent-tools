@@ -84,10 +84,12 @@ export function sessionAnalysis(record, offset = 0) {
       setIndex: row.i,
       round: Number.isSafeInteger(row.rd) && row.rd > 0 ? row.rd : null,
       type: { n: 'normal', w: 'warmup', f: 'failure', d: 'drop_set' }[row.t ?? 'n'] ?? 'unknown',
-      weightKg: number(row.w ?? 0, 100000),
-      repetitions: number(row.r ?? 0, 100000),
-      exerciseDurationSeconds: number(row.d ?? 0),
-      distanceMeters: number(row.dist ?? 0, 1000000),
+      recordedLoad: number(row.w, 100000),
+      recordedLoadUnit: row.wu === 'kg' || row.wu === 'lb' ? row.wu : 'unknown',
+      weightKg: row.wu === 'kg' ? number(row.w, 100000) : null,
+      repetitions: number(row.r, 100000),
+      exerciseDurationSeconds: number(row.d),
+      distanceMeters: number(row.dist, 1000000),
       rpe: number(row.rpe, 10),
       completed,
       skipped,
@@ -139,7 +141,7 @@ export function sessionAnalysis(record, offset = 0) {
     exercises,
     warnings: [...new Set(warnings)],
     interpretation:
-      'Recorded set time is a timer interval, not proof of continuous effort. Ten-minute or longer timers are observations to clarify, not confirmed absences. Missing timing is unknown, never zero. Rest follows the completed set. Do not reconstruct unrecorded pauses or heart rate.',
+      'Recorded set time is a timer interval, not proof of continuous effort. Ten-minute or longer timers are observations to clarify, not confirmed absences. Missing timing and result values are unknown, never zero. recordedLoad keeps the entered number; only explicit kg/lb labels establish recordedLoadUnit. weightKg is populated only for recorded kg; do not infer units or convert unknown values. Rest follows the completed set. Do not reconstruct unrecorded pauses or heart rate.',
     wearableData: 'not_in_session_record',
   };
 }
@@ -152,5 +154,54 @@ export function analyzeSessionPage(page, id, offset = 0) {
     checkpoint: page.checkpoint,
     availability: record ? 'available' : page.omittedIds?.includes(id) ? 'omitted' : 'not_found',
     analysis: record ? sessionAnalysis(record, offset) : null,
+  };
+}
+
+/** Rolling-server compatibility: older analysis responses named every entered
+ * load weightKg without preserving its unit, and filled absent scalars with 0.
+ * Retain useful nonzero observations, never certify that older label as kg.
+ * Do not mutate the transport cache or its revision/checkpoint identity. */
+export function normalizeSessionAnalysisResponse(value) {
+  if (!value || typeof value !== 'object' || !Array.isArray(value.analysis?.sets)) {
+    return value;
+  }
+  let legacy = false;
+  const sets = value.analysis.sets.map((set) => {
+    if (!set || typeof set !== 'object') {
+      return set;
+    }
+    if (
+      Object.hasOwn(set, 'recordedLoad') &&
+      ['kg', 'lb', 'unknown'].includes(set.recordedLoadUnit)
+    ) {
+      return {
+        ...set,
+        weightKg: set.recordedLoadUnit === 'kg' ? number(set.recordedLoad, 100000) : null,
+      };
+    }
+    legacy = true;
+    const known = (v, max) => (v === 0 ? null : number(v, max));
+    return {
+      ...set,
+      recordedLoad: known(set.weightKg, 100000),
+      recordedLoadUnit: 'unknown',
+      weightKg: null,
+      repetitions: known(set.repetitions, 100000),
+      exerciseDurationSeconds: known(set.exerciseDurationSeconds, 86400),
+      distanceMeters: known(set.distanceMeters, 1000000),
+    };
+  });
+  return {
+    ...value,
+    analysis: {
+      ...value.analysis,
+      sets,
+      warnings: [
+        ...new Set([
+          ...(value.analysis.warnings ?? []),
+          ...(legacy ? ['legacy_load_units_unavailable'] : []),
+        ]),
+      ],
+    },
   };
 }

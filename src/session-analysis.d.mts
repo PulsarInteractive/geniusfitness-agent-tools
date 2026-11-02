@@ -22,3 +22,5 @@ export function analyzeSessionPage(
   availability: 'available' | 'omitted' | 'not_found';
   analysis: Record<string, unknown> | null;
 };
+
+export function normalizeSessionAnalysisResponse(value: unknown): unknown;

@@ -222,7 +222,7 @@
   {
     "name": "fitness_session_analysis",
     "title": "Analyze a training session",
-    "description": "Read recorded time per set and exercise, actual rest and measurement coverage for one session. Long timers may include interruptions; do not assume continuous effort or invent wearable measurements. Sets page at 50; continue with nextSetOffset as offset and the same revision.",
+    "description": "Read recorded time per set and exercise, actual rest and measurement coverage for one session. Long timers may include interruptions; do not assume continuous effort or invent wearable measurements. Sets page at 50; continue with nextSetOffset as offset and the same revision. Read recordedLoad with recordedLoadUnit; only explicit kg/lb establishes a unit. weightKg is null for pounds or unknown units. Missing values are unknown, not zero. Do not infer historical units from current settings or prescribe progression from an unknown load convention.",
     "inputSchema": {
       "type": "object",
       "properties": {

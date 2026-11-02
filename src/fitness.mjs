@@ -2,6 +2,7 @@ import * as z from 'zod/v4';
 import catalog from './command-catalog.mjs';
 import { fail } from './errors.mjs';
 import { setPayloadSpec } from './set-payloads.mjs';
+import { normalizeSessionAnalysisResponse } from './session-analysis.mjs';
 
 const id = z
   .string()
@@ -56,7 +57,9 @@ export const sessionAnalysisSchema = z
   .strict()
   .refine((input) => !input.offset || input.revision !== undefined);
 export const readSessionAnalysis = (client, input) =>
-  client.get('session-analysis', checked(sessionAnalysisSchema, input));
+  Promise.resolve(client.get('session-analysis', checked(sessionAnalysisSchema, input))).then(
+    normalizeSessionAnalysisResponse,
+  );
 
 export const workoutCopyPreviewSchema = z
   .object({

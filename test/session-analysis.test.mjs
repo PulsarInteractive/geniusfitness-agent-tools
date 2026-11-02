@@ -149,3 +149,101 @@ test('MCP presentation omits implementation limits without mutating API data or 
   const denied = { error: { code: 'rate_limited', retryAfterSeconds: 60 } };
   assert.deepEqual(agentPresentation(denied), denied);
 });
+
+test('loads require their recorded unit and missing numeric results never become zero', () => {
+  const result = sessionAnalysis(
+    record([
+      set({ wu: 'kg', w: 42.5 }),
+      set({ i: 2, wu: 'lb', w: 100 }),
+      set({ i: 3, w: 45 }),
+      { ex: 'squat', i: 4, done: true },
+      set({ i: 5, wu: 'kg', w: 0, r: 0, d: 0, dist: 0 }),
+      set({ i: 6, wu: 'stone', w: 3 }),
+    ]),
+  );
+  assert.deepEqual(
+    result.sets.map((s) => [s.recordedLoad, s.recordedLoadUnit, s.weightKg]),
+    [
+      [42.5, 'kg', 42.5],
+      [100, 'lb', null],
+      [45, 'unknown', null],
+      [null, 'unknown', null],
+      [0, 'kg', 0],
+      [3, 'unknown', null],
+    ],
+  );
+  assert.deepEqual(
+    [
+      result.sets[3].repetitions,
+      result.sets[3].exerciseDurationSeconds,
+      result.sets[3].distanceMeters,
+    ],
+    [null, null, null],
+  );
+  assert.deepEqual(
+    [
+      result.sets[4].repetitions,
+      result.sets[4].exerciseDurationSeconds,
+      result.sets[4].distanceMeters,
+    ],
+    [0, 0, 0],
+  );
+});
+
+test('the latest correction owns its unit and cannot borrow an earlier kilogram label', () => {
+  const result = sessionAnalysis(record([set({ wu: 'kg', w: 40 }), set({ wu: 'lb', w: 90 })]));
+  assert.equal(result.totalSets, 1);
+  assert.equal(result.sets[0].recordedLoad, 90);
+  assert.equal(result.sets[0].recordedLoadUnit, 'lb');
+  assert.equal(result.sets[0].weightKg, null);
+  assert.equal(
+    sessionAnalysis(record([set({ wu: 'kg' }), set()])).sets[0].recordedLoadUnit,
+    'unknown',
+  );
+});
+
+test('rolling-server compatibility preserves raw values and identity without certifying old units or default zeros', async () => {
+  const response = {
+    scope: 'project:p',
+    epoch: 'e',
+    checkpoint: '12',
+    analysis: {
+      revision: '12',
+      warnings: [],
+      sets: [
+        { weightKg: 50, repetitions: 8, exerciseDurationSeconds: 0, distanceMeters: 0 },
+        { weightKg: 0, repetitions: 0, exerciseDurationSeconds: 0, distanceMeters: 0 },
+        { recordedLoad: 0, recordedLoadUnit: 'kg', weightKg: 0, repetitions: 0 },
+        { recordedLoad: 100, recordedLoadUnit: 'lb', weightKg: 100 },
+      ],
+    },
+  };
+  const before = structuredClone(response),
+    calls = [];
+  const value = await readSessionAnalysis(
+    {
+      get: async (name, args) => {
+        calls.push([name, args]);
+        return response;
+      },
+    },
+    { scope: 'project:p', id: 'session' },
+  );
+  assert.deepEqual(response, before);
+  assert.equal(value.epoch, 'e');
+  assert.equal(value.checkpoint, '12');
+  assert.equal(value.analysis.revision, '12');
+  assert.deepEqual(
+    value.analysis.sets.map((s) => [s.recordedLoad, s.recordedLoadUnit, s.weightKg]),
+    [
+      [50, 'unknown', null],
+      [null, 'unknown', null],
+      [0, 'kg', 0],
+      [100, 'lb', null],
+    ],
+  );
+  assert.equal(value.analysis.sets[0].exerciseDurationSeconds, null);
+  assert.equal(value.analysis.sets[2].repetitions, 0);
+  assert.deepEqual(value.analysis.warnings, ['legacy_load_units_unavailable']);
+  assert.equal(calls.length, 1);
+});
