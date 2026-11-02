@@ -236,6 +236,7 @@ export default {
         "distanceMeters",
         "avgPaceSecPerKm",
         "elevationGainMeters",
+        "elevationCoverage",
         "splits",
         "polyline",
         "routeSegments",
@@ -261,6 +262,7 @@ export default {
         "distanceMeters",
         "avgPaceSecPerKm",
         "elevationGainMeters",
+        "elevationCoverage",
         "splits",
         "polyline",
         "routeSegments",
@@ -572,6 +574,7 @@ export default {
         "distanceMeters",
         "avgPaceSecPerKm",
         "elevationGainMeters",
+        "elevationCoverage",
         "splits",
         "polyline",
         "routeSegments",
@@ -1237,6 +1240,24 @@ export default {
             "type": "null"
           }
         ]
+      },
+      "elevationCoverage": {
+        "anyOf": [
+          {
+            "enum": [
+              "Recorded",
+              "Partial",
+              "Unavailable",
+              "Unknown"
+            ],
+            "type": "string",
+            "default": "Unknown"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": "Unknown"
       },
       "splits": {
         "anyOf": [

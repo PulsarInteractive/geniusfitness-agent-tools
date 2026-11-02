@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Preserve optional run elevation coverage alongside measured gain. Missing altitude remains distinct from zero; imports and summaries retain partial or unknown coverage. Requires the matching application/backend rollout.
+
 - Copy a coach-owned prepared workout into an independent student prescription, then preview and explicitly confirm later synchronization using source and destination fingerprints. Includes CLI, local MCP, hosted MCP tool catalogue and permission-aware coaching guidance. Requires the matching backend and application rollout.
 
 - Keep recorded personal-record flags in session analysis and accept optional canonical session XP from the service; session points are distinct from capped account rewards. Optional exercise observation arrays remain compatible with older servers.
