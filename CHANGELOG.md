@@ -1,3 +1,9 @@
+## Unreleased
+
+- Add bounded, read-only Push result consultation through `sessions push-results`
+  and `fitness_push_results`, with strict response binding, explicit missing values
+  and corrected-outcome guidance. Requires a server with the Push result endpoint.
+
 # Changelog
 
 ## Unreleased

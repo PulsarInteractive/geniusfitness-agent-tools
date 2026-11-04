@@ -1,4 +1,5 @@
 import { workflow } from './workflows.mjs';
+import { readPushResults } from './push-results.mjs';
 import {
   readWorkoutCopyPreview,
   readWorkoutVitals,
@@ -76,6 +77,11 @@ export const commands = {
   'sessions analyze': {
     summary: 'Read one recorded session with set timing, rest and measurement coverage.',
     options: ['scope', 'id', 'offset', 'revision'],
+  },
+  'sessions push-results': {
+    summary:
+      'Read verified Push outcomes for one exact live session; never authorizes an attempt, XP or prescription change.',
+    options: ['scope', 'sessionId', 'athleteId'],
   },
   'metrics summary': {
     summary:
@@ -380,6 +386,12 @@ export async function main(
             .map((key) => [key, options[key]]),
         ),
       );
+    } else if (command === 'sessions push-results') {
+      data = await readPushResults(client, {
+        scope: options.scope,
+        sessionId: options.sessionId,
+        ...(options.athleteId === undefined ? {} : { athleteId: options.athleteId }),
+      });
     } else if (command === 'sessions analyze') {
       data = await readSessionAnalysis(client, {
         scope: options.scope,

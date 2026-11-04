@@ -9,6 +9,19 @@ Read `fitness_workflow` with `topic: progress`. Identify the program and athlete
 then request a bounded period. For details use `fitness_session_analysis` with
 the session's real ID, or `geniusfitness sessions analyze --scope project:ID --id ID --json`.
 
+For Push bonus results, use `fitness_push_results` or
+`geniusfitness sessions push-results --scope project:ID --sessionId UUID --json`.
+Use the actual live UUID (the suffix of a canonical `live_<UUID>` session log),
+and specify `athleteId` for a student. Each request covers one selected program
+and session. Current program rights and history windows still apply to archives.
+Compare `actual` against `base` and `offeredTarget`; `loadMilliunits / 1000` uses
+the explicit kg/lb unit, while unweighted work has a null load. Keep unknown or
+incomplete results explicit. A proposed or accepted bonus is not completed work,
+a current execution grant, an XP award or approval to change a future plan.
+Use the latest corrected outcome; never add its superseded version to totals.
+Do not enumerate unrelated history or poll for results. On access refusal, stop
+that read; do not use stale results or another athlete's credentials.
+
 Compare the same exercise, recorded units and load convention across sessions.
 Use `recordedLoad` with `recordedLoadUnit`; unknown is not kg. `weightKg` is only
 populated for explicit kg and must not be used to infer units for legacy data.

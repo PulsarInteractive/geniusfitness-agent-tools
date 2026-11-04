@@ -73,3 +73,13 @@ student's prescription customizations are replaced; schedules, completed
 results, progress and health measurements are preserved. No automatic sync.
 Current Coach entitlement, the student's planning grant, source reads and
 destination writes are rechecked by the server.
+
+### Recorded Push bonus results
+
+`geniusfitness sessions push-results --scope project:ID --sessionId UUID --json`
+reads one selected training session. MCP provides `fitness_push_results`; pass
+`athleteId` for an authorized student. Results distinguish performed values, usual
+values and the offered bonus, including units, missing observations and corrections.
+This read requires `metrics:read` and current program access. It cannot execute a
+bonus, award XP or update a prescription. It is available only on servers that
+implement the Push result endpoint; an unavailable route is not an empty result.

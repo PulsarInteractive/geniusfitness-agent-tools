@@ -1,5 +1,6 @@
 import subscriptionGuidance from '../remote/subscription-guidance.json' with { type: 'json' };
 import { agentPresentation } from './presentation.mjs';
+import { pushResultsSchema, readPushResults } from './push-results.mjs';
 import { workflow, workflowSchema } from './workflows.mjs';
 import {
   workoutCopyPreviewSchema,
@@ -171,6 +172,12 @@ export function createMcpServer(client) {
     'Read one session with recorded time per set and exercise, actual rest, personal-record flags and missing-measurement coverage. Optional sessionXp contains canonical uncapped session points, not the capped account reward. Long timers may include interruptions; never infer continuous effort or unrecorded heart rate. Use recordedLoad and recordedLoadUnit together: kg or lb only when explicitly stored. weightKg is null for pounds or unknown units; missing values are null, not zero. Never assume an older weightKg label proved kilograms or compare unknown load conventions.',
     sessionAnalysisSchema,
     (input) => readSessionAnalysis(client, input),
+  );
+  register(
+    'fitness_push_results',
+    'Read verified Push bonus results for one selected program and live session UUID. Requires metrics:read and current program access; another athlete requires Coach and current control of that athlete’s program. Read-only: compare actual with base/offeredTarget using explicit units and loadMilliunits / 1000. Incomplete or unconfirmed is unknown, not failure or zero. Corrections supersede earlier outcome IDs. No permission to attempt a bonus, award XP or change a future prescription. No history enumeration or automatic retry loop.',
+    pushResultsSchema,
+    (input) => readPushResults(client, input),
   );
   register(
     'fitness_metrics',

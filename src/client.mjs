@@ -186,6 +186,7 @@ export class AgentClient {
         'catalog',
         'metrics',
         'session-analysis',
+        'push-results',
         'muscle-insights',
         'workout-vitals',
         'workout-copy-preview',

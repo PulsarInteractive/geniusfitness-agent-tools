@@ -254,6 +254,33 @@
     "route": "session-analysis"
   },
   {
+    "name": "fitness_push_results",
+    "title": "Recorded Push bonus results",
+    "description": "Read verified Push bonus results for one selected program and live session UUID. Requires metrics:read and current program access; another athlete requires Coach and current control of that athlete’s program. Read-only: compare actual with base/offeredTarget using explicit units and loadMilliunits / 1000. Incomplete or unconfirmed is unknown, not failure or zero. Corrections supersede earlier outcome IDs. No permission to attempt a bonus, award XP or change a future prescription. No history enumeration or automatic retry loop.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "pattern": "^project:[A-Za-z0-9_-]{1,128}$"
+        },
+        "sessionId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "athleteId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,128}$"
+        }
+      },
+      "required": ["scope", "sessionId"],
+      "additionalProperties": false
+    },
+    "scopes": ["metrics:read"],
+    "route": "push-results"
+  },
+  {
     "name": "fitness_metrics",
     "title": "Training progress",
     "description": "Read basic daily totals for an authorized program and bounded inclusive UTC dates. Pass athleteId for one student in their own shared program (requires Coach); otherwise totals cover all visible participants and must not be presented as individual progress. History is checked against current subscriptions: four weeks for Free, up to 24 calendar months for Premium. A mixed total cannot extend a Free athlete history using the coach subscription; choose a recent range or specify an eligible athlete.",
