@@ -63,8 +63,14 @@ test('every command can request its exact permission without unrelated write gra
     assert.equal(validate({ ...input, kind: other }), false, `${kind} must reject ${other}`);
   }
   for (const tool of tools.filter((candidate) => candidate.name.includes('_coach_'))) {
-    assert.ok(tool.scopes.includes('coaching:write'));
-    assert.equal(tool.route, 'commands');
-    assert.equal(tool.write, true);
+    if (tool.name === 'fitness_coach_push') {
+      assert.deepEqual(tool.scopes, ['planning:read']);
+      assert.equal(tool.route, 'coach-push');
+      assert.ok(!tool.write);
+    } else {
+      assert.ok(tool.scopes.includes('coaching:write'));
+      assert.equal(tool.route, 'commands');
+      assert.equal(tool.write, true);
+    }
   }
 });

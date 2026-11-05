@@ -1,3 +1,4 @@
+import { coachPushProposalSchema, coachPushWithdrawalSchema } from './coach-push.mjs';
 import { retryAt, requireRetryReady } from './recovery.mjs';
 import { randomUUID } from 'node:crypto';
 import { constants } from 'node:fs';
@@ -65,12 +66,26 @@ export function validateCommand(value) {
   if (
     Buffer.byteLength(JSON.stringify(command)) > catalog.maxCommandBytes ||
     Object.keys(command.data).some((key) => !definition.fields.includes(key)) ||
-    (definition.create ? command.expectedRevision !== null : command.expectedRevision === null)
+    (definition.revisionMode !== 'occurrence' &&
+      (definition.create ? command.expectedRevision !== null : command.expectedRevision === null))
   ) {
     fail(
       'invalid_arguments',
       'Use the declared command fields and size limit. Creation requires a null revision; other commands require the current record revision.',
     );
+  }
+  if (command.kind.startsWith('coach.push.')) {
+    const schema =
+      command.kind === 'coach.push.propose' ? coachPushProposalSchema : coachPushWithdrawalSchema;
+    if (
+      !z.string().uuid().safeParse(command.id).success ||
+      !schema.safeParse(command.data).success
+    ) {
+      fail(
+        'invalid_arguments',
+        'Use an exact proposal UUID and declared occurrence fields. Only the athlete can confirm; numerical targets are never command fields.',
+      );
+    }
   }
   const prefix = definition.module.startsWith('LocalUser/') ? 'personal:' : 'project:';
   const invalidPayload = invalidSetPayload(definition.module, command.data);

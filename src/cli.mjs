@@ -1,3 +1,4 @@
+import { readCoachPush } from './coach-push.mjs';
 import { workflow } from './workflows.mjs';
 import { readPushResults } from './push-results.mjs';
 import { readPushAdjustments } from './push-adjustments.mjs';
@@ -83,6 +84,11 @@ export const commands = {
     summary:
       'Read verified Push outcomes for one exact live session; never authorizes an attempt, XP or prescription change.',
     options: ['scope', 'sessionId', 'athleteId', 'includeRewardDetails'],
+  },
+  'coaching push-proposals': {
+    summary:
+      'Read your coach proposals for one exact athlete workout occurrence; athlete consent remains mandatory.',
+    options: ['scope', 'athleteId', 'trainingId', 'occurrenceId'],
   },
   'sessions push-adjustments': {
     summary:
@@ -385,6 +391,15 @@ export async function main(
       );
     } else if (command === 'muscles insights') {
       data = await readMuscleInsights(
+        client,
+        Object.fromEntries(
+          commands[command].options
+            .filter((key) => options[key] !== undefined)
+            .map((key) => [key, options[key]]),
+        ),
+      );
+    } else if (command === 'coaching push-proposals') {
+      data = await readCoachPush(
         client,
         Object.fromEntries(
           commands[command].options

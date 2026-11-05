@@ -92,3 +92,30 @@ Its optional `sessionXp` is the current session score, not proof of the capped
 reward credited to the account. All set pages use the same pinned revision.
 
 The optional `goalProfileKey` on adjustment-history entries is an opaque, athlete-bound reference to the profile version used for that decision. It is not the current goal, a progress score, or permission to read private profile answers. A missing key or unavailable version must stay unknown; never join by goal label or date.
+
+## Propose a future Push
+
+Read the `coaching` workflow for the full command sequence. Identify the athlete's
+actual shared program, workout and scheduled occurrence, then use
+`fitness_coach_push` or CLI `coaching push-proposals`. Use that read's **athlete
+occurrence epoch and revision**, never a project inventory checkpoint.
+
+`coach.push.propose` records intent with an exercise/set scope and rationale.
+Whole workout: both `exerciseId` and `setIndex` are explicitly null. Whole
+exercise: only `setIndex` is null. A specific set uses its actual 1-based index.
+Use a new proposal UUID, or the same UUID only when editing a pending proposal.
+Keep the immutable prepared command for uncertain-response recovery. Reading
+needs `planning:read`; writing additionally needs `planning:write` and
+`coaching:write`, current Coach access and actual named program control.
+
+Only the athlete can confirm or decline. Do not claim a pending proposal changes
+weights, grants permission to attempt a bonus, records work or awards XP. Agents
+cannot confirm, including the athlete's own connection. Readback shows only the
+connected coach's entries. `coach.push.withdraw` targets that coach's pending or
+confirmed proposal with its latest occurrence revision; it never erases work.
+A replay receipt describes the original commit, not the current proposal state.
+No polling or alternate-account retry after access is denied.
+
+A confirmed choice requests evaluation; it does not guarantee a bonus. If the
+connected app has no athlete review controls, leave the proposal pending and
+explain that limitation instead of claiming activation.

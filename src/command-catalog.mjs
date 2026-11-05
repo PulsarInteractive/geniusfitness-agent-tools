@@ -2,6 +2,43 @@
 export default {
   "maxCommandBytes": 131072,
   "commands": {
+    "coach.push.propose": {
+      "fields": [
+        "athleteId",
+        "trainingId",
+        "occurrenceId",
+        "exerciseId",
+        "setIndex",
+        "rationale"
+      ],
+      "inputSchema": "GeniusFitness.CoachPush.AgentProposalData",
+      "module": "Project/CoachPushProposal",
+      "permission": "planning:write",
+      "requiredFields": [
+        "athleteId",
+        "trainingId",
+        "occurrenceId",
+        "exerciseId",
+        "setIndex",
+        "rationale"
+      ],
+      "revisionMode": "occurrence"
+    },
+    "coach.push.withdraw": {
+      "fields": [
+        "athleteId",
+        "trainingId",
+        "occurrenceId"
+      ],
+      "inputSchema": "GeniusFitness.CoachPush.AgentWithdrawalData",
+      "module": "Project/CoachPushProposal",
+      "permission": "planning:write",
+      "requiredFields": [
+        "athleteId",
+        "trainingId",
+        "occurrenceId"
+      ]
+    },
     "exercise.create": {
       "create": true,
       "fields": [
@@ -659,6 +696,55 @@ export default {
     }
   },
   "fieldSchemas": {
+    "Project/CoachPushProposal": {
+      "athleteId": {
+        "maxLength": 128,
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9_-]+$",
+        "type": "string"
+      },
+      "trainingId": {
+        "maxLength": 128,
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9_-]+$",
+        "type": "string"
+      },
+      "occurrenceId": {
+        "maxLength": 128,
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9_-]+$",
+        "type": "string"
+      },
+      "exerciseId": {
+        "anyOf": [
+          {
+            "maxLength": 128,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "setIndex": {
+        "anyOf": [
+          {
+            "format": "int32",
+            "maximum": 1000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "rationale": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "type": "string"
+      }
+    },
     "LocalUser/LocalUserElement": {
       "name": {
         "type": "string",

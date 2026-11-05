@@ -654,7 +654,7 @@ export function commandHelp(kind) {
       required.push(field);
     }
     const schema = properties[field];
-    if (schema.anyOf?.some((part) => part.type === 'null')) {
+    if (!kind.startsWith('coach.push.') && schema.anyOf?.some((part) => part.type === 'null')) {
       properties[field] = { ...schema, anyOf: schema.anyOf.filter((part) => part.type !== 'null') };
     }
   }
@@ -665,9 +665,11 @@ export function commandHelp(kind) {
     ...(setPayloadSpec(definition.module) && !definition.delete
       ? { encodedSets: setPayloadSpec(definition.module) }
       : {}),
-    workflow: definition.create
-      ? 'Use a new stable ID and null expectedRevision; read the scope epoch first. program.create uses its UUID as initial epoch and needs all-resources consent.'
-      : 'Read the current record and use its revision. Send only fields requested to change; omission preserves stored values, null explicitly clears a nullable field. JSON strings and arrays replace that field as a whole. Preserve the prepared operation after an uncertain response.',
+    workflow: kind.startsWith('coach.push.')
+      ? 'Read fitness_coach_push / coaching push-proposals for this athlete and occurrence. Use its epoch/revision, never the program checkpoint. New proposal: new UUID; pending edit: same proposal UUID and latest occurrence revision. Required exerciseId/setIndex may be null for a wider scope. Only propose or withdraw; the athlete must confirm separately. Preserve immutable journal bytes after uncertainty.'
+      : definition.create
+        ? 'Use a new stable ID and null expectedRevision; read the scope epoch first. program.create uses its UUID as initial epoch and needs all-resources consent.'
+        : 'Read the current record and use its revision. Send only fields requested to change; omission preserves stored values, null explicitly clears a nullable field. JSON strings and arrays replace that field as a whole. Preserve the prepared operation after an uncertain response.',
     coach:
       'Other athletes’ programs need current Coach subscription, coaching:write and ordinary program access.',
   };

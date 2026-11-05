@@ -53,3 +53,5 @@ origins are available only with an explicit local-testing option.
 
 See [Insights](INSIGHTS.md) for the exact commands, consent requirements and
 interpretation of missing measurements.
+
+See [Coach Push proposals](COACH_PUSH.md) for exact-occurrence intent, athlete confirmation and safe command recovery.

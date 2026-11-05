@@ -86,3 +86,5 @@ loads the canonical change. When reconnecting after a network interruption, the
 application catches up through its existing sync system. A server receipt and a
 screen update are different observations: the assistant should verify the changed
 record, and should not claim to have seen your screen unless it actually did.
+
+See [Coach Push proposals](COACH_PUSH.md) for exact-occurrence intent, athlete confirmation and safe command recovery.

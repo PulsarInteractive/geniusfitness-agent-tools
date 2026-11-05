@@ -1,3 +1,4 @@
+import { coachPushReadSchema, readCoachPush } from './coach-push.mjs';
 import subscriptionGuidance from '../remote/subscription-guidance.json' with { type: 'json' };
 import { agentPresentation } from './presentation.mjs';
 import { pushResultsSchema, readPushResults } from './push-results.mjs';
@@ -179,6 +180,12 @@ export function createMcpServer(client) {
     'Read verified Push bonus results for one selected program and live session UUID. Requires metrics:read and current program access; another athlete requires Coach and current control of that athlete’s program. Read-only: compare actual with base/offeredTarget using explicit units and loadMilliunits / 1000. Set includeRewardDetails true to request awardedXp: exact settled cosmetic bonus after caps; absent/null means unknown, never a nominal or promised award. Incomplete or unconfirmed is unknown, not failure or zero. Corrections supersede earlier outcome IDs. No permission to attempt a bonus, award XP or change a future prescription. No history enumeration or automatic retry loop.',
     pushResultsSchema,
     (input) => readPushResults(client, input),
+  );
+  register(
+    'fitness_coach_push',
+    'Read only your coach proposals for one exact athlete workout occurrence. Requires planning:read, current Coach subscription and control of that athlete program. No private health or other coach proposals. Use the returned athlete occurrence epoch/revision for coach.push.propose or coach.push.withdraw through the command journal; never use a program checkpoint. Student confirmation remains mandatory. Read once when needed, without polling.',
+    coachPushReadSchema,
+    (input) => readCoachPush(client, input),
   );
   register(
     'fitness_push_adjustments',
