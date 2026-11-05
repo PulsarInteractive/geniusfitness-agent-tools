@@ -1,6 +1,7 @@
 import subscriptionGuidance from '../remote/subscription-guidance.json' with { type: 'json' };
 import { agentPresentation } from './presentation.mjs';
 import { pushResultsSchema, readPushResults } from './push-results.mjs';
+import { pushAdjustmentsSchema, readPushAdjustments } from './push-adjustments.mjs';
 import { workflow, workflowSchema } from './workflows.mjs';
 import {
   workoutCopyPreviewSchema,
@@ -178,6 +179,12 @@ export function createMcpServer(client) {
     'Read verified Push bonus results for one selected program and live session UUID. Requires metrics:read and current program access; another athlete requires Coach and current control of that athlete’s program. Read-only: compare actual with base/offeredTarget using explicit units and loadMilliunits / 1000. Set includeRewardDetails true to request awardedXp: exact settled cosmetic bonus after caps; absent/null means unknown, never a nominal or promised award. Incomplete or unconfirmed is unknown, not failure or zero. Corrections supersede earlier outcome IDs. No permission to attempt a bonus, award XP or change a future prescription. No history enumeration or automatic retry loop.',
     pushResultsSchema,
     (input) => readPushResults(client, input),
+  );
+  register(
+    'fitness_push_adjustments',
+    'Read retained future-workout adjustments linked to one exact current Push outcome from fitness_push_results. Requires metrics:read for the selected program; another athlete requires Coach and current control of that program. Each call checks one occurrence and at most 16 decisions. An empty entries page with nextCursor is not proof of no adjustments. Request additional pages explicitly only when useful; never scan the whole account or loop until a match. Keep the same scope, athlete, session and outcome with the returned cursor. On 409, reread the source result and restart explicitly; do not retry an obsolete cursor. Saved/withdrawn values, dates and goal are historical decisions, not confirmation of the effective prescription. Coverage is retained records only; missing legacy links remain unknown. No private health/readiness, attempt authorization, XP award or write access.',
+    pushAdjustmentsSchema,
+    (input) => readPushAdjustments(client, input),
   );
   register(
     'fitness_metrics',

@@ -29,6 +29,25 @@ Use the latest corrected outcome; never add its superseded version to totals.
 Do not enumerate unrelated history or poll for results. On access refusal, stop
 that read; do not use stale results or another athlete's credentials.
 
+To explain whether a bonus led to a later workout adjustment, use
+`fitness_push_adjustments` with the exact `scope`, `athleteId`, `sessionId` and
+current `outcomeId` returned above. CLI:
+`geniusfitness sessions push-adjustments --scope project:ID --athleteId USER --sessionId UUID --outcomeId ID --json`.
+Each call checks one occurrence and at most 16 decisions. An empty `entries`
+page with `nextCursor` means more occurrences remain; it does not prove absence.
+Continue explicitly with the same query and `cursor` only as needed for the
+user's question. Do not scan until a match, poll or crawl the account. On 409,
+reread the source result and restart explicitly; corrections may replace its ID.
+On 429 honor Retry-After; on 401/403 stop rather than reusing cached data.
+
+Describe `before`, `after`, the goal, saved/withdrawn dates and whether the athlete
+confirmed the decision (`automatic: false`). `saved` is a historical decision,
+not proof of the effective plan: `planApplication` remains `not_verified`.
+`coverage: retained_records` does not certify complete lifetime history. Unknown
+legacy goal/source links stay unknown. Source references authorize no additional
+read, and this tool grants no preparation, prescription, health, XP or attempt
+permission. Current named-coach control and subscriptions still apply.
+
 Compare the same exercise, recorded units and load convention across sessions.
 Use `recordedLoad` with `recordedLoadUnit`; unknown is not kg. `weightKg` is only
 populated for explicit kg and must not be used to infer units for legacy data.

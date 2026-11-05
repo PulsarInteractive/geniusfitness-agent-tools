@@ -1,5 +1,6 @@
 import { workflow } from './workflows.mjs';
 import { readPushResults } from './push-results.mjs';
+import { readPushAdjustments } from './push-adjustments.mjs';
 import {
   readWorkoutCopyPreview,
   readWorkoutVitals,
@@ -82,6 +83,11 @@ export const commands = {
     summary:
       'Read verified Push outcomes for one exact live session; never authorizes an attempt, XP or prescription change.',
     options: ['scope', 'sessionId', 'athleteId', 'includeRewardDetails'],
+  },
+  'sessions push-adjustments': {
+    summary:
+      'Read one retained adjustment page for an exact outcome. Saved does not mean currently applied; empty pages may continue.',
+    options: ['scope', 'athleteId', 'sessionId', 'outcomeId', 'cursor'],
   },
   'metrics summary': {
     summary:
@@ -379,6 +385,15 @@ export async function main(
       );
     } else if (command === 'muscles insights') {
       data = await readMuscleInsights(
+        client,
+        Object.fromEntries(
+          commands[command].options
+            .filter((key) => options[key] !== undefined)
+            .map((key) => [key, options[key]]),
+        ),
+      );
+    } else if (command === 'sessions push-adjustments') {
+      data = await readPushAdjustments(
         client,
         Object.fromEntries(
           commands[command].options

@@ -1,5 +1,9 @@
 ## Unreleased
 
+- Add `sessions push-adjustments` / `fitness_push_adjustments` for explicit,
+  bounded reads of retained adjustments linked to a current recorded outcome.
+  Saved decisions are not proof of current prescription application.
+
 - Add optional settled bonus XP details to Push results with
   `includeRewardDetails: true`. Preserve legacy response compatibility and
   unknown historical amounts; this does not award or recalculate XP.

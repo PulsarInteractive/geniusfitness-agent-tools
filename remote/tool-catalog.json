@@ -284,6 +284,43 @@
     "route": "push-results"
   },
   {
+    "name": "fitness_push_adjustments",
+    "title": "Later workout adjustments",
+    "description": "Read retained future-workout adjustments linked to one exact current Push outcome from fitness_push_results. Requires metrics:read for the selected program; another athlete requires Coach and current control of that program. Each call checks one occurrence and at most 16 decisions. An empty entries page with nextCursor is not proof of no adjustments. Request additional pages explicitly only when useful; never scan the whole account or loop until a match. Keep the same scope, athlete, session and outcome with the returned cursor. On 409, reread the source result and restart explicitly; do not retry an obsolete cursor. Saved/withdrawn values, dates and goal are historical decisions, not confirmation of the effective prescription. Coverage is retained records only; missing legacy links remain unknown. No private health/readiness, attempt authorization, XP award or write access.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "pattern": "^project:[A-Za-z0-9_-]{1,128}$"
+        },
+        "athleteId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,128}$"
+        },
+        "sessionId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "outcomeId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "cursor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": ["scope", "athleteId", "sessionId", "outcomeId"],
+      "additionalProperties": false
+    },
+    "scopes": ["metrics:read"],
+    "route": "push-adjustments"
+  },
+  {
     "name": "fitness_metrics",
     "title": "Training progress",
     "description": "Read basic daily totals for an authorized program and bounded inclusive UTC dates. Pass athleteId for one student in their own shared program (requires Coach); otherwise totals cover all visible participants and must not be presented as individual progress. History is checked against current subscriptions: four weeks for Free, up to 24 calendar months for Premium. A mixed total cannot extend a Free athlete history using the coach subscription; choose a recent range or specify an eligible athlete.",

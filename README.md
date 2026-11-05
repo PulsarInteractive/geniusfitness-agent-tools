@@ -87,3 +87,14 @@ bonus XP for the outcome, not total session XP or physical progression.
 This read requires `metrics:read` and current program access. It cannot execute a
 bonus, award XP or update a prescription. It is available only on servers that
 implement the Push result endpoint; an unavailable route is not an empty result.
+
+### Later workout adjustments
+
+Use `fitness_push_adjustments` or
+`geniusfitness sessions push-adjustments --scope project:ID --athleteId USER --sessionId UUID --outcomeId ID --json`
+with a current outcome from `fitness_push_results`. Each explicit call reads one
+retained occurrence and up to 16 decisions. Empty pages may have a `nextCursor`;
+continue with `--cursor` when needed. Saved/withdrawn values and dates explain a
+historical decision, not whether it is currently applied. Current program grants
+and named-coach rights are enforced on every page. This read grants no write or
+private health access. Server rollout and package publication are separate.

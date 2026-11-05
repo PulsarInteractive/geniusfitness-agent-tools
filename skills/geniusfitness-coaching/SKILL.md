@@ -43,6 +43,13 @@ permissions, the athlete's explicit sharing with this coach, and their sharing
 with authorized connectors. Never widen consent or read their personal scope.
 A permission denial is not an empty workout. Honor revocation immediately.
 
+For a student's recorded Push result and its later adjustments, use
+`fitness_push_results`, then `fitness_push_adjustments` with the same selected
+program and explicit athlete/session/outcome IDs. Read the progress workflow for
+bounded continuation and correction handling. These reads require metrics access
+and current named-coach control; they do not authorize changing future defaults.
+Keep saved/withdrawn decisions distinct from a currently applied prescription.
+
 ## Student subscriptions and repeatable examples
 
 Coach has no commercial student-seat limit. Each student needs their own Premium
