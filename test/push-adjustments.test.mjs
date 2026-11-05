@@ -84,6 +84,24 @@ test('one page per call, empty continuation and unknown legacy context remain ex
   const finished = { ...page, occurrence: null, nextCursor: null };
   assert.deepEqual(await readPushAdjustments({ get: async () => finished }, input), finished);
 });
+test('opaque original-goal profile reference is optional, bounded and never a private profile payload', async () => {
+  const page = result();
+  for (const key of [null, 'a'.repeat(64)]) {
+    page.entries[0].goalProfileKey = key;
+    assert.deepEqual(await readPushAdjustments({ get: async () => page }, input), page);
+  }
+  for (const key of ['', 'raw-profile-revision', 'a'.repeat(65), { primaryGoal: 'muscle' }]) {
+    page.entries[0].goalProfileKey = key;
+    await assert.rejects(readPushAdjustments({ get: async () => page }, input), {
+      code: 'invalid_response',
+    });
+  }
+  page.entries[0].goalProfileKey = 'a'.repeat(64);
+  page.entries[0].goal = null;
+  await assert.rejects(readPushAdjustments({ get: async () => page }, input), {
+    code: 'invalid_response',
+  });
+});
 test('bad inputs are refused before HTTP and request failures do not trigger retries', async () => {
   let calls = 0;
   const client = {

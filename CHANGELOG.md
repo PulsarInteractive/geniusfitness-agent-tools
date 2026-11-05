@@ -1,5 +1,9 @@
 ## Unreleased
 
+## Unreleased goal provenance
+
+- Preserve the optional opaque profile-version reference in adjustment history; keep private answers and current-goal claims separate.
+
 - Add `sessions push-adjustments` / `fitness_push_adjustments` for explicit,
   bounded reads of retained adjustments linked to a current recorded outcome.
   Saved decisions are not proof of current prescription application.

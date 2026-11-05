@@ -128,3 +128,5 @@ the kilocalorie value. It can cover only part of a session. Do not divide this
 workout total into invented set calories or add overlapping device totals. Null
 means unavailable. The athlete must separately enable calorie collection; the
 existing recipient permissions and their Premium entitlement still apply.
+
+The optional `goalProfileKey` on adjustment-history entries is an opaque, athlete-bound reference to the profile version used for that decision. It is not the current goal, a progress score, or permission to read private profile answers. A missing key or unavailable version must stay unknown; never join by goal label or date.

@@ -64,6 +64,11 @@ const entry = z
     goal: z
       .enum(['muscle', 'strength', 'fat_loss', 'endurance', 'consistency', 'general'])
       .nullable(),
+    goalProfileKey: z
+      .string()
+      .regex(/^[a-f0-9]{64}$/)
+      .nullable()
+      .optional(),
     sourceResults: z.array(z.object({ id, sessionId: session.nullable() }).strict()).max(16),
   })
   .strict();
@@ -122,6 +127,7 @@ export async function readPushAdjustments(client, input) {
         e.target.trainingId !== p.trainingId ||
         e.target.occurrenceId !== o?.occurrenceId ||
         e.target.sessionId !== null ||
+        (e.goalProfileKey !== undefined && e.goalProfileKey !== null && e.goal === null) ||
         (e.state === 'saved') !== (e.withdrawnAt === null) ||
         (e.withdrawnAt !== null && Date.parse(e.withdrawnAt) < Date.parse(e.savedAt)) ||
         (e.unit === 'none' &&

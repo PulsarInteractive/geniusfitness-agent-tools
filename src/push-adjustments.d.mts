@@ -20,6 +20,8 @@ export interface PushAdjustment {
   withdrawnAt: string | null;
   automatic: boolean;
   goal: 'muscle' | 'strength' | 'fat_loss' | 'endurance' | 'consistency' | 'general' | null;
+  /** Opaque historical profile reference. No profile read permission or current-goal claim. */
+  goalProfileKey?: string | null;
   sourceResults: { id: string; sessionId: string | null }[];
 }
 export interface PushAdjustmentsPage {

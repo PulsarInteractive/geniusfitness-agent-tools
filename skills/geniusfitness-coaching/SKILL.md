@@ -90,3 +90,5 @@ calorie collection. Match exercise IDs with `fitness_session_analysis` for reps,
 load, duration/distance, RPE, target and actual rest, completion and record flags.
 Its optional `sessionXp` is the current session score, not proof of the capped
 reward credited to the account. All set pages use the same pinned revision.
+
+The optional `goalProfileKey` on adjustment-history entries is an opaque, athlete-bound reference to the profile version used for that decision. It is not the current goal, a progress score, or permission to read private profile answers. A missing key or unavailable version must stay unknown; never join by goal label or date.

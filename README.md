@@ -98,3 +98,5 @@ continue with `--cursor` when needed. Saved/withdrawn values and dates explain a
 historical decision, not whether it is currently applied. Current program grants
 and named-coach rights are enforced on every page. This read grants no write or
 private health access. Server rollout and package publication are separate.
+
+The optional `goalProfileKey` on adjustment-history entries is an opaque, athlete-bound reference to the profile version used for that decision. It is not the current goal, a progress score, or permission to read private profile answers. A missing key or unavailable version must stay unknown; never join by goal label or date.
