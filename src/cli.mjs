@@ -81,7 +81,7 @@ export const commands = {
   'sessions push-results': {
     summary:
       'Read verified Push outcomes for one exact live session; never authorizes an attempt, XP or prescription change.',
-    options: ['scope', 'sessionId', 'athleteId'],
+    options: ['scope', 'sessionId', 'athleteId', 'includeRewardDetails'],
   },
   'metrics summary': {
     summary:
@@ -391,6 +391,16 @@ export async function main(
         scope: options.scope,
         sessionId: options.sessionId,
         ...(options.athleteId === undefined ? {} : { athleteId: options.athleteId }),
+        ...(options.includeRewardDetails === undefined
+          ? {}
+          : {
+              includeRewardDetails:
+                options.includeRewardDetails === true || options.includeRewardDetails === 'true'
+                  ? true
+                  : options.includeRewardDetails === 'false'
+                    ? false
+                    : options.includeRewardDetails,
+            }),
       });
     } else if (command === 'sessions analyze') {
       data = await readSessionAnalysis(client, {

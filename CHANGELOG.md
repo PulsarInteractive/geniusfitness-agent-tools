@@ -1,5 +1,8 @@
 ## Unreleased
 
+- Add optional settled bonus XP details to Push results with
+  `includeRewardDetails: true`. Preserve legacy response compatibility and
+  unknown historical amounts; this does not award or recalculate XP.
 - Add bounded, read-only Push result consultation through `sessions push-results`
   and `fitness_push_results`, with strict response binding, explicit missing values
   and corrected-outcome guidance. Requires a server with the Push result endpoint.

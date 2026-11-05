@@ -14,6 +14,13 @@ For Push bonus results, use `fitness_push_results` or
 Use the actual live UUID (the suffix of a canonical `live_<UUID>` session log),
 and specify `athleteId` for a student. Each request covers one selected program
 and session. Current program rights and history windows still apply to archives.
+When explaining bonus XP, request `includeRewardDetails: true` (CLI
+`--includeRewardDetails true`). On supporting servers, `awardedXp` is the exact
+cosmetic bonus settled for that outcome after caps, not total workout XP. Missing
+or null remains unknown even when `rewardState` is `awarded`; never multiply
+successful sets by a nominal award. These points do not measure physical progress
+or authorize a future increase. Omit the option when using older servers; do not
+retry an unsupported request in a loop.
 Compare `actual` against `base` and `offeredTarget`; `loadMilliunits / 1000` uses
 the explicit kg/lb unit, while unweighted work has a null load. Keep unknown or
 incomplete results explicit. A proposed or accepted bonus is not completed work,

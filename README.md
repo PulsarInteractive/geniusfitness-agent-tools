@@ -80,6 +80,10 @@ destination writes are rechecked by the server.
 reads one selected training session. MCP provides `fitness_push_results`; pass
 `athleteId` for an authorized student. Results distinguish performed values, usual
 values and the offered bonus, including units, missing observations and corrections.
+On supporting servers, add `--includeRewardDetails true` (MCP
+`includeRewardDetails: true`) for the exact settled `awardedXp` after caps.
+Missing/null amounts stay unknown, including older awarded outcomes. This is
+bonus XP for the outcome, not total session XP or physical progression.
 This read requires `metrics:read` and current program access. It cannot execute a
 bonus, award XP or update a prescription. It is available only on servers that
 implement the Push result endpoint; an unavailable route is not an empty result.

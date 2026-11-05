@@ -4,6 +4,7 @@ export interface PushResultsQuery {
   scope: string;
   sessionId: string;
   athleteId?: string;
+  includeRewardDetails?: boolean;
 }
 export interface PushValues {
   repetitions: number;
@@ -62,6 +63,8 @@ export interface PushOutcome {
   completedAt: string | null;
   recordedAt: string;
   rewardState: 'pending' | 'awarded' | 'ineligible';
+  /** Exact settled cosmetic bonus after caps; absent/null means unknown. */
+  awardedXp?: number | null;
   supersedesOutcomeId: string | null;
 }
 export interface PushResults {

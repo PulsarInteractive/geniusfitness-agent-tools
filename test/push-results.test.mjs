@@ -6,6 +6,7 @@ import { createMcpServer } from '../src/mcp.mjs';
 import { readPushResults } from '../src/push-results.mjs';
 import { main } from '../src/cli.mjs';
 import { fixture, origin } from './helpers.mjs';
+import remoteTools from '../remote/tool-catalog.json' with { type: 'json' };
 
 const input = {
   scope: 'project:program',
@@ -86,6 +87,46 @@ test('one explicit read retains corrected actual values, units and missing evide
     await assert.rejects(readPushResults(client, invalid), { code: 'invalid_arguments' });
   }
   assert.equal(calls, 1);
+});
+
+test('settled bonus amounts are explicit, optional and never inferred from a legacy award', async () => {
+  for (const amount of [undefined, null, 3]) {
+    const value = result();
+    Object.assign(value.outcomes[0], {
+      resolution: 'achieved',
+      actual: { repetitions: 9, loadMilliunits: 40000 },
+      rewardState: 'awarded',
+    });
+    if (amount !== undefined) {
+      value.outcomes[0].awardedXp = amount;
+    }
+    let calls = 0;
+    const query = { ...input, includeRewardDetails: true };
+    const returned = await readPushResults(
+      {
+        get: async (name, q) => {
+          calls++;
+          assert.deepEqual(q, query);
+          return value;
+        },
+      },
+      query,
+    );
+    assert.deepEqual(returned, value);
+    assert.equal(calls, 1);
+  }
+  for (const amount of [0, -1, 1.5, 2147483648]) {
+    const value = result();
+    value.outcomes[0].awardedXp = amount;
+    await assert.rejects(readPushResults({ get: async () => value }, input), {
+      code: 'invalid_response',
+    });
+  }
+  const inconsistent = result();
+  inconsistent.outcomes[0].awardedXp = 3;
+  await assert.rejects(readPushResults({ get: async () => inconsistent }, input), {
+    code: 'invalid_response',
+  });
 });
 
 test('foreign, inconsistent, oversized and private responses are refused before the agent sees them', async () => {
@@ -180,4 +221,72 @@ test('CLI sends one authorized HTTP read and does not cache the completed result
   assert.equal(calls, 1);
   await readPushResults(f.client, input);
   assert.equal(calls, 2, 'Each explicit read reauthorizes through the server');
+});
+
+test('CLI and MCP preserve the explicit reward-details opt-in without extra reads', async (t) => {
+  const value = result();
+  Object.assign(value.outcomes[0], {
+    resolution: 'achieved',
+    actual: { repetitions: 9, loadMilliunits: 40000 },
+    rewardState: 'awarded',
+    awardedXp: 3,
+  });
+  let calls = 0;
+  const f = await fixture(t, async (url) => {
+    calls++;
+    assert.equal(new URL(url).searchParams.get('includeRewardDetails'), 'true');
+    return Response.json(value);
+  });
+  let stdout = '',
+    stderr = '';
+  const code = await main(
+    [
+      'sessions',
+      'push-results',
+      '--scope',
+      input.scope,
+      '--sessionId',
+      input.sessionId,
+      '--athleteId',
+      input.athleteId,
+      '--includeRewardDetails',
+      'true',
+      '--origin',
+      origin,
+      '--allow-local',
+      '--json',
+    ],
+    {
+      directory: f.directory,
+      fetchImpl: f.transport.fetch,
+      stdout: { write: (s) => (stdout += s) },
+      stderr: { write: (s) => (stderr += s) },
+    },
+  );
+  assert.equal(code, 0, stderr);
+  assert.equal(JSON.parse(stdout).data.outcomes[0].awardedXp, 3);
+  assert.equal(calls, 1);
+  const server = createMcpServer(f.client);
+  const client = new Client({ name: 'xp-test', version: '1' });
+  const [a, b] = InMemoryTransport.createLinkedPair();
+  await server.connect(a);
+  await client.connect(b);
+  try {
+    const tool = (await client.listTools()).tools.find((t) => t.name === 'fitness_push_results');
+    assert.equal(tool.inputSchema.properties.includeRewardDetails.type, 'boolean');
+    assert.deepEqual(
+      remoteTools.find((t) => t.name === tool.name).inputSchema.properties.includeRewardDetails,
+      tool.inputSchema.properties.includeRewardDetails,
+    );
+    const response = await client.callTool({
+      name: 'fitness_push_results',
+      arguments: { ...input, includeRewardDetails: true },
+    });
+    assert.notEqual(response.isError, true);
+    assert.equal(response.structuredContent.data.outcomes[0].awardedXp, 3);
+    assert.equal(calls, 2);
+  } finally {
+    await client.close();
+    await server.close();
+  }
 });

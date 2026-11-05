@@ -175,7 +175,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_push_results',
-    'Read verified Push bonus results for one selected program and live session UUID. Requires metrics:read and current program access; another athlete requires Coach and current control of that athlete’s program. Read-only: compare actual with base/offeredTarget using explicit units and loadMilliunits / 1000. Incomplete or unconfirmed is unknown, not failure or zero. Corrections supersede earlier outcome IDs. No permission to attempt a bonus, award XP or change a future prescription. No history enumeration or automatic retry loop.',
+    'Read verified Push bonus results for one selected program and live session UUID. Requires metrics:read and current program access; another athlete requires Coach and current control of that athlete’s program. Read-only: compare actual with base/offeredTarget using explicit units and loadMilliunits / 1000. Set includeRewardDetails true to request awardedXp: exact settled cosmetic bonus after caps; absent/null means unknown, never a nominal or promised award. Incomplete or unconfirmed is unknown, not failure or zero. Corrections supersede earlier outcome IDs. No permission to attempt a bonus, award XP or change a future prescription. No history enumeration or automatic retry loop.',
     pushResultsSchema,
     (input) => readPushResults(client, input),
   );

@@ -8,6 +8,7 @@ export const pushResultsSchema = z
   .object({
     scope,
     sessionId,
+    includeRewardDetails: z.boolean().optional(),
     athleteId: z
       .string()
       .regex(/^[A-Za-z0-9_-]{1,128}$/)
@@ -86,6 +87,7 @@ const outcome = z
     completedAt: time.nullable(),
     recordedAt: time,
     rewardState: z.enum(['pending', 'awarded', 'ineligible']),
+    awardedXp: z.number().int().min(1).max(2147483647).nullable().optional(),
     supersedesOutcomeId: id.nullable(),
   })
   .strict();
@@ -136,6 +138,9 @@ export async function readPushResults(client, input) {
         o.proposalRevision > p.revision ||
         o.unit !== p.unit ||
         o.convention !== p.convention ||
+        (o.awardedXp !== undefined &&
+          o.awardedXp !== null &&
+          (o.rewardState !== 'awarded' || o.resolution !== 'achieved')) ||
         (['achieved', 'partial', 'base'].includes(o.resolution) &&
           (o.actual === null || o.completedAt === null)) ||
         (['not_attempted', 'unconfirmed'].includes(o.resolution) && o.actual !== null) ||
