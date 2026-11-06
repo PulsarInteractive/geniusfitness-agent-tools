@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Request a bounded, field-level workout sync comparison. Explain retained student adaptations and conservative legacy-copy handling; refuse unavailable or inconsistent reviews. Requires comparison version 1 on the service before client rollout.
+
 ## Unreleased goal provenance
 
 - Preserve the optional opaque profile-version reference in adjustment history; keep private answers and current-goal claims separate.

@@ -73,6 +73,47 @@ export const workoutCopyPreviewSchema = z
   })
   .strict()
   .refine((input) => input.sourceScope !== input.targetScope);
+const copyFields = z
+  .array(
+    z.enum([
+      'name',
+      'description',
+      'icon',
+      'estimatedMinutes',
+      'mode',
+      'capMinutes',
+      'targetSets',
+      'restSeconds',
+      'exercise',
+      'order',
+    ]),
+  )
+  .max(6)
+  .refine((fields) => new Set(fields).size === fields.length);
+const copyDifference = z
+  .object({
+    kind: z.enum(['workout', 'exercise', 'order']),
+    sourceId: z.string().min(1).max(128).nullable(),
+    targetId: z.string().min(1).max(128).nullable(),
+    title: z.string().max(160),
+    action: z.enum(['update', 'add', 'remove', 'keep', 'keep_removed', 'keep_deleted']),
+    updatedFields: copyFields,
+    retainedFields: copyFields,
+    conflictFields: copyFields,
+  })
+  .strict()
+  .refine(
+    (item) =>
+      !item.updatedFields.some((field) => item.retainedFields.includes(field)) &&
+      item.conflictFields.every((field) => item.retainedFields.includes(field)),
+  );
+const copyComparison = z
+  .object({
+    version: z.literal(1),
+    legacy: z.boolean(),
+    items: z.array(copyDifference).max(202),
+  })
+  .strict();
 const copyPreviewResult = z
   .object({
     sourceScope: z.string(),
@@ -89,11 +130,14 @@ const copyPreviewResult = z
     targetEpoch: z.string().min(1),
     changed: z.boolean(),
     exerciseCount: z.number().int().min(0).max(100),
+    comparison: copyComparison,
   })
   .strict();
 export async function readWorkoutCopyPreview(client, input) {
   const query = checked(workoutCopyPreviewSchema, input);
-  const result = copyPreviewResult.safeParse(await client.get('workout-copy-preview', query));
+  const result = copyPreviewResult.safeParse(
+    await client.get('workout-copy-preview', { ...query, comparisonVersion: '1' }),
+  );
   if (
     !result.success ||
     result.data.sourceScope !== query.sourceScope ||
@@ -106,7 +150,7 @@ export async function readWorkoutCopyPreview(client, input) {
   ) {
     fail(
       'invalid_response',
-      'The workout copy preview does not match the requested source and destination.',
+      'The workout comparison is unavailable or does not match the requested source and destination. Do not synchronize; request a fresh preview from a service supporting comparison version 1.',
     );
   }
   return result.data;

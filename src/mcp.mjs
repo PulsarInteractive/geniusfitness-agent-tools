@@ -153,7 +153,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_workout_copy_preview',
-    'Inspect a workout from the connected coach’s own catalogue before copying it into a student program, or compare an existing copy with its source. Requires Coach, source programs:read and personal exercises:read, target programs:write and coaching:write plus current student planning permission. Use the returned source fingerprint, target epoch/revision and optional target fingerprint with workout.copy or workout.sync. Never match sources by name. Sync replaces the prescription, including student customizations; obtain explicit confirmation before executing it. Recorded history and health data are preserved. No automatic synchronization.',
+    'Inspect a workout from the connected coach’s own catalogue before copying it into a student program, or compare an existing copy with its source. Requires Coach, source programs:read and personal exercises:read, target programs:write and coaching:write plus current student planning permission. Use the returned source fingerprint, target epoch/revision and optional target fingerprint with workout.copy or workout.sync. Never match sources by name. Read comparison.items: updatedFields will change; retainedFields and conflictFields keep the student’s values. Added, removed, locally deleted and retained exercises have explicit actions. Legacy copies preserve ambiguous choices. Explain this review and obtain explicit confirmation before syncing. If comparison is unavailable, do not synchronize. Recorded history and health data are preserved. No automatic synchronization.',
     workoutCopyPreviewSchema,
     (input) => readWorkoutCopyPreview(client, input),
   );

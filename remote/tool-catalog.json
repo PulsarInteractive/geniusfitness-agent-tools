@@ -151,7 +151,7 @@
   {
     "name": "fitness_workout_vitals",
     "title": "Workout heart rate and active calories",
-    "description": "Premium/Coach heart-rate summaries by minute and optional recorded active kcal for one session. Energy requires the athlete\u2019s separate calorie collection choice; preserve its observed interval, which may be partial. Never infer calories per set or combine overlapping sources. Requires health:read, metrics:read and explicit athlete connector sharing; another athlete also requires Coach, current program access and their named coach consent. Missing minutes are unmeasured, not zero. Match actual timestamps to sets; never infer continuous effort, recovery or diagnosis. For a student, their own Premium or Coach entitlement is required; the coach\u2019s paid plan does not upgrade the student.",
+    "description": "Premium/Coach heart-rate summaries by minute and optional recorded active kcal for one session. Energy requires the athlete’s separate calorie collection choice; preserve its observed interval, which may be partial. Never infer calories per set or combine overlapping sources. Requires health:read, metrics:read and explicit athlete connector sharing; another athlete also requires Coach, current program access and their named coach consent. Missing minutes are unmeasured, not zero. Match actual timestamps to sets; never infer continuous effort, recovery or diagnosis. For a student, their own Premium or Coach entitlement is required; the coach’s paid plan does not upgrade the student.",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -177,7 +177,7 @@
   {
     "name": "fitness_muscle_insights",
     "title": "Muscle training insights",
-    "description": "Premium/Coach muscle training evidence: weekly sets, explicit kg/lb normalized resistance volume, measurement coverage, durations and catalogue attribution. Incomplete load coverage is unavailable, never zero. Optional athleteId selects a currently shared athlete-owned program and requires Coach. Follow nextAfter with epoch/checkpoint and unchanged dates/athlete. Not measured growth, force or recovery; missing attribution stays unknown. For a student, their own Premium or Coach entitlement is required; the coach\u2019s paid plan does not upgrade the student.",
+    "description": "Premium/Coach muscle training evidence: weekly sets, explicit kg/lb normalized resistance volume, measurement coverage, durations and catalogue attribution. Incomplete load coverage is unavailable, never zero. Optional athleteId selects a currently shared athlete-owned program and requires Coach. Follow nextAfter with epoch/checkpoint and unchanged dates/athlete. Not measured growth, force or recovery; missing attribution stays unknown. For a student, their own Premium or Coach entitlement is required; the coach’s paid plan does not upgrade the student.",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -256,7 +256,7 @@
   {
     "name": "fitness_push_results",
     "title": "Recorded Push bonus results",
-    "description": "Read verified Push bonus results for one selected program and live session UUID. Requires metrics:read and current program access; another athlete requires Coach and current control of that athlete\u2019s program. Read-only: compare actual with base/offeredTarget using explicit units and loadMilliunits / 1000. Set includeRewardDetails true to request awardedXp: exact settled cosmetic bonus after caps; absent/null means unknown, never a nominal or promised award. Incomplete or unconfirmed is unknown, not failure or zero. Corrections supersede earlier outcome IDs. No permission to attempt a bonus, award XP or change a future prescription. No history enumeration or automatic retry loop.",
+    "description": "Read verified Push bonus results for one selected program and live session UUID. Requires metrics:read and current program access; another athlete requires Coach and current control of that athlete’s program. Read-only: compare actual with base/offeredTarget using explicit units and loadMilliunits / 1000. Set includeRewardDetails true to request awardedXp: exact settled cosmetic bonus after caps; absent/null means unknown, never a nominal or promised award. Incomplete or unconfirmed is unknown, not failure or zero. Corrections supersede earlier outcome IDs. No permission to attempt a bonus, award XP or change a future prescription. No history enumeration or automatic retry loop.",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -1512,7 +1512,7 @@
   {
     "name": "fitness_workout_copy_preview",
     "title": "Compare a coach workout and student copy",
-    "description": "Read a selected workout from the connected coach\u2019s own catalogue and compare an optional student copy. Requires current Coach, planning rights, source program/exercise reads and target program/coaching writes. Use returned fingerprints with workout.copy or workout.sync. Obtain confirmation before sync: student prescription customizations are replaced; history, planning and health records are preserved. Never match source by name or auto-sync.",
+    "description": "Read one workout from the connected coach’s own catalogue and compare an optional student copy. Requires current Coach, planning rights, source program/exercise reads and target program/coaching writes. Review comparison.items: updatedFields change, retainedFields and conflictFields keep student values; explicit actions describe added, removed and locally deleted exercises. Legacy copies preserve ambiguous choices. Explain this review and obtain confirmation before workout.sync with the returned fingerprints and target epoch/revision. If comparison is missing, do not sync. Planning, history and health records stay unchanged. Never match source by name or auto-sync.",
     "inputSchema": {
       "type": "object",
       "properties": {

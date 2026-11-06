@@ -119,3 +119,38 @@ No polling or alternate-account retry after access is denied.
 A confirmed choice requests evaluation; it does not guarantee a bonus. If the
 connected app has no athlete review controls, leave the proposal pending and
 explain that limitation instead of claiming activation.
+
+## Copy and update a prepared coach workout
+
+Use `fitness_workout_copy_preview` (CLI `workouts copy-preview`) for one exact
+source and student destination. The source must belong to the connected coach;
+never infer origin from a matching workout title. The preview needs current Coach
+access, source `programs:read` and personal `exercises:read`, destination
+`programs:write` and `coaching:write`, and current student planning permission.
+It reads only the selected prescription, not history or health records.
+
+The client requests comparison version 1. Review `comparison.items`:
+
+- `updatedFields` are fields that will change. `retainedFields` remain the
+  student's own choices. `conflictFields` are retained fields also changed by
+  the source; the student's value wins.
+- `add` creates a source exercise; `remove` removes an untouched copied exercise.
+  `keep_removed` preserves an adapted exercise removed from the catalogue.
+  `keep_deleted` respects an exercise removed by the student; it is not recreated.
+- `kind: order` describes the exercise sequence. A local reordering is preserved.
+- `legacy: true` means no reliable earlier baseline exists. Ambiguous existing
+  choices are retained. Do not promise that all source values will be applied.
+- Empty updates do not mean the records are identical: adaptations can be kept.
+  Missing or invalid comparison is unavailable, never an empty successful review.
+
+Explain changes and retained adaptations to the user before explicit sync
+confirmation. Use the returned fingerprints, target epoch and revision with
+`workout.sync`; first copies use `workout.copy` with a new destination UUID.
+Keep the exact prepared command for retries after an uncertain response. A stale
+source, destination or permission requires a fresh authorized preview and renewed
+confirmation. Do not substitute a generic edit to bypass this comparison.
+
+Synchronization is manual. It preserves independent student adaptations and
+existing schedules, recorded results and health measurements. Set targets are
+compared as one field, not guessed matches between individual sets. The bounded
+preview contains at most 202 decisions, with no account crawl or polling.

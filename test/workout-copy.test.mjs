@@ -16,6 +16,7 @@ const response = {
   targetEpoch: 'epoch',
   changed: true,
   exerciseCount: 2,
+  comparison: { version: 1, legacy: false, items: [] },
 };
 test('workout previews require an exact source/destination and immutable content fingerprints', async () => {
   assert.deepEqual(
@@ -23,7 +24,7 @@ test('workout previews require an exact source/destination and immutable content
       {
         get: async (name, input) => {
           assert.equal(name, 'workout-copy-preview');
-          assert.deepEqual(input, query);
+          assert.deepEqual(input, { ...query, comparisonVersion: '1' });
           return response;
         },
       },
@@ -65,6 +66,42 @@ test('workout previews require an exact source/destination and immutable content
     await readWorkoutCopyPreview({ get: async () => sync }, { ...query, targetTraining: 'copy' }),
     sync,
   );
+});
+test('comparison preserves field decisions and rejects missing, oversized or contradictory reviews', async () => {
+  const item = {
+    kind: 'exercise',
+    sourceId: 'source-slot',
+    targetId: 'copied-slot',
+    title: 'Squat',
+    action: 'update',
+    updatedFields: ['targetSets'],
+    retainedFields: ['restSeconds'],
+    conflictFields: ['restSeconds'],
+  };
+  const read = (comparison) =>
+    readWorkoutCopyPreview({ get: async () => ({ ...response, comparison }) }, query);
+  for (const legacy of [false, true]) {
+    const comparison = { version: 1, legacy, items: [item] };
+    assert.deepEqual((await read(comparison)).comparison, comparison);
+  }
+  for (const comparison of [
+    undefined,
+    { version: 2, legacy: false, items: [] },
+    { version: 1, legacy: false, items: Array(203).fill(item) },
+    ...[
+      { kind: 'unknown' },
+      { action: 'overwrite' },
+      { updatedFields: ['health'] },
+      { title: 'x'.repeat(161) },
+      { retainedFields: ['restSeconds', 'restSeconds'] },
+      { updatedFields: ['restSeconds'] },
+      { conflictFields: ['exercise'] },
+      { sourceId: '' },
+      { privateHealth: 123 },
+    ].map((patch) => ({ version: 1, legacy: false, items: [{ ...item, ...patch }] })),
+  ]) {
+    await assert.rejects(read(comparison), { code: 'invalid_response' });
+  }
 });
 test('copy and sync expose only source and confirmation fields, never forged origin or private content', () => {
   const create = commandHelp('workout.copy'),
