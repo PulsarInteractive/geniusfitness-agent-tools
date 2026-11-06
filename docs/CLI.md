@@ -17,7 +17,7 @@ for protocol messages.
 | `muscles insights`                     | Premium/Coach bounded per-exercise muscle evidence               |
 | `workouts vitals`                      | Consented Premium/Coach minute heart-rate observations           |
 | `changes list`, `changes watch`        | Bounded incremental follow-up                                    |
-| `commands describe`                    | Local command catalogue and envelope schemas                     |
+| `commands describe [--kind KIND]`      | Targeted command schema, or full catalogue when omitted          |
 | `commands prepare`                     | Persist a draft with one immutable operation ID                  |
 | `commands execute`                     | Send a complete journaled operation once                         |
 | `commands retry`                       | Replay the exact saved operation                                 |

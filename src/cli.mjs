@@ -3,6 +3,7 @@ import { workflow } from './workflows.mjs';
 import { readPushResults } from './push-results.mjs';
 import { readPushAdjustments } from './push-adjustments.mjs';
 import {
+  commandHelp,
   readWorkoutCopyPreview,
   readWorkoutVitals,
   readCatalog,
@@ -119,8 +120,8 @@ export const commands = {
     options: ['scope', 'collection', 'cursor', 'wait-seconds'],
   },
   'commands describe': {
-    summary: 'Show contract-derived command fields and JSON schemas; no network.',
-    options: [],
+    summary: 'Inspect one command with --kind, or the full catalogue when omitted; no network.',
+    options: ['kind'],
   },
   'commands prepare': {
     summary: 'Save an immutable operation from a JSON draft without sending it.',
@@ -328,7 +329,7 @@ export async function main(
     } else if (command === 'workflow show') {
       data = workflow({ topic: options.topic });
     } else if (command === 'commands describe') {
-      data = describeCommands();
+      data = options.kind ? commandHelp(options.kind) : describeCommands();
     } else if (command === 'commands prepare') {
       data = await new CommandJournal(client).prepare(await readCommandFile(options.file));
     } else if (command === 'commands execute') {

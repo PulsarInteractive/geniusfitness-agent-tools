@@ -152,6 +152,13 @@ geniusfitness commands help --kind run.route.update --json
 
 ## Running prescriptions and interval results
 
+Use `fitness_command_help` for the exact kind, or CLI
+`commands describe --kind workout.update --json` / `--kind run.update`.
+`encodedRun` provides the public JSON schemas, limits and synthetic examples.
+Stage order defines identity; never add IDs or turn skipped/unreported stages
+into reached stages. Partial edits keep omitted data; the server checks them
+against the stored plan and totals. Local validation is not server acceptance.
+
 Use `workouts` to read a bounded page or an exact workout, then
 `workout.create` / `workout.update` with `icon: "gps:run"` and `runPlan`
 (a JSON **string**, not an object). Call command help first. The v1 format is:

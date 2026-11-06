@@ -1,3 +1,4 @@
+import { invalidRunPayload } from './run-payloads.mjs';
 import { coachPushProposalSchema, coachPushWithdrawalSchema } from './coach-push.mjs';
 import { retryAt, requireRetryReady } from './recovery.mjs';
 import { randomUUID } from 'node:crypto';
@@ -86,6 +87,16 @@ export function validateCommand(value) {
         'Use an exact proposal UUID and declared occurrence fields. Only the athlete can confirm; numerical targets are never command fields.',
       );
     }
+  }
+  const invalidRun = invalidRunPayload(definition.module, command.data, {
+    create: definition.create === true,
+  });
+  if (invalidRun) {
+    fail(
+      'invalid_arguments',
+      `${invalidRun} must use command help encodedRun; preserve missing history and supplied stage order.`,
+      { property: invalidRun },
+    );
   }
   const prefix = definition.module.startsWith('LocalUser/') ? 'personal:' : 'project:';
   const invalidPayload = invalidSetPayload(definition.module, command.data);

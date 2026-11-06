@@ -5,6 +5,16 @@ Start with `geniusfitness workflow show --topic running --json` or MCP
 records and applying commands still uses the account's normal permissions and quota.
 Use bounded pages and exact records rather than a broad multi-program search.
 
+Use `geniusfitness commands describe --kind workout.update --json` for a future
+workout or `--kind run.update` for an explicitly requested result correction.
+MCP uses `fitness_command_help` with the same kind. Its `encodedRun` contains the
+exact decoded JSON schemas, aggregate bounds and clearly synthetic examples.
+Supply the payload as a JSON **string**. Stage order defines identity; do not add
+stage IDs. Missing fields remain untouched; supplied arrays replace the whole
+payload. Local preparation checks only supplied fields, and the server validates
+the resulting record using the retained plan, icon and totals. This requires the
+matching updated tools/server; it does not imply deployment from a Git commit.
+
 A workout may carry a versioned `runPlan`. A completed recording retains its plan
 and reported `planProgress`: reached, skipped and unreported stages differ. A
 later workout edit does not rewrite that recording. Read command help for the
@@ -60,7 +70,7 @@ Weight management never turns run calories into a promised weight-loss result.
 Resistance goals do not automatically require a harder run.
 
 No automatic running escalation is currently approved. For an explicitly requested
-manual edit, use `geniusfitness commands describe workout.update --json`, then the
+manual edit, use `geniusfitness commands describe --kind workout.update --json`, then the
 ordinary prepare/review/execute flow. Retain the current revision and unchanged
 retry body. A changed workout applies to future starts; it cannot alter a plan
 already copied into an active recording. Do not add frequency changes or XP as

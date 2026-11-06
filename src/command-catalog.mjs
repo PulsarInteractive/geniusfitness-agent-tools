@@ -2011,6 +2011,40 @@ export default {
       "required": []
     }
   },
+  "runPayloads": {
+    "maxCharacters": 16000,
+    "maxStages": 64,
+    "plan": {
+      "goals": [
+        "easy",
+        "endurance",
+        "intervals"
+      ],
+      "kinds": [
+        "warmup",
+        "easy",
+        "work",
+        "recovery",
+        "cooldown"
+      ],
+      "maxMeters": 1000000,
+      "maxSeconds": 86400,
+      "units": [
+        "seconds",
+        "meters"
+      ]
+    },
+    "progress": {
+      "outcomes": [
+        "reached",
+        "skipped"
+      ],
+      "stageTolerance": 0.001,
+      "totalTolerance": 1
+    },
+    "trainingIcon": "gps:run",
+    "version": 1
+  },
   "changes": {
     "pollIntervalSeconds": 5,
     "maxWatchSeconds": 60

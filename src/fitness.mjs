@@ -1,3 +1,4 @@
+import { runPayloadSpec } from './run-payloads.mjs';
 import * as z from 'zod/v4';
 import catalog from './command-catalog.mjs';
 import { fail } from './errors.mjs';
@@ -710,6 +711,9 @@ export function commandHelp(kind) {
     requiredTier: definition.requiredTier ?? null,
     revisionScope: definition.revisionScope ?? 'resource',
     resourceChecksRequired: true,
+    ...(definition.fields.includes('runPlan') && !definition.delete
+      ? { encodedRun: runPayloadSpec(definition.module) }
+      : {}),
     dataSchema: { type: 'object', properties, required, additionalProperties: false },
     ...(setPayloadSpec(definition.module) && !definition.delete
       ? { encodedSets: setPayloadSpec(definition.module) }
