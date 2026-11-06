@@ -4,6 +4,7 @@
 | -------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------- |
 | Find a movement or create a custom one | `catalogue`  | Search catalogue; reuse/import an exercise; create, update or delete a custom exercise; maintain workout slots and instructions |
 | Plan training                          | `planning`   | Create/update/delete programs, workout templates, individual planning entries, recurring schedules and goals                    |
+| Plan or review a run                   | `running`    | Plans, interval outcomes, optional athlete-reported effort, comparisons and separate GPS permissions                            |
 | Review recent performances             | `progress`   | Daily totals and targeted session analysis with per-set timing, rest and measurement coverage                                   |
 | Read or record measurements            | `progress`   | Your stored personal health records, with separate consent                                                                      |
 | Work with a student                    | `coaching`   | Shared program workouts, planning and results, with Coach, coaching permission and current membership                           |
@@ -12,6 +13,7 @@
 
 Use `fitness_workflow` in MCP or `geniusfitness workflow show --topic TOPIC`.
 Use command help for current field types rather than copying guessed payloads.
+For runs, see [Running plans and context](RUNNING.md).
 For timing and measurement coverage, see [Understand a training session](PROGRESS.md).
 
 ## Example requests

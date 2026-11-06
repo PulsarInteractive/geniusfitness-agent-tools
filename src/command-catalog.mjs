@@ -266,6 +266,8 @@ export default {
     "run.create": {
       "create": true,
       "fields": [
+        "perceivedEffort",
+        "terrain",
         "runPlan",
         "planProgress",
         "startedAt",
@@ -301,6 +303,8 @@ export default {
     },
     "run.update": {
       "fields": [
+        "perceivedEffort",
+        "terrain",
         "runPlan",
         "planProgress",
         "startedAt",
@@ -625,6 +629,8 @@ export default {
     },
     "runs": {
       "fields": [
+        "perceivedEffort",
+        "terrain",
         "runPlan",
         "planProgress",
         "startedAt",
@@ -1290,6 +1296,36 @@ export default {
       }
     },
     "Project/SportRunLog": {
+      "perceivedEffort": {
+        "anyOf": [
+          {
+            "format": "int32",
+            "maximum": 10,
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "terrain": {
+        "anyOf": [
+          {
+            "enum": [
+              "Road",
+              "Trail",
+              "Track",
+              "Treadmill",
+              "Mixed"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "runPlan": {
         "anyOf": [
           {
