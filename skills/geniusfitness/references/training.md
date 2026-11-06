@@ -87,6 +87,28 @@ Use `metrics summary` for bounded daily totals. Use detailed `sessions` or `runs
 only when the task requires them. Personal health logs are independent and need
 `health:read` or `health:write` consent; a shared program does not expose them.
 
+## Run transfers, imports and corrections
+
+A recording ID is distinct from an operation ID. Keep one canonical run ID for
+one source recording in its selected program; retries also retain the original
+operation ID and complete command. Phone and Watch recordings now preserve a
+UUID across recovery and transfer. Reuse that verified ID when transferring the
+same GeniusFitness recording. For another authorized source, the importer must
+retain its stable source-to-record mapping; do not assign a new ID on each retry.
+
+Read a known ID before correcting it. Use `run.update` with the current revision
+for actual corrections, then read back the run and affected planning. A create
+conflict can represent an already imported or deleted recording. Never evade it
+with a new ID or overwrite the current record with an old source payload. Missing
+access does not establish absence. Timestamp, distance and route similarity alone
+do not establish identity: keep unlinked activities separate and do not merge or
+delete old records without the user's explicit choice.
+
+The native Health observation reader is not a general GPX or Health workout
+importer. Do not promise unsupported formats. GPS and personal-health permissions
+remain separate from ordinary metric writes. Do not infer XP from distance or
+create another completed activity to obtain a reward.
+
 ## Incremental follow-up
 
 After a full collection read, retain its final `changeCursor`. Follow changes
