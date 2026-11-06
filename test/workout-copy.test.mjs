@@ -115,3 +115,36 @@ test('copy and sync expose only source and confirmation fields, never forged ori
   ]);
   assert.equal(create.create, true);
 });
+
+test('running targets participate in the complete seven-field workout comparison', async () => {
+  const fields = [
+    'name',
+    'description',
+    'icon',
+    'estimatedMinutes',
+    'mode',
+    'capMinutes',
+    'runPlan',
+  ];
+  const comparison = {
+    version: 1,
+    legacy: false,
+    items: [
+      {
+        kind: 'workout',
+        sourceId: 'source',
+        targetId: 'target',
+        title: 'Intervals',
+        action: 'update',
+        updatedFields: fields,
+        retainedFields: [],
+        conflictFields: [],
+      },
+    ],
+  };
+  const value = await readWorkoutCopyPreview(
+    { get: async () => ({ ...response, comparison }) },
+    query,
+  );
+  assert.deepEqual(value.comparison.items[0].updatedFields, fields);
+});

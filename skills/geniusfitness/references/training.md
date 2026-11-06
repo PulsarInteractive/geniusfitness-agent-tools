@@ -127,3 +127,50 @@ Example read after the owner has explicitly granted access:
 geniusfitness resources list --scope project:ID --collection runRoutes --id RUN_ID --json
 geniusfitness commands help --kind run.route.update --json
 ```
+
+## Running prescriptions and interval results
+
+Use `workouts` to read a bounded page or an exact workout, then
+`workout.create` / `workout.update` with `icon: "gps:run"` and `runPlan`
+(a JSON **string**, not an object). Call command help first. The v1 format is:
+
+```json
+{
+  "v": 1,
+  "goal": "intervals",
+  "stages": [
+    { "kind": "warmup", "unit": "seconds", "target": 300 },
+    { "kind": "work", "unit": "meters", "target": 400 },
+    { "kind": "recovery", "unit": "seconds", "target": 60 },
+    { "kind": "cooldown", "unit": "seconds", "target": 300 }
+  ]
+}
+```
+
+This is a structural example, not a recommended intensity. Confirm the person's
+intended duration/distance and adapt to their own history. There is no universal
+pace target or inferred medical readiness. `goal` is `easy`, `endurance` or
+`intervals`; stage `kind` is `warmup`, `easy`, `work`, `recovery` or `cooldown`;
+`unit` is `seconds` or `meters`. Targets must be positive integers. Maximum
+64 stages, total 86,400 seconds and 1,000,000 meters; encoded size 16,000
+characters. Set `runPlan: null` explicitly to return to a free run. Omitting the
+field preserves it. This session focus does not change the account's goals.
+
+Plan an occurrence using the returned workout identity in the ordinary planning
+command. Creating a workout does not itself schedule or start GPS. Starting on
+the phone copies the prescription into the recording. Later catalogue changes
+affect future starts only. Existing revision, idempotency, program permissions,
+coach entitlement and named-athlete authorization apply unchanged.
+
+In `runs`, `runPlan` is the original snapshot and `planProgress` is a JSON string:
+`{"v":1,"stages":[{"outcome":"reached","distanceMeters":900,"movingSeconds":300}]}`.
+Results are an ordered prefix of the plan. Measurements at each transition are
+cumulative, based on accepted GPS moving time/distance. `skipped` is not
+`reached`; absent trailing results mean unfinished steps, not success. Manual
+pauses, GPS gaps and unknown crash time do not advance intervals. Do not invent
+results from scheduled targets. The user may keep recording after the final
+target, skip a step or finish early. Exact route access still requires the
+separate location permission; reading these targets grants no GPS access.
+
+Coach/CLI/MCP should use normal bounded workout and run reads, followed by exact
+commands. Never crawl the complete history or perform an unmetered nested search.

@@ -82,13 +82,14 @@ const copyFields = z
       'estimatedMinutes',
       'mode',
       'capMinutes',
+      'runPlan',
       'targetSets',
       'restSeconds',
       'exercise',
       'order',
     ]),
   )
-  .max(6)
+  .max(7)
   .refine((fields) => new Set(fields).size === fields.length);
 const copyDifference = z
   .object({

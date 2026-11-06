@@ -266,6 +266,8 @@ export default {
     "run.create": {
       "create": true,
       "fields": [
+        "runPlan",
+        "planProgress",
         "startedAt",
         "endedAt",
         "durationSeconds",
@@ -299,6 +301,8 @@ export default {
     },
     "run.update": {
       "fields": [
+        "runPlan",
+        "planProgress",
         "startedAt",
         "endedAt",
         "durationSeconds",
@@ -427,7 +431,8 @@ export default {
         "icon",
         "estimatedMinutes",
         "mode",
-        "capMinutes"
+        "capMinutes",
+        "runPlan"
       ],
       "module": "Project/SportTraining",
       "permission": "programs:write"
@@ -491,7 +496,8 @@ export default {
         "icon",
         "estimatedMinutes",
         "mode",
-        "capMinutes"
+        "capMinutes",
+        "runPlan"
       ],
       "module": "Project/SportTraining",
       "permission": "programs:write"
@@ -619,6 +625,8 @@ export default {
     },
     "runs": {
       "fields": [
+        "runPlan",
+        "planProgress",
         "startedAt",
         "endedAt",
         "durationSeconds",
@@ -699,6 +707,7 @@ export default {
         "estimatedMinutes",
         "mode",
         "capMinutes",
+        "runPlan",
         "copyOrigin",
         "creator",
         "created",
@@ -1281,6 +1290,30 @@ export default {
       }
     },
     "Project/SportRunLog": {
+      "runPlan": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "planProgress": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "startedAt": {
         "anyOf": [
           {
@@ -1722,6 +1755,18 @@ export default {
         "default": 0,
         "format": "int32",
         "type": "integer"
+      },
+      "runPlan": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000
+          },
+          {
+            "type": "null"
+          }
+        ]
       },
       "targetFingerprint": {
         "pattern": "^[a-f0-9]{64}$",
