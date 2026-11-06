@@ -42,3 +42,26 @@ need separate explicit `location:read` / `location:write` grants and are owner-o
 Personal health and athlete-to-coach wearable sharing remain separate. Ordinary
 `run.create` / `run.update` reject route fields; use `run.route.update` for an
 authorized route change and preserve segment breaks.
+
+## Reviewing the next session
+
+Read the exact workout and current revision before proposing a change. Show its
+saved stages, the requested change and the relevant observed runs. A single long
+session and a gap in running matter independently of weekly totals. A percentage
+difference describes the chosen records; it is not a safe allowance. Timed stages
+have no inferred distance, and a mixed duration/distance plan has no invented
+whole-run distance or pace.
+
+Use the athlete's explicitly stated goal and current context. If those answers
+are not available through the granted records, ask instead of treating a program
+name as the athlete's personal goal. Endurance emphasizes recorded distance and
+duration; consistency and general activity emphasize regular participation.
+Weight management never turns run calories into a promised weight-loss result.
+Resistance goals do not automatically require a harder run.
+
+No automatic running escalation is currently approved. For an explicitly requested
+manual edit, use `geniusfitness commands describe workout.update --json`, then the
+ordinary prepare/review/execute flow. Retain the current revision and unchanged
+retry body. A changed workout applies to future starts; it cannot alter a plan
+already copied into an active recording. Do not add frequency changes or XP as
+unrequested side effects. A revision conflict requires a fresh read and review.
