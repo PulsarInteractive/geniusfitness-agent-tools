@@ -52,7 +52,9 @@ test('a fully granted profile accepts the current coaching permission without a 
   };
   const result = await profiles.create(input);
   assert.ok(result.grant.permissions.includes('coaching:write'));
-  assert.equal(result.grant.permissions.length, 11);
+  assert.deepEqual(result.grant.permissions, catalog.grants.permissions);
+  assert.ok(result.grant.permissions.includes('location:read'));
+  assert.ok(result.grant.permissions.includes('location:write'));
   for (const permissions of [
     [...input.grant.permissions, 'unknown:write'],
     ['planning:read', 'planning:read'],

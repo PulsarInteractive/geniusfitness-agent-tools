@@ -74,3 +74,31 @@ test('every command can request its exact permission without unrelated write gra
     }
   }
 });
+
+test('precise route tools require location consent and ordinary run commands exclude geometry', async () => {
+  const { default: catalog } = await import('../src/command-catalog.mjs');
+  assert.ok(!catalog.grants.defaultPermissions.some((p) => p.startsWith('location:')));
+  assert.equal(catalog.collections.runRoutes.permission, 'location:read');
+  assert.equal(catalog.collections.runRoutes.creatorOnly, true);
+  assert.equal(catalog.commands['run.route.update'].permission, 'location:write');
+  assert.equal(catalog.commands['run.route.update'].creatorOnly, true);
+  for (const kind of ['run.create', 'run.update']) {
+    for (const field of ['polyline', 'routeSegments']) {
+      assert.ok(!catalog.commands[kind].fields.includes(field));
+    }
+  }
+  for (const field of ['polyline', 'routeSegments']) {
+    assert.ok(!catalog.collections.runs.fields.includes(field));
+  }
+  assert.deepEqual(tools.find((t) => t.name === 'fitness_read_locations').scopes, [
+    'location:read',
+  ]);
+  assert.deepEqual(tools.find((t) => t.name === 'fitness_edit_locations').scopes, [
+    'location:write',
+  ]);
+  assert.ok(
+    !tools
+      .find((t) => t.name === 'fitness_coach_metrics')
+      .inputSchema.properties.kind.enum.includes('run.route.update'),
+  );
+});

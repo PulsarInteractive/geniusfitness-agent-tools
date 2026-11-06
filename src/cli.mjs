@@ -204,7 +204,7 @@ export function help(command = 'help') {
       flow: 'browser (default, PKCE loopback) | device (SSH/headless)',
       browser: 'default (automatic) | chrome; --no-browser prints the link without opening it',
       scope:
-        'space-separated permission ceiling; official login proposes all requested permissions for review before approval',
+        'space-separated permission ceiling; precise GPS requires explicitly requested location:read/location:write and a checked consent choice',
       interactive:
         'required when starting login without a terminal; never use to bypass human consent',
     },
@@ -294,7 +294,7 @@ export async function main(
         }
       };
       data = await (options.flow === 'device' ? deviceLogin : browserLogin)(client, {
-        scope: options.scope ?? catalog.grants.permissions.join(' '),
+        scope: options.scope ?? catalog.grants.defaultPermissions.join(' '),
         openBrowser: options['no-browser']
           ? undefined
           : async (url) => {

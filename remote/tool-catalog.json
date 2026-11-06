@@ -70,7 +70,8 @@
             "schedules",
             "sessions",
             "workoutExercises",
-            "workouts"
+            "workouts",
+            "runRoutes"
           ]
         },
         "id": {
@@ -417,6 +418,7 @@
             "run.create",
             "run.delete",
             "run.update",
+            "run.route.update",
             "schedule.create",
             "schedule.delete",
             "schedule.update",
@@ -473,6 +475,7 @@
             "run.create",
             "run.delete",
             "run.update",
+            "run.route.update",
             "schedule.create",
             "schedule.delete",
             "schedule.update",
@@ -569,6 +572,7 @@
             "run.create",
             "run.delete",
             "run.update",
+            "run.route.update",
             "schedule.create",
             "schedule.delete",
             "schedule.update",
@@ -1538,5 +1542,120 @@
     },
     "scopes": ["programs:read", "programs:write", "exercises:read", "coaching:write"],
     "route": "workout-copy-preview"
+  },
+  {
+    "name": "fitness_read_locations",
+    "title": "Read your precise run routes",
+    "description": "Read one bounded page or exact run route recorded by the connected account. Requires explicit location:read consent, never included by default. A coach grant cannot authorize another athlete’s GPS route. Ordinary run statistics contain no precise route. Respect revisions and cursor bounds.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "collection": {
+          "type": "string",
+          "enum": ["runRoutes"]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "after": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "checkpoint": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "archive": {
+          "type": "string",
+          "enum": ["active", "archived", "all"]
+        }
+      },
+      "required": ["scope", "collection"],
+      "additionalProperties": false
+    },
+    "scopes": ["location:read"],
+    "route": "resources"
+  },
+  {
+    "name": "fitness_edit_locations",
+    "title": "Apply an approved route change",
+    "description": "Update or clear only the connected account’s own run route after explicit location:write consent and user approval. Prepare run.route.update with the current revision. Send only polyline/routeSegments; preserve the immutable operation for retries. Coach access does not grant permission to edit an athlete’s GPS route.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+        },
+        "issuedAt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["run.route.update"]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "expectedRevision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "maxProperties": 40
+        }
+      },
+      "required": [
+        "operationId",
+        "issuedAt",
+        "kind",
+        "scope",
+        "id",
+        "epoch",
+        "expectedRevision",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "scopes": ["location:write"],
+    "route": "commands",
+    "write": true,
+    "destructive": true
   }
 ]

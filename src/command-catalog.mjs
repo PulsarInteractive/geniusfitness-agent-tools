@@ -275,8 +275,6 @@ export default {
         "elevationGainMeters",
         "elevationCoverage",
         "splits",
-        "polyline",
-        "routeSegments",
         "source",
         "notes",
         "task"
@@ -290,6 +288,15 @@ export default {
       "module": "Project/SportRunLog",
       "permission": "metrics:write"
     },
+    "run.route.update": {
+      "creatorOnly": true,
+      "fields": [
+        "polyline",
+        "routeSegments"
+      ],
+      "module": "Project/SportRunLog",
+      "permission": "location:write"
+    },
     "run.update": {
       "fields": [
         "startedAt",
@@ -301,8 +308,6 @@ export default {
         "elevationGainMeters",
         "elevationCoverage",
         "splits",
-        "polyline",
-        "routeSegments",
         "source",
         "notes",
         "task"
@@ -602,6 +607,16 @@ export default {
       "module": "Project/$",
       "permission": "programs:read"
     },
+    "runRoutes": {
+      "creatorOnly": true,
+      "fields": [
+        "polyline",
+        "routeSegments",
+        "creator"
+      ],
+      "module": "Project/SportRunLog",
+      "permission": "location:read"
+    },
     "runs": {
       "fields": [
         "startedAt",
@@ -613,8 +628,6 @@ export default {
         "elevationGainMeters",
         "elevationCoverage",
         "splits",
-        "polyline",
-        "routeSegments",
         "source",
         "notes",
         "task",
@@ -1359,34 +1372,6 @@ export default {
         ],
         "default": ""
       },
-      "polyline": {
-        "anyOf": [
-          {
-            "default": "",
-            "type": "string",
-            "minLength": 0,
-            "maxLength": 16000
-          },
-          {
-            "type": "null"
-          }
-        ],
-        "default": ""
-      },
-      "routeSegments": {
-        "anyOf": [
-          {
-            "default": "",
-            "type": "string",
-            "minLength": 0,
-            "maxLength": 16000
-          },
-          {
-            "type": "null"
-          }
-        ],
-        "default": ""
-      },
       "source": {
         "anyOf": [
           {
@@ -1426,6 +1411,34 @@ export default {
             "type": "null"
           }
         ]
+      },
+      "polyline": {
+        "anyOf": [
+          {
+            "default": "",
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": ""
+      },
+      "routeSegments": {
+        "anyOf": [
+          {
+            "default": "",
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 16000
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": ""
       }
     },
     "Project/ProjectScheduledTask": {
@@ -1913,6 +1926,21 @@ export default {
   },
   "grants": {
     "permissions": [
+      "location:read",
+      "location:write",
+      "programs:read",
+      "programs:write",
+      "exercises:read",
+      "exercises:write",
+      "planning:read",
+      "planning:write",
+      "metrics:read",
+      "metrics:write",
+      "health:read",
+      "health:write",
+      "coaching:write"
+    ],
+    "defaultPermissions": [
       "programs:read",
       "programs:write",
       "exercises:read",
