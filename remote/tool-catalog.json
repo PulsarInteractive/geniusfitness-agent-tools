@@ -15,7 +15,7 @@
   {
     "name": "fitness_capabilities",
     "title": "Available actions",
-    "description": "Discover the current permitted collections and commands. Do not assume paid or coach access.",
+    "description": "Read current connection/profile permissions and subscription eligibility. Commands list the account ceiling, not permission on a specific athlete. Collections describe schemas; check their permission against permissions. Target membership, coach control, consent, activation and revisions are rechecked at execution. Static command help is not authorization.",
     "inputSchema": {
       "type": "object",
       "properties": {},

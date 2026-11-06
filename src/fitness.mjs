@@ -706,6 +706,10 @@ export function commandHelp(kind) {
   return {
     kind,
     ...definition,
+    requiredPermissions: [definition.permission, ...(definition.additionalPermissions ?? [])],
+    requiredTier: definition.requiredTier ?? null,
+    revisionScope: definition.revisionScope ?? 'resource',
+    resourceChecksRequired: true,
     dataSchema: { type: 'object', properties, required, additionalProperties: false },
     ...(setPayloadSpec(definition.module) && !definition.delete
       ? { encodedSets: setPayloadSpec(definition.module) }

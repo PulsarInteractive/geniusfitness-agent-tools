@@ -135,7 +135,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_capabilities',
-    'Discover available collections, fields, permission ceiling and write availability before choosing a workflow.',
+    'Read current connection/profile permissions and subscription eligibility. Commands list the account ceiling, not permission on a specific athlete. Collections describe schemas; check their permission against permissions. Target membership, coach control, consent, activation and revisions are rechecked at execution. Static command help is not authorization.',
     z.object({}).strict(),
     async () => agentPresentation(await client.get('capabilities')),
   );

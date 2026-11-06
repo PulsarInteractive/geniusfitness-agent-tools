@@ -3,6 +3,9 @@ export default {
   "maxCommandBytes": 131072,
   "commands": {
     "coach.push.propose": {
+      "additionalPermissions": [
+        "coaching:write"
+      ],
       "fields": [
         "athleteId",
         "trainingId",
@@ -22,9 +25,14 @@ export default {
         "setIndex",
         "rationale"
       ],
-      "revisionMode": "occurrence"
+      "requiredTier": "Pro",
+      "revisionMode": "occurrence",
+      "revisionScope": "occurrence"
     },
     "coach.push.withdraw": {
+      "additionalPermissions": [
+        "coaching:write"
+      ],
       "fields": [
         "athleteId",
         "trainingId",
@@ -37,7 +45,9 @@ export default {
         "athleteId",
         "trainingId",
         "occurrenceId"
-      ]
+      ],
+      "requiredTier": "Pro",
+      "revisionScope": "occurrence"
     },
     "exercise.create": {
       "create": true,

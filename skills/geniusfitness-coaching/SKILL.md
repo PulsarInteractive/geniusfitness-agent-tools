@@ -10,6 +10,16 @@ program. Resolve ambiguity before changing a different person’s training.
 `coaching:write` is an additional gate: it never replaces program membership or
 ordinary edit permissions. A paid subscription alone is not an athlete’s consent.
 
+Capabilities describe the current connection/profile and account ceiling; they do
+not confirm access to a particular student. Both `coach.push.propose` and
+`coach.push.withdraw` require `planning:write`, `coaching:write` and Coach
+(`requiredTier: Pro`). Their `revisionScope: occurrence` uses the revision from
+`fitness_coach_push`, never the program checkpoint. Static command help describes
+syntax even when the operation is unavailable. Missing optional capability fields
+on an older server do not establish permission. Each request still checks the
+student, membership, control, consent and feature activation. A subscription or
+grant change requires a fresh capability read when needed, not repeated polling.
+
 Read the relevant workout, exercise slots and planning entries. Prefer the
 canonical exercise catalogue. Use `fitness_command_help` before unfamiliar writes.
 Prepare and retain each operation; retry the same operation after an uncertain

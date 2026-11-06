@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Publish command permission, subscription and revision requirements consistently in CLI and MCP help. Explain current capabilities separately from per-athlete authorization; older servers never imply Coach access. Requires the matching server capability fields for dynamic filtering.
+
 - Request a bounded, field-level workout sync comparison. Explain retained student adaptations and conservative legacy-copy handling; refuse unavailable or inconsistent reviews. Requires comparison version 1 on the service before client rollout.
 
 ## Unreleased goal provenance
