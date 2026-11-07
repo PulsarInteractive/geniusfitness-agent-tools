@@ -10,8 +10,11 @@ The connector can read a specific recorded session through
 geniusfitness sessions analyze --scope project:PROGRAM_ID --id SESSION_ID --json
 ```
 
-Find real session IDs in the program's `sessions` collection. Exercise IDs refer
-to your exercise library; reuse the catalogue identity when comparing movements.
+Find real session IDs in the program's `sessions` collection. Recorded exercise
+IDs refer to existing exercise resources or copied workout slot `element` IDs.
+Do not substitute a name or catalogue key when writing results. Compare different
+IDs only with an authorized, explicit identity mapping. Unknown references can
+leave measured totals unavailable while preserving the recorded rows.
 
 | Information               | Meaning                                                                                       |
 | ------------------------- | --------------------------------------------------------------------------------------------- |

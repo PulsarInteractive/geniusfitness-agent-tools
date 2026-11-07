@@ -83,6 +83,20 @@ transaction. Editing a result does not change historical completion. Deleting th
 matching finished result can reopen its linked plan under ordinary task rights;
 read back the affected planning as well as the result.
 
+Each `performedSets` row uses an exact `ex` reference: an existing exercise
+resource ID or the `element` ID of a copied workout slot. Read the applicable
+resource first; do not substitute its name, catalogue key or a local-only alias.
+Keep the recorded IDs and untouched rows when correcting a session. Own-library
+verification needs `exercises:read`; copied slots need `programs:read`. These
+read permissions are separate from `metrics:write`. A coach's personal exercise
+does not verify a different athlete's recorded reference.
+
+The service preserves unknown references but leaves identity-dependent totals
+unavailable; this is not zero activity. A valid earlier recorded identity can
+remain usable after an exercise is removed. Notes-only edits preserve existing
+provenance. Never supply identity metadata yourself or rewrite historical IDs
+by guessing. These guarantees require the matching service rollout.
+
 Use `metrics summary` for bounded daily totals. Use detailed `sessions` or `runs`
 only when the task requires them. Personal health logs are independent and need
 `health:read` or `health:write` consent; a shared program does not expose them.

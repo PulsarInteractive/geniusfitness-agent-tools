@@ -22,8 +22,23 @@ test('set help exposes the actual encoded schema and partial update semantics', 
   assert.deepEqual(help.encodedSets.fields.t.values, ['n', 'w', 'f', 'd']);
   assert.equal(help.encodedSets.fields.r.kind, 'integer');
   assert.equal(commandHelp('session.update').encodedSets.property, 'performedSets');
+  assert.match(commandHelp('session.update').encodedSets.exerciseReference, /exact element id/);
+  assert.match(commandHelp('session.update').encodedSets.recordedIdentity, /exercises:read/);
   assert.equal(commandHelp('workout.delete').encodedSets, undefined);
   assert.match(help.workflow, /omission preserves/);
+});
+test('recorded-set identity is service metadata, never a client-supplied attestation', () => {
+  assert.throws(
+    () =>
+      validateCommand({
+        ...command({
+          performedSets: '[{"ex":"exercise-id","i":1}]',
+          setIdentity: 'v1:' + 'a'.repeat(64),
+        }),
+        kind: 'session.update',
+      }),
+    { code: 'invalid_arguments' },
+  );
 });
 test('CLI and MCP command validation rejects invalid JSON facts before transmission', () => {
   for (const targetSets of [

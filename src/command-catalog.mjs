@@ -1863,6 +1863,7 @@ export default {
   },
   "setPayloads": {
     "performed": {
+      "exerciseReference": "ex is an existing exercise resource id, or the exact element id of a copied workout slot. Never use a name, catalogue key or local-only alias as a substitute. Preserve existing recorded ids when editing a session.",
       "fields": {
         "at": {
           "kind": "integer",
@@ -1963,6 +1964,7 @@ export default {
       ],
       "maxCharacters": 16000,
       "maxRows": 1000,
+      "recordedIdentity": "The server confirms known exercise references for new or explicitly edited performedSets. Own exercise lookup requires exercises:read; named-coach writes never read the coach's private exercises for another athlete. Unresolved references preserve the session but leave measured totals unavailable. Notes-only edits preserve stored provenance.",
       "required": [
         "ex",
         "i"

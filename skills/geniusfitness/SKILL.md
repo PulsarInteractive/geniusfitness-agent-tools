@@ -27,6 +27,10 @@ remain unchanged; explicit `null` clears a nullable field. Do not copy a whole
 resource, fill missing values with defaults or rewrite exercise slots to rename
 the workout. Encoded set arrays replace that entire field: read all existing
 sets, preserve untouched entries and validate `command_help.encodedSets`.
+For recorded sets, use the exact existing exercise ID or the copied workout
+slot's `element` ID. Keep established IDs when correcting history; names,
+catalogue keys and unverified local aliases are not substitutes. See the
+planning workflow below for permissions and unresolved references.
 
 Do not record completed activity when the user only requested a plan. Do not
 modify another athlete’s program without both the user’s instruction and current

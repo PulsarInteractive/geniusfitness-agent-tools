@@ -1,5 +1,10 @@
 ## Unreleased
 
+- Explain exact recorded exercise references in generated CLI/MCP command help
+  and training guidance. Identity metadata remains service-owned; unresolved
+  references preserve results without inventing measured totals. Requires the
+  matching backend rollout.
+
 - Add targeted `commands describe --kind KIND` help and exact encoded running-plan/result schemas to CLI and MCP. Validate supplied stage targets and observations before preparation while preserving partial edits and immutable retries. Server validation remains authoritative.
 
 - Publish command permission, subscription and revision requirements consistently in CLI and MCP help. Explain current capabilities separately from per-athlete authorization; older servers never imply Coach access. Requires the matching server capability fields for dynamic filtering.
