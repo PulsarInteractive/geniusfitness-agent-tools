@@ -52,7 +52,7 @@ export const sessionAnalysisSchema = z
   .object({
     scope: z.string().regex(/^project:[A-Za-z0-9_-]{1,128}$/),
     id: z.string().regex(/^[A-Za-z0-9_-]{1,128}$/),
-    offset: z.number().int().min(0).max(1000).optional(),
+    offset: z.number().int().min(0).max(2560).optional(),
     revision: revision.optional(),
   })
   .strict()
@@ -593,6 +593,7 @@ const metricsPage = z
     checkpoint: revision,
     from: date,
     until: date,
+    measurementCoverage: z.enum(['recorded', 'unknown']).optional(),
     days: z
       .array(
         z
@@ -600,8 +601,10 @@ const metricsPage = z
             day: date,
             sessions: z.number().int().nonnegative().safe(),
             runs: z.number().int().nonnegative().safe(),
-            durationSeconds: z.number().nonnegative(),
-            distanceMeters: z.number().nonnegative(),
+            durationSeconds: z.number().nonnegative().nullable(),
+            distanceMeters: z.number().nonnegative().nullable(),
+            durationMeasuredActivities: z.number().int().nonnegative().safe().nullable().optional(),
+            distanceMeasuredRuns: z.number().int().nonnegative().safe().nullable().optional(),
           })
           .strict(),
       )
@@ -621,7 +624,15 @@ export async function readMetrics(client, input) {
       (day, index) =>
         day.day < query.from ||
         day.day > query.until ||
-        (index > 0 && day.day <= result.days[index - 1].day),
+        (index > 0 && day.day <= result.days[index - 1].day) ||
+        (result.measurementCoverage === 'recorded' && !completeMetricDay(day)) ||
+        (result.measurementCoverage === 'unknown' &&
+          [
+            day.durationSeconds,
+            day.distanceMeters,
+            day.durationMeasuredActivities,
+            day.distanceMeasuredRuns,
+          ].some((value) => value !== null)),
     )
   ) {
     fail(
@@ -629,7 +640,37 @@ export async function readMetrics(client, input) {
       'The metrics response was invalid. Do not infer empty activity from it.',
     );
   }
-  return result;
+  if (result.measurementCoverage) {
+    return result;
+  }
+  // Older totals had no presence coverage and could include synthesized zero
+  // or only part of a day's measurements. Retain the proven activity counts.
+  return {
+    ...result,
+    measurementCoverage: 'unknown',
+    days: result.days.map((day) => ({
+      ...day,
+      durationSeconds: null,
+      distanceMeters: null,
+      durationMeasuredActivities: null,
+      distanceMeasuredRuns: null,
+    })),
+  };
+}
+
+function completeMetricDay(day) {
+  const eligible = day.sessions + day.runs;
+  const valid = (value, measured, count, max) =>
+    Number.isSafeInteger(measured) &&
+    measured >= 0 &&
+    measured <= count &&
+    (count > 0 && measured === count ? value !== null && value <= count * max : value === null);
+  return (
+    Number.isSafeInteger(eligible) &&
+    eligible > 0 &&
+    valid(day.durationSeconds, day.durationMeasuredActivities, eligible, 86400) &&
+    valid(day.distanceMeters, day.distanceMeasuredRuns, day.runs, 1000000)
+  );
 }
 
 const resourcePage = z

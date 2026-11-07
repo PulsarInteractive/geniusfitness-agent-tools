@@ -171,7 +171,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_session_analysis',
-    'Read one session with recorded time per set and exercise, actual rest, personal-record flags and missing-measurement coverage. Optional sessionXp contains canonical uncapped session points, not the capped account reward. Long timers may include interruptions; never infer continuous effort or unrecorded heart rate. Use recordedLoad and recordedLoadUnit together: kg or lb only when explicitly stored. weightKg is null for pounds or unknown units; missing values are null, not zero. Never assume an older weightKg label proved kilograms or compare unknown load conventions.',
+    'Read one recorded session, at most 50 observations per page. Continue with nextSetOffset and the same revision; totalRecordedRows is the paging inventory, not proof of physical set count. Only identity resolved certifies set/exercise totals and optional uncapped sessionXp (not account rewards). With identity unresolved retain raw observations, but totals, timing eligibility and sessionXp are null: never sum overlapping references, guess a mapping or infer progression. Latest duplicate corrections are marked corrected; unindexed observations remain separate. Read recordedLoad with recordedLoadUnit: only explicit kg/lb establishes a unit; weightKg is null otherwise. Missing values are unknown; explicit zero stays zero. Timers may include interruptions and are not continuous effort or wearable measurements. Access/context failures require a fresh authorized read, never cached advice.',
     sessionAnalysisSchema,
     (input) => readSessionAnalysis(client, input),
   );
@@ -195,7 +195,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_metrics',
-    'Read basic daily totals for one authorized program. Pass athleteId for individual progress; otherwise totals include all visible participants. Free includes the last four weeks; Premium history is up to 24 calendar months, checked by the server for the requester and represented athletes. A coach subscription cannot extend a Free student history.',
+    'Read bounded daily activity counts for one authorized program. Pass athleteId for individual progress; otherwise all visible participants are included. With measurementCoverage recorded, durationSeconds is null unless every session/run has a measured duration; distanceMeters is null unless every run has measured distance (also null when there are no runs). Compare durationMeasuredActivities with sessions+runs and distanceMeasuredRuns with runs. Explicit zero is measured; missing or legacy coverage is unknown, never zero or declining progress. Free includes four weeks; Premium up to 24 calendar months, checked for requester and athletes. A Coach subscription cannot extend Free student history.',
     metricsSchema,
     (input) => readMetrics(client, input),
   );

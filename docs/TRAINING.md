@@ -102,7 +102,7 @@ work as completed without evidence from the user or an authorized source. A
 finished session can complete its linked planning entry in the same server
 transaction. Editing or deleting a result does not undo historical completion.
 
-Use `metrics summary` for bounded daily totals. Use detailed `sessions` or `runs`
+Use `metrics summary` for bounded daily totals. Inspect `measurementCoverage` and measured activity counts; missing or incomplete duration/distance totals remain null. Session analysis only certifies set counts and XP when `identity` is `resolved`; see [observation quality](PROGRESS.md#observation-quality). Use detailed `sessions` or `runs`
 only when the task requires them. Personal health logs are independent and need
 `health:read` or `health:write` consent; a shared program does not expose them.
 

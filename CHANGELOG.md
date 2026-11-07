@@ -1,5 +1,14 @@
 ## Unreleased
 
+- Keep unknown session identities and incomplete daily measurements explicit.
+  Preserve raw observations and explicit zero, mark duplicate corrections, and
+  withhold ambiguous totals/XP. Pagination supports legacy unindexed rows.
+  Matching backend rollout supplies identity/coverage; older responses retain
+  observations and activity counts without certifying totals.
+  Wire change: aggregate counts/measurements can now be null. Update clients
+  requiring numeric totals before rolling out the matching backend; this is
+  unreleased and does not imply an npm publication or a service deployment.
+
 - Explain exact recorded exercise references in generated CLI/MCP command help
   and training guidance. Identity metadata remains service-owned; unresolved
   references preserve results without inventing measured totals. Requires the

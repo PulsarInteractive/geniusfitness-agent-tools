@@ -691,6 +691,7 @@ export default {
         "training",
         "task",
         "performedSets",
+        "setIdentity",
         "notes",
         "creator",
         "created",

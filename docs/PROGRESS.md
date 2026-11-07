@@ -78,3 +78,25 @@ repetition volume; this does not mean no training occurred. Missing catalogue
 semantics remain unknown. Older servers without the policy marker cannot certify
 kg values: the updated client clears those load claims, preserving set counts,
 durations, source identity and pagination. It makes no extra API calls.
+
+## Observation quality
+
+Read `identity` before interpreting session totals. With `resolved`, the recorded
+references have been reconciled; this does not certify effort quality. With
+`unresolved`, preserve raw rows but do not add their counts, durations, loads or
+XP: references may overlap. `totalSets`, exercise completed/skipped counts,
+timing eligibility and `sessionXp` remain null. Ask the owner to review ambiguous
+historical references in the app; never guess a mapping or rewrite history.
+`totalRecordedRows` is only the pagination inventory. Continue pages of at most
+50 with `nextSetOffset` and the same revision when useful to the question.
+An exact-key duplicate uses its latest correction (`corrected: true`); rows
+without an index remain distinct observations. Context changes require an
+explicit fresh read; access refusal ends the read and forbids cached advice.
+
+For daily `fitness_metrics`, inspect `measurementCoverage`. With `recorded`,
+compare `durationMeasuredActivities` with `sessions + runs`, and
+`distanceMeasuredRuns` with `runs`. Duration/distance totals are null when
+coverage is incomplete; distance is also null on days without a run. A recorded
+zero is valid. Old responses without coverage preserve activity counts but
+return `unknown` coverage and null measurement totals/counters. Never describe
+an unknown or partial total as zero, declining progress or a personal record.

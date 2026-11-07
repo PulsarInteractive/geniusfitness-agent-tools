@@ -10,17 +10,20 @@ export interface SessionPage {
   items?: SessionRecord[];
   omittedIds?: string[];
 }
-export function sessionAnalysis(record: SessionRecord, offset?: number): Record<string, unknown>;
+export function sessionAnalysis(
+  record: SessionRecord,
+  offset?: number,
+): Promise<Record<string, unknown>>;
 export function analyzeSessionPage(
   page: SessionPage,
   id: string,
   offset?: number,
-): {
+): Promise<{
   scope: string;
   epoch: string;
   checkpoint: string;
   availability: 'available' | 'omitted' | 'not_found';
   analysis: Record<string, unknown> | null;
-};
+}>;
 
 export function normalizeSessionAnalysisResponse(value: unknown): unknown;

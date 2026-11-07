@@ -223,7 +223,7 @@
   {
     "name": "fitness_session_analysis",
     "title": "Analyze a training session",
-    "description": "Read recorded time per set and exercise, actual rest and measurement coverage for one session. Long timers may include interruptions; do not assume continuous effort or invent wearable measurements. Sets page at 50; continue with nextSetOffset as offset and the same revision. Read recordedLoad with recordedLoadUnit; only explicit kg/lb establishes a unit. weightKg is null for pounds or unknown units. Missing values are unknown, not zero. Do not infer historical units from current settings or prescribe progression from an unknown load convention.",
+    "description": "Read one recorded session, at most 50 observations per page. Continue with nextSetOffset and the same revision; totalRecordedRows is the paging inventory, not proof of physical set count. Only identity resolved certifies set/exercise totals and optional uncapped sessionXp (not account rewards). With identity unresolved retain raw observations, but totals, timing eligibility and sessionXp are null: never sum overlapping references, guess a mapping or infer progression. Latest duplicate corrections are marked corrected; unindexed observations remain separate. Read recordedLoad with recordedLoadUnit: only explicit kg/lb establishes a unit; weightKg is null otherwise. Missing values are unknown; explicit zero stays zero. Timers may include interruptions and are not continuous effort or wearable measurements. Access/context failures require a fresh authorized read, never cached advice.",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -240,7 +240,7 @@
         "offset": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 1000
+          "maximum": 2560
         },
         "revision": {
           "type": "string",
@@ -356,7 +356,7 @@
   {
     "name": "fitness_metrics",
     "title": "Training progress",
-    "description": "Read basic daily totals for an authorized program and bounded inclusive UTC dates. Pass athleteId for one student in their own shared program (requires Coach); otherwise totals cover all visible participants and must not be presented as individual progress. History is checked against current subscriptions: four weeks for Free, up to 24 calendar months for Premium. A mixed total cannot extend a Free athlete history using the coach subscription; choose a recent range or specify an eligible athlete.",
+    "description": "Read bounded daily activity counts for one authorized program. Pass athleteId for individual progress; otherwise all visible participants are included. With measurementCoverage recorded, durationSeconds is null unless every session/run has a measured duration; distanceMeters is null unless every run has measured distance (also null when there are no runs). Compare durationMeasuredActivities with sessions+runs and distanceMeasuredRuns with runs. Explicit zero is measured; missing or legacy coverage is unknown, never zero or declining progress. Free includes four weeks; Premium up to 24 calendar months, checked for requester and athletes. A Coach subscription cannot extend Free student history.",
     "inputSchema": {
       "type": "object",
       "properties": {
