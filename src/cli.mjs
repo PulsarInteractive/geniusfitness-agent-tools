@@ -1,3 +1,4 @@
+import { readTemporaryActions } from './temporary-actions.mjs';
 import { readCoachPush } from './coach-push.mjs';
 import { workflow } from './workflows.mjs';
 import { readPushResults } from './push-results.mjs';
@@ -85,6 +86,23 @@ export const commands = {
     summary:
       'Read verified Push outcomes for one exact live session; never authorizes an attempt, XP or prescription change.',
     options: ['scope', 'sessionId', 'athleteId', 'includeRewardDetails'],
+  },
+  'coaching intents': {
+    summary: 'Read temporary exercise instructions for one athlete program.',
+    options: ['scope', 'athleteId', 'sessionId'],
+  },
+  'coaching resolve-intent': {
+    summary: 'Resolve current/next or an exact exercise/set before a temporary action.',
+    options: [
+      'scope',
+      'athleteId',
+      'sessionId',
+      'selection',
+      'trainingId',
+      'occurrenceId',
+      'exerciseId',
+      'setIndex',
+    ],
   },
   'coaching push-proposals': {
     summary:
@@ -399,6 +417,13 @@ export async function main(
             .map((key) => [key, options[key]]),
         ),
       );
+    } else if (command === 'coaching intents' || command === 'coaching resolve-intent') {
+      const query = Object.fromEntries(
+        commands[command].options
+          .filter((k) => options[k] !== undefined)
+          .map((k) => [k, k === 'setIndex' ? Number(options[k]) : options[k]]),
+      );
+      data = await readTemporaryActions(client, query, command === 'coaching resolve-intent');
     } else if (command === 'coaching push-proposals') {
       data = await readCoachPush(
         client,

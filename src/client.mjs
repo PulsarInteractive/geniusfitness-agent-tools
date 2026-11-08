@@ -189,6 +189,8 @@ export class AgentClient {
         'push-results',
         'push-adjustments',
         'coach-push',
+        'coach-intents',
+        'coach-intent-target',
         'muscle-insights',
         'workout-vitals',
         'workout-copy-preview',

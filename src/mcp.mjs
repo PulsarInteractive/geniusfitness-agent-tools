@@ -1,3 +1,8 @@
+import {
+  temporaryReadSchema,
+  temporaryResolveSchema,
+  readTemporaryActions,
+} from './temporary-actions.mjs';
 import { coachPushReadSchema, readCoachPush } from './coach-push.mjs';
 import subscriptionGuidance from '../remote/subscription-guidance.json' with { type: 'json' };
 import { agentPresentation } from './presentation.mjs';
@@ -180,6 +185,18 @@ export function createMcpServer(client) {
     'Read verified Push bonus results for one selected program and live session UUID. Requires metrics:read and current program access; another athlete requires Coach and current control of that athlete’s program. Read-only: compare actual with base/offeredTarget using explicit units and loadMilliunits / 1000. Set includeRewardDetails true to request awardedXp: exact settled cosmetic bonus after caps; absent/null means unknown, never a nominal or promised award. Incomplete or unconfirmed is unknown, not failure or zero. Corrections supersede earlier outcome IDs. No permission to attempt a bonus, award XP or change a future prescription. No history enumeration or automatic retry loop.',
     pushResultsSchema,
     (input) => readPushResults(client, input),
+  );
+  register(
+    'fitness_coach_intents',
+    'Read bounded temporary instructions for one athlete program. Own Premium actions or a named Coach with current control; no health data. Read before changing, disclose replacements and preserve immutable commands. Cancel does not undo performed or skipped work. No polling.',
+    temporaryReadSchema,
+    (input) => readTemporaryActions(client, input),
+  );
+  register(
+    'fitness_coach_intent_target',
+    'Resolve current/next exercise in an active session, or one exact exercise/set of a scheduled occurrence. Never guess IDs. Returns sourceVersion and athlete-intents epoch/revision for coach.intent.set. Incompatible overlapping adjustments replace the earlier instruction, including exercise/set overlap. Focus changes guidance only, never weight, repetitions, baseline or XP. A live skip must subsequently be applied explicitly with coach.intent.apply; scheduled skips are not completed work. Reread after conflicts; never silently replace.',
+    temporaryResolveSchema,
+    (input) => readTemporaryActions(client, input, true),
   );
   register(
     'fitness_coach_push',

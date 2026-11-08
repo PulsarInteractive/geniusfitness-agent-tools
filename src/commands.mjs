@@ -1,3 +1,4 @@
+import { validTemporaryCommand } from './temporary-actions.mjs';
 import { invalidRunPayload } from './run-payloads.mjs';
 import { coachPushProposalSchema, coachPushWithdrawalSchema } from './coach-push.mjs';
 import { retryAt, requireRetryReady } from './recovery.mjs';
@@ -73,6 +74,12 @@ export function validateCommand(value) {
     fail(
       'invalid_arguments',
       'Use the declared command fields and size limit. Creation requires a null revision; other commands require the current record revision.',
+    );
+  }
+  if (command.kind.startsWith('coach.intent.') && !validTemporaryCommand(command)) {
+    fail(
+      'invalid_arguments',
+      'Resolve the exact temporary target and use the current athlete-intents revision. Cancel/apply require null proposal fields.',
     );
   }
   if (command.kind.startsWith('coach.push.')) {

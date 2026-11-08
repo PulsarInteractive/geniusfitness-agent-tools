@@ -434,7 +434,10 @@
             "workout.copy",
             "workout.sync",
             "coach.push.propose",
-            "coach.push.withdraw"
+            "coach.push.withdraw",
+            "coach.intent.set",
+            "coach.intent.cancel",
+            "coach.intent.apply"
           ]
         }
       },
@@ -491,7 +494,10 @@
             "workout.copy",
             "workout.sync",
             "coach.push.propose",
-            "coach.push.withdraw"
+            "coach.push.withdraw",
+            "coach.intent.set",
+            "coach.intent.cancel",
+            "coach.intent.apply"
           ]
         },
         "scope": {
@@ -588,7 +594,10 @@
             "workout.copy",
             "workout.sync",
             "coach.push.propose",
-            "coach.push.withdraw"
+            "coach.push.withdraw",
+            "coach.intent.set",
+            "coach.intent.cancel",
+            "coach.intent.apply"
           ]
         },
         "scope": {
@@ -954,7 +963,10 @@
             "schedule.delete",
             "schedule.update",
             "coach.push.propose",
-            "coach.push.withdraw"
+            "coach.push.withdraw",
+            "coach.intent.set",
+            "coach.intent.cancel",
+            "coach.intent.apply"
           ]
         },
         "scope": {
@@ -1034,7 +1046,10 @@
             "schedule.delete",
             "schedule.update",
             "coach.push.propose",
-            "coach.push.withdraw"
+            "coach.push.withdraw",
+            "coach.intent.set",
+            "coach.intent.cancel",
+            "coach.intent.apply"
           ]
         },
         "scope": {
@@ -1658,5 +1673,83 @@
     "route": "commands",
     "write": true,
     "destructive": true
+  },
+  {
+    "name": "fitness_coach_intents",
+    "title": "Temporary instructions",
+    "description": "Read bounded temporary instructions for one athlete program. Own Premium actions or a named Coach with current control; no health data. Read before changing, disclose replacements and preserve immutable commands. Cancel does not undo performed or skipped work. No polling.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "pattern": "^project:[A-Za-z0-9_-]{1,128}$"
+        },
+        "athleteId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,128}$"
+        },
+        "sessionId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        }
+      },
+      "required": ["scope", "athleteId"],
+      "additionalProperties": false
+    },
+    "scopes": ["planning:read"],
+    "route": "coach-intents"
+  },
+  {
+    "name": "fitness_coach_intent_target",
+    "title": "Resolve exercise instruction",
+    "description": "Resolve current/next exercise in an active session, or one exact exercise/set of a scheduled occurrence. Never guess IDs. Returns sourceVersion and athlete-intents epoch/revision for coach.intent.set. Incompatible overlapping adjustments replace the earlier instruction, including exercise/set overlap. Focus changes guidance only, never weight, repetitions, baseline or XP. A live skip must subsequently be applied explicitly with coach.intent.apply; scheduled skips are not completed work. Reread after conflicts; never silently replace.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "pattern": "^project:[A-Za-z0-9_-]{1,128}$"
+        },
+        "athleteId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,128}$"
+        },
+        "sessionId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "selection": {
+          "type": "string",
+          "enum": ["current", "next", "exact"]
+        },
+        "trainingId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "occurrenceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "exerciseId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "setIndex": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        }
+      },
+      "required": ["scope", "athleteId", "selection"],
+      "additionalProperties": false
+    },
+    "scopes": ["planning:read"],
+    "route": "coach-intent-target"
   }
 ]

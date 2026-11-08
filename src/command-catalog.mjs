@@ -2,6 +2,87 @@
 export default {
   "maxCommandBytes": 131072,
   "commands": {
+    "coach.intent.apply": {
+      "fields": [
+        "athleteId",
+        "sessionId",
+        "kind",
+        "objective",
+        "target",
+        "sourceVersion",
+        "startsAt",
+        "endsAt"
+      ],
+      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentData",
+      "module": "Project/CoachIntent",
+      "permission": "planning:write",
+      "requiredFields": [
+        "athleteId",
+        "sessionId",
+        "kind",
+        "objective",
+        "target",
+        "sourceVersion",
+        "startsAt",
+        "endsAt"
+      ],
+      "revisionMode": "occurrence",
+      "revisionScope": "athlete_intents"
+    },
+    "coach.intent.cancel": {
+      "fields": [
+        "athleteId",
+        "sessionId",
+        "kind",
+        "objective",
+        "target",
+        "sourceVersion",
+        "startsAt",
+        "endsAt"
+      ],
+      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentData",
+      "module": "Project/CoachIntent",
+      "permission": "planning:write",
+      "requiredFields": [
+        "athleteId",
+        "sessionId",
+        "kind",
+        "objective",
+        "target",
+        "sourceVersion",
+        "startsAt",
+        "endsAt"
+      ],
+      "revisionMode": "occurrence",
+      "revisionScope": "athlete_intents"
+    },
+    "coach.intent.set": {
+      "fields": [
+        "athleteId",
+        "sessionId",
+        "kind",
+        "objective",
+        "target",
+        "sourceVersion",
+        "startsAt",
+        "endsAt"
+      ],
+      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentData",
+      "module": "Project/CoachIntent",
+      "permission": "planning:write",
+      "requiredFields": [
+        "athleteId",
+        "sessionId",
+        "kind",
+        "objective",
+        "target",
+        "sourceVersion",
+        "startsAt",
+        "endsAt"
+      ],
+      "revisionMode": "occurrence",
+      "revisionScope": "athlete_intents"
+    },
     "coach.push.propose": {
       "additionalPermissions": [
         "coaching:write"
@@ -735,6 +816,162 @@ export default {
     }
   },
   "fieldSchemas": {
+    "Project/CoachIntent": {
+      "athleteId": {
+        "maxLength": 128,
+        "pattern": "^[A-Za-z0-9_-]{1,128}$",
+        "type": "string"
+      },
+      "sessionId": {
+        "anyOf": [
+          {
+            "format": "uuid",
+            "maxLength": 36,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "kind": {
+        "anyOf": [
+          {
+            "enum": [
+              "focus",
+              "skip"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "objective": {
+        "anyOf": [
+          {
+            "enum": [
+              "comfort",
+              "hypertrophy",
+              "strength",
+              "consistency",
+              "skip_once"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "target": {
+        "anyOf": [
+          {
+            "additionalProperties": false,
+            "required": [
+              "exerciseId",
+              "occurrenceId",
+              "projectId",
+              "sessionId",
+              "setIndex",
+              "trainingId"
+            ],
+            "type": "object",
+            "properties": {
+              "exerciseId": {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              "occurrenceId": {
+                "anyOf": [
+                  {
+                    "maxLength": 128,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "projectId": {
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_-]{1,128}$",
+                "type": "string"
+              },
+              "sessionId": {
+                "anyOf": [
+                  {
+                    "format": "uuid",
+                    "maxLength": 36,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "setIndex": {
+                "anyOf": [
+                  {
+                    "format": "int32",
+                    "maximum": 1000,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "trainingId": {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "sourceVersion": {
+        "anyOf": [
+          {
+            "maxLength": 64,
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "startsAt": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "endsAt": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
     "Project/CoachPushProposal": {
       "athleteId": {
         "maxLength": 128,

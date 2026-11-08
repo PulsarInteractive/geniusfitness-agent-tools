@@ -164,3 +164,10 @@ Synchronization is manual. It preserves independent student adaptations and
 existing schedules, recorded results and health measurements. Set targets are
 compared as one field, not guessed matches between individual sets. The bounded
 preview contains at most 202 decisions, with no account crawl or polling.
+
+For temporary focus or a one-time skip, read
+[`TEMPORARY_ACTIONS.md`](../../docs/TEMPORARY_ACTIONS.md). Resolve the exact target,
+explain replacements, and use the athlete-intents revision. A focus is guidance,
+not an automatic prescription; a skip never earns work. Retain immutable commands
+after uncertain replies. Never apply a student’s temporary context to your own
+workout or to another student.
