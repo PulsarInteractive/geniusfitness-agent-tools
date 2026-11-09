@@ -170,7 +170,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_muscle_insights',
-    'Premium/Coach muscle training evidence, weekly sets, explicit kg/lb normalized load volume, measurement coverage, exercise durations and catalogue attribution. Missing units or repetitions make load totals unavailable, never zero. Requires metrics:read and personal exercises:read. Follow every nextAfter with epoch/checkpoint. Not a measurement of muscle growth or recovery.',
+    'Premium/Coach muscle training evidence, weekly sets, explicit kg/lb normalized load volume, measurement coverage, exercise durations and catalogue attribution. Missing units or repetitions make load totals unavailable, never zero. Requires metrics:read and personal exercises:read. Follow every nextAfter with epoch/checkpoint. Optional muscleEvidence distinguishes broad groups, muscles and regions from current catalogue labels, never historical activation. Missing precision stays unknown; do not sum parent and child counts. Not a measurement of muscle growth or recovery.',
     muscleInsightsSchema,
     (input) => readMuscleInsights(client, input),
   );

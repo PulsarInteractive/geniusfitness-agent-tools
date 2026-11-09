@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Validate optional precise muscle evidence and explain current catalogue attribution, unknown labels and parent/region overlap. Legacy responses remain supported; matching backend rollout is required.
+
 - Keep unknown session identities and incomplete daily measurements explicit.
   Preserve raw observations and explicit zero, mark duplicate corrections, and
   withhold ambiguous totals/XP. Pagination supports legacy unindexed rows.

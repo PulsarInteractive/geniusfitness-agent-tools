@@ -163,3 +163,76 @@ test('real MCP transport removes legacy kg claims while preserving sets and sour
     await server.close();
   }
 });
+
+test('precise muscle evidence survives MCP and rejects impossible or invented structure in one call', async () => {
+  const page = fixture();
+  page.exercises[0].muscleEvidence = {
+    taxonomyVersion: 'fitness-muscle-evidence-v1',
+    catalogueVersion: 'a'.repeat(64),
+    basis: 'current_catalogue_not_historical',
+    targets: [
+      {
+        id: 'rectus_lower',
+        labelFr: 'Grand droit · région inférieure',
+        labelEn: 'Rectus · lower region',
+        kind: 'region',
+        parentId: 'rectus_abdominis',
+        role: 'primary',
+        rawLabels: ['lower abs'],
+      },
+    ],
+    unmappedLabels: ['ankles'],
+  };
+  const server = createMcpServer({ get: async () => page });
+  const client = new Client({ name: 'muscle-evidence-test', version: '1' });
+  const [a, b] = InMemoryTransport.createLinkedPair();
+  await server.connect(a);
+  await client.connect(b);
+  try {
+    const reply = await client.callTool({ name: 'fitness_muscle_insights', arguments: query });
+    assert.notEqual(reply.isError, true);
+    const result = JSON.parse(reply.content.find((row) => row.type === 'text').text);
+    assert.deepEqual(result.exercises[0].muscleEvidence, page.exercises[0].muscleEvidence);
+    assert.equal(result.exercises[0].sets, 2);
+  } finally {
+    await client.close();
+    await server.close();
+  }
+  for (const edit of [
+    (e) => {
+      e.basis = 'measured_activation';
+    },
+    (e) => {
+      e.targets[0].parentId = null;
+    },
+    (e) => {
+      e.targets[0].parentId = e.targets[0].id;
+    },
+    (e) => {
+      e.targets.push({ ...e.targets[0] });
+    },
+    (e) => {
+      e.targets[0].activationPercent = 99;
+    },
+    (e) => {
+      e.catalogueVersion = 'unknown';
+    },
+  ]) {
+    const invalid = structuredClone(page);
+    edit(invalid.exercises[0].muscleEvidence);
+    let calls = 0;
+    await assert.rejects(
+      readMuscleInsights(
+        {
+          get: async () => {
+            calls++;
+            return invalid;
+          },
+        },
+        query,
+      ),
+      { code: 'invalid_response' },
+    );
+    assert.equal(calls, 1);
+  }
+});

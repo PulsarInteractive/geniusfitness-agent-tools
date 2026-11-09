@@ -152,3 +152,17 @@ coverage is incomplete; distance is also null on days without a run. A recorded
 zero is valid. Old responses without coverage preserve activity counts but
 return `unknown` coverage and null measurement totals/counters. Never describe
 an unknown or partial total as zero, declining progress or a personal record.
+
+## Precise muscle labels
+
+On supporting servers, each exercise can include `muscleEvidence`. Its
+`basis: current_catalogue_not_historical` is crucial: these are current catalogue
+labels, not a measurement of which fibres a past set recruited. Preserve the
+taxonomy and catalogue versions. `targets` distinguishes `group`, `muscle` and
+`region`, with primary/secondary roles copied from source labels. An unspecified
+abdominal group must not be divided into rectus, obliques or transverse. Upper
+and lower rectus are regions of one muscle. A performed set matching both a
+parent and a child contributes once to that aggregate; never add overlapping
+anatomical views into total workload. `unmappedLabels`, null or absent evidence
+remain unknown. Do not infer activation percentages, muscle growth, recovery or
+localized fat loss. This optional precision requires the matching server rollout.

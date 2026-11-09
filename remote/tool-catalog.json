@@ -178,7 +178,7 @@
   {
     "name": "fitness_muscle_insights",
     "title": "Muscle training insights",
-    "description": "Premium/Coach muscle training evidence: weekly sets, explicit kg/lb normalized resistance volume, measurement coverage, durations and catalogue attribution. Incomplete load coverage is unavailable, never zero. Optional athleteId selects a currently shared athlete-owned program and requires Coach. Follow nextAfter with epoch/checkpoint and unchanged dates/athlete. Not measured growth, force or recovery; missing attribution stays unknown. For a student, their own Premium or Coach entitlement is required; the coach’s paid plan does not upgrade the student.",
+    "description": "Premium/Coach muscle training evidence: weekly sets, explicit kg/lb normalized resistance volume, measurement coverage, durations and catalogue attribution. Incomplete load coverage is unavailable, never zero. Optional athleteId selects a currently shared athlete-owned program and requires Coach. Follow nextAfter with epoch/checkpoint and unchanged dates/athlete. Not measured growth, force or recovery; missing attribution stays unknown. For a student, their own Premium or Coach entitlement is required; the coach’s paid plan does not upgrade the student. Optional muscleEvidence distinguishes current catalogue groups, muscles and regions; it is not historical activation. Preserve unknown labels and never sum parent and child attribution as independent sets.",
     "inputSchema": {
       "type": "object",
       "properties": {

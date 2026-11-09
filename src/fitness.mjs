@@ -349,6 +349,37 @@ const muscleWeek = z.object({
   externalResistanceVolumeKg: observed.nullable(),
   exerciseSeconds: observed,
 });
+// Optional precise catalogue labels. Absence remains unknown on old servers;
+// these tags never describe measured activation in a historical set.
+const muscleEvidenceTarget = z
+  .object({
+    id: z.string().regex(/^[a-z][a-z0-9_]{0,79}$/),
+    labelFr: z.string().min(1).max(160),
+    labelEn: z.string().min(1).max(160),
+    kind: z.enum(['group', 'muscle', 'region']),
+    parentId: z
+      .string()
+      .regex(/^[a-z][a-z0-9_]{0,79}$/)
+      .nullable(),
+    role: z.enum(['primary', 'secondary']),
+    rawLabels: z.array(z.string().min(1).max(120)).min(1).max(16),
+  })
+  .strict()
+  .refine((row) => row.parentId !== row.id && (row.kind !== 'region' || row.parentId !== null));
+const muscleEvidence = z
+  .object({
+    taxonomyVersion: z.string().min(1).max(80),
+    catalogueVersion: z.string().regex(/^[a-f0-9]{64}$/),
+    basis: z.literal('current_catalogue_not_historical'),
+    targets: z.array(muscleEvidenceTarget).max(17),
+    unmappedLabels: z.array(z.string().min(1).max(120)).max(17),
+  })
+  .strict()
+  .refine(
+    (value) =>
+      new Set(value.targets.map((row) => row.id)).size === value.targets.length &&
+      value.targets.filter((row) => row.role === 'primary').length <= 1,
+  );
 const musclePage = z.object({
   scope,
   athleteId: id,
@@ -370,6 +401,7 @@ const musclePage = z.object({
         catalogKey: z.string().nullable(),
         primaryMuscle: z.string().nullable(),
         secondaryMuscles: z.array(z.string()).max(22),
+        muscleEvidence: muscleEvidence.nullable().optional(),
         attribution: z.enum(['catalogue', 'unmapped']),
         exerciseType: z.string().nullable(),
         weightConvention: z.enum(['total', 'perImplement', 'perSide']),
