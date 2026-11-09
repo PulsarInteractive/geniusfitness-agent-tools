@@ -5,6 +5,12 @@ import {
 } from './temporary-actions.mjs';
 import { coachPushReadSchema, readCoachPush } from './coach-push.mjs';
 import { catalogueSearchSchema, readCatalogueSearch } from './catalogue-search.mjs';
+import {
+  reviewedCatalogueSchema,
+  reviewedCatalogueDetailSchema,
+  readReviewedCatalogue,
+  readReviewedCatalogueDetail,
+} from './reviewed-catalogue.mjs';
 import subscriptionGuidance from '../remote/subscription-guidance.json' with { type: 'json' };
 import { agentPresentation } from './presentation.mjs';
 import { pushResultsSchema, readPushResults } from './push-results.mjs';
@@ -162,6 +168,18 @@ export function createMcpServer(client) {
     'Search one v2 catalogue page: existing French/English names and synonyms, exact legacy equipment tags and broad muscle groups. Variants are scored by text before grouping; expandVariants explicitly separates them. At most 48 evaluated variants per call. Scores are local to this page, not anatomy or equipment compatibility. Legacy evidence stays unreviewed. Reuse identical filters with nextCursor, even after an empty page; each continuation is a separate normal request. No automatic traversal, recommendations or exercise changes.',
     catalogueSearchSchema,
     (input) => readCatalogueSearch(client, input),
+  );
+  register(
+    'fitness_catalog_reviewed',
+    'Inspect one explicitly partial reviewed catalogue page. At most 48 variants before matching, complete families unless expandVariants is true. Only known reviewed qualitative targets contribute software relevance; unknown is not a match. Inventory is supplied explicitly or remains unknown. Use nextCursor with identical filters and limit; each call is charged normally. No global catalogue coverage, physiological score, safety clearance or exercise change.',
+    reviewedCatalogueSchema,
+    (input) => readReviewedCatalogue(client, input),
+  );
+  register(
+    'fitness_catalog_variant',
+    'Read one exact variant from the reviewed partial subset with its cited sources, opposing evidence, equipment and known limits. Unavailable media and unknown muscles remain explicit. No fallback to legacy metadata and no mutation.',
+    reviewedCatalogueDetailSchema,
+    (input) => readReviewedCatalogueDetail(client, input),
   );
   register(
     'fitness_workout_copy_preview',

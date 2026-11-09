@@ -5,3 +5,6 @@ src/command-catalog.mjs
 tools/schemas/
 LICENSE
 LICENSES/
+
+src/reviewed-catalogue-schemas.mjs
+src/reviewed-catalogue.d.mts

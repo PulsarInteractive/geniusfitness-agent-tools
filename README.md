@@ -101,3 +101,25 @@ and named-coach rights are enforced on every page. This read grants no write or
 private health access. Server rollout and package publication are separate.
 
 The optional `goalProfileKey` on adjustment-history entries is an opaque, athlete-bound reference to the profile version used for that decision. It is not the current goal, a progress score, or permission to read private profile answers. A missing key or unavailable version must stay unknown; never join by goal label or date.
+
+### Reviewed partial catalogue (unreleased source)
+
+`geniusfitness catalog reviewed` reads one explicitly partial, version-pinned
+corpus. For structured muscle and equipment filters, use `--file query.json`.
+`geniusfitness catalog reviewed-detail --key ex.0662` reads one exact admitted
+variant with its cited evidence and limits. The MCP equivalents are
+`fitness_catalog_reviewed` and `fitness_catalog_variant`.
+
+Each call is an ordinary authorized read. A page examines at most 48 candidates
+before matching and can be empty while returning `nextCursor`. Continue only
+explicitly, with the same query and limit. Families stay complete; request
+`filters.expandVariants: true` to page individual variants. A grouped limit too
+small for the next family is refused rather than cutting it.
+
+Inventory is supplied by the caller or stays unknown; this read does not inspect
+a private profile. Unknown muscles or equipment do not establish a match.
+Relevance points describe the supplied page, not physiological percentages or
+safety. Read the exact variant's source limitations and unavailable-media state.
+The existing `catalog search`, `catalog explore`, and their MCP tools keep their
+legacy metadata contracts. This source feature is not an npm release or a claim
+that the complete catalogue is reviewed.

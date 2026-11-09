@@ -1,6 +1,7 @@
 import { readTemporaryActions } from './temporary-actions.mjs';
 import { readCoachPush } from './coach-push.mjs';
 import { readCatalogueSearch } from './catalogue-search.mjs';
+import { readReviewedCatalogue, readReviewedCatalogueDetail } from './reviewed-catalogue.mjs';
 import { workflow } from './workflows.mjs';
 import { readPushResults } from './push-results.mjs';
 import { readPushAdjustments } from './push-adjustments.mjs';
@@ -64,6 +65,15 @@ export const commands = {
     summary:
       'Search the canonical exercise catalogue; reuse stable catalogKey values instead of duplicating exercises.',
     options: ['query', 'key', 'equipment', 'muscle', 'after', 'version'],
+  },
+  'catalog reviewed': {
+    summary:
+      'Read one partial reviewed page from an optional JSON query; no automatic continuation.',
+    options: ['file'],
+  },
+  'catalog reviewed-detail': {
+    summary: 'Read one exact reviewed variant and its cited evidence.',
+    options: ['key'],
   },
   'catalog explore': {
     summary:
@@ -388,6 +398,13 @@ export async function main(
                 ? {}
                 : { waitSeconds: Number(options['wait-seconds']) }),
             });
+    } else if (command === 'catalog reviewed') {
+      data = await readReviewedCatalogue(
+        client,
+        options.file ? await readCommandFile(options.file) : {},
+      );
+    } else if (command === 'catalog reviewed-detail') {
+      data = await readReviewedCatalogueDetail(client, { key: options.key });
     } else if (command === 'catalog explore') {
       const input = Object.fromEntries(
         commands[command].options

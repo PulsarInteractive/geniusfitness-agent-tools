@@ -185,6 +185,7 @@ export class AgentClient {
         'changes',
         'catalog',
         'catalog-v2',
+        'catalog-reviewed-detail',
         'metrics',
         'session-analysis',
         'push-results',
@@ -238,9 +239,26 @@ export class AgentClient {
     // visible to the agent. A caller chooses how to recover using the envelope.
     try {
       return await this.transport.request(
-        resource === 'catalog-v2' ? '/api/agents/v2/catalog' : `/api/agents/v1/${resource}`,
-        { token, query },
+        resource === 'catalog-v2'
+          ? '/api/agents/v2/catalog'
+          : resource === 'catalog-reviewed-detail'
+            ? '/api/agents/catalogue/reviewed/' + encodeURIComponent(query?.key ?? '')
+            : `/api/agents/v1/${resource}`,
+        { token, query: resource === 'catalog-reviewed-detail' ? undefined : query },
       );
+    } catch (error) {
+      this.invalidateReads();
+      throw error;
+    }
+  }
+  async reviewedCatalogue(query) {
+    try {
+      const token = await this.accessToken();
+      return await this.transport.request('/api/agents/catalogue/reviewed', {
+        method: 'POST',
+        token,
+        json: query,
+      });
     } catch (error) {
       this.invalidateReads();
       throw error;

@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Add explicit partial reviewed catalogue page and exact-variant reads in CLI/MCP, with generated public schemas, bounded matching and normal per-call authorization. Preserve legacy catalogue contracts.
+
 - Add `catalog explore` / `fitness_catalog_search` with a distinct v2 endpoint, French/English text and synonyms, per-variant text relevance before grouping, complete bounded family pages and explicit legacy evidence coverage. Every continuation remains a separate normal request; v1 stays strict and unchanged. Requires the matching backend; no npm publication, reviewed-content publication or production activation is implied.
 
 - Add explicit representation 2 for temporary focus reads and commands, preserving the complete selected interests and nullable priority. Legacy v1 stays strict; mismatched versions never trigger silent downgrade. Includes command-help policy, immutable retry and safe unavailable-feature guidance. Requires the matching backend and supported app readers; no producer activation or npm release is implied.

@@ -1797,5 +1797,149 @@
     },
     "scopes": ["planning:read"],
     "route": "coach-intent-target"
+  },
+  {
+    "name": "fitness_catalog_reviewed",
+    "title": "Read a reviewed partial catalogue page",
+    "description": "Read at most 48 candidates from the pinned reviewed subset before filters. Group complete families unless expandVariants. Only known reviewed qualitative evidence contributes software relevance; unknown is not a match. Supplied inventory is a declaration, not a private profile read. Follow nextCursor explicitly with unchanged filters and limit. Every call uses normal quota. No full catalogue, physiological score, safety clearance, automatic traversal or mutation.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "type": "string"
+        },
+        "filters": {
+          "additionalProperties": false,
+          "properties": {
+            "expandVariants": {
+              "type": "boolean"
+            },
+            "inventory": {
+              "additionalProperties": false,
+              "properties": {
+                "coverage": {
+                  "oneOf": [
+                    {
+                      "enum": ["unknown"],
+                      "type": "string"
+                    },
+                    {
+                      "enum": ["partial"],
+                      "type": "string"
+                    },
+                    {
+                      "enum": ["complete"],
+                      "type": "string"
+                    }
+                  ]
+                },
+                "items": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "equipmentId": {
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "quantity": {
+                        "anyOf": [
+                          {
+                            "format": "int32",
+                            "maximum": 128,
+                            "minimum": 0,
+                            "type": "integer"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": ["equipmentId", "quantity"],
+                    "type": "object"
+                  },
+                  "maxItems": 128,
+                  "type": "array"
+                }
+              },
+              "required": ["coverage", "items"],
+              "type": "object"
+            },
+            "mode": {
+              "oneOf": [
+                {
+                  "enum": ["browse"],
+                  "type": "string"
+                },
+                {
+                  "enum": ["search"],
+                  "type": "string"
+                }
+              ]
+            },
+            "muscleMode": {
+              "oneOf": [
+                {
+                  "enum": ["any"],
+                  "type": "string"
+                },
+                {
+                  "enum": ["all"],
+                  "type": "string"
+                }
+              ]
+            },
+            "muscleTargets": {
+              "items": {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 8,
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "required": ["inventory", "muscleMode", "muscleTargets"],
+          "type": "object"
+        },
+        "limit": {
+          "format": "int32",
+          "maximum": 48,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "version": {
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "scopes": ["exercises:read"],
+    "route": "catalog-reviewed"
+  },
+  {
+    "name": "fitness_catalog_variant",
+    "title": "Read one exact reviewed variant",
+    "description": "Inspect an exact variant, its cited and opposing sources, required or optional apparatus and known limits. This partial corpus has no legacy fallback; unavailable media and unknown muscles remain explicit. No mutation.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^ex\\.[0-9]+$"
+        }
+      },
+      "required": ["key"],
+      "additionalProperties": false
+    },
+    "scopes": ["exercises:read"],
+    "route": "catalog-reviewed-detail"
   }
 ]
