@@ -55,3 +55,10 @@ See [Insights](INSIGHTS.md) for the exact commands, consent requirements and
 interpretation of missing measurements.
 
 See [Coach Push proposals](COACH_PUSH.md) for exact-occurrence intent, athlete confirmation and safe command recovery.
+
+Temporary exercise focus and skip instructions use `coaching intents` and
+`coaching resolve-intent`. Add `--representationVersion 2` explicitly to preserve
+all interests and a nullable priority in structured focus; omission keeps the
+legacy representation. Commands are still prepared and retried through the
+normal immutable command journal. See [Temporary exercise instructions](TEMPORARY_ACTIONS.md)
+for the complete v1/v2 fields and replacement rules.

@@ -1,6 +1,25 @@
 // Generated from the reviewed public subset of TypeSpec. Do not edit by hand.
 export default {
   "maxCommandBytes": 131072,
+  "temporaryFocus": {
+    "policyVersion": "1",
+    "representationVersion": 2,
+    "selection": {
+      "choices": [
+        "hypertrophy",
+        "strength",
+        "power",
+        "fat_loss",
+        "endurance",
+        "consistency",
+        "comfort"
+      ],
+      "incompatible": [],
+      "maximum": 3,
+      "minimum": 1,
+      "priority": "optional"
+    }
+  },
   "commands": {
     "coach.intent.apply": {
       "fields": [
@@ -11,9 +30,11 @@ export default {
         "target",
         "sourceVersion",
         "startsAt",
-        "endsAt"
+        "endsAt",
+        "representationVersion",
+        "focusSelection"
       ],
-      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentData",
+      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentDataSupported",
       "module": "Project/CoachIntent",
       "permission": "planning:write",
       "requiredFields": [
@@ -38,9 +59,11 @@ export default {
         "target",
         "sourceVersion",
         "startsAt",
-        "endsAt"
+        "endsAt",
+        "representationVersion",
+        "focusSelection"
       ],
-      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentData",
+      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentDataSupported",
       "module": "Project/CoachIntent",
       "permission": "planning:write",
       "requiredFields": [
@@ -65,9 +88,11 @@ export default {
         "target",
         "sourceVersion",
         "startsAt",
-        "endsAt"
+        "endsAt",
+        "representationVersion",
+        "focusSelection"
       ],
-      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentData",
+      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentDataSupported",
       "module": "Project/CoachIntent",
       "permission": "planning:write",
       "requiredFields": [
@@ -856,9 +881,11 @@ export default {
               "hypertrophy",
               "strength",
               "consistency",
-              "skip_once"
+              "skip_once",
+              "multiple_axes"
             ],
-            "type": "string"
+            "type": "string",
+            "description": "V1 accepts only legacy single objectives. multiple_axes is permitted only by explicit v2 with a complete non-null focusSelection."
           },
           {
             "type": "null"
@@ -965,6 +992,58 @@ export default {
           {
             "format": "date-time",
             "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "representationVersion": {
+        "description": "Omit for strict legacy v1. Exact 2 opts into the complete focus representation; it grants no write permission or feature activation.",
+        "enum": [
+          2
+        ],
+        "type": "integer"
+      },
+      "focusSelection": {
+        "anyOf": [
+          {
+            "additionalProperties": false,
+            "required": [
+              "policyVersion",
+              "priority",
+              "selected"
+            ],
+            "type": "object",
+            "description": "Required in v2: full selected interests and nullable priority for multiple_axes; null for legacy mono/skip/cancel/apply. Forbidden in v1. No inferred priority or data reduction.",
+            "properties": {
+              "policyVersion": {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              "priority": {
+                "anyOf": [
+                  {
+                    "maxLength": 80,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "selected": {
+                "maxItems": 3,
+                "minItems": 1,
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
           },
           {
             "type": "null"

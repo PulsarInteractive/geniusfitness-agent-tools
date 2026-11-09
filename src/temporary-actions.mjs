@@ -1,5 +1,34 @@
 import * as z from 'zod/v4';
 import { fail } from './errors.mjs';
+import catalog from './command-catalog.mjs';
+const focusPolicy = catalog.temporaryFocus;
+const objectives = ['comfort', 'hypertrophy', 'strength', 'consistency', 'skip_once'];
+const focusSelectionSchema = z
+  .object({
+    policyVersion: z.string().min(1).max(80),
+    selected: z
+      .array(z.string().regex(/^[a-z][a-z0-9_.-]{0,79}$/))
+      .min(focusPolicy.selection.minimum)
+      .max(focusPolicy.selection.maximum),
+    priority: z
+      .string()
+      .regex(/^[a-z][a-z0-9_.-]{0,79}$/)
+      .nullable(),
+  })
+  .strict()
+  .refine(
+    (v) =>
+      new Set(v.selected).size === v.selected.length &&
+      (v.priority === null || v.selected.includes(v.priority)),
+  )
+  .refine(
+    (v) =>
+      v.policyVersion !== focusPolicy.policyVersion ||
+      v.selected.every((axis) => focusPolicy.selection.choices.includes(axis)),
+  );
+const currentFocusSchema = focusSelectionSchema.refine(
+  (v) => v.policyVersion === focusPolicy.policyVersion,
+);
 const id = z.string().min(1).max(128),
   identifier = z.string().regex(/^[A-Za-z0-9_-]{1,128}$/);
 export const temporaryTargetSchema = z
@@ -30,9 +59,17 @@ export const temporaryDataSchema = z
     endsAt: z.string().datetime().nullable(),
   })
   .strict();
+export const temporaryDataV2Schema = temporaryDataSchema
+  .extend({
+    representationVersion: z.literal(2),
+    objective: z.enum([...objectives, 'multiple_axes']).nullable(),
+    focusSelection: currentFocusSchema.nullable(),
+  })
+  .strict();
 export const temporaryReadSchema = z
   .object({
     scope: z.string().regex(/^project:[A-Za-z0-9_-]{1,128}$/),
+    representationVersion: z.literal(2).optional(),
     athleteId: identifier,
     sessionId: z.string().uuid().optional(),
   })
@@ -100,12 +137,47 @@ const resolved = snapshot
     replaces: z.array(z.string().uuid()).max(32),
   })
   .strict();
+const entryV2 = entry
+  .extend({
+    objective: z.enum([...objectives, 'multiple_axes']),
+    focusSelection: focusSelectionSchema.nullable(),
+  })
+  .strict()
+  .refine((v) =>
+    v.objective === 'multiple_axes'
+      ? v.kind === 'focus' &&
+        v.focusSelection !== null &&
+        (!['active', 'scheduled'].includes(v.state) ||
+          v.focusSelection.policyVersion === focusPolicy.policyVersion)
+      : v.focusSelection === null,
+  );
+const snapshotV2 = snapshot
+  .extend({ representationVersion: z.literal(2), entries: z.array(entryV2).max(64) })
+  .strict();
+const resolvedV2 = resolved
+  .extend({ representationVersion: z.literal(2), entries: z.array(entryV2).max(64) })
+  .strict();
+
+/** Versions are explicit and strict. Never project one selected interest into a
+ * legacy objective or reconstruct a reduced request for a retry. */
 export function validTemporaryCommand(c) {
-  const parsed = temporaryDataSchema.safeParse(c.data);
+  const parsed = (
+    c.data && Object.hasOwn(c.data, 'representationVersion')
+      ? temporaryDataV2Schema
+      : temporaryDataSchema
+  ).safeParse(c.data);
   if (!parsed.success || !z.string().uuid().safeParse(c.id).success) {
     return false;
   }
   const d = parsed.data;
+  if (
+    d.representationVersion === 2 &&
+    (d.objective === 'multiple_axes'
+      ? d.kind !== 'focus' || d.focusSelection === null
+      : d.focusSelection !== null)
+  ) {
+    return false;
+  }
   if (c.kind !== 'coach.intent.set') {
     return (
       ['kind', 'objective', 'target', 'sourceVersion', 'startsAt', 'endsAt'].every(
@@ -135,7 +207,8 @@ export async function readTemporaryActions(client, input, resolve = false) {
       'Select one athlete program and an exact session or scheduled occurrence.',
     );
   }
-  const value = (resolve ? resolved : snapshot).safeParse(
+  const v2 = parsed.data.representationVersion === 2;
+  const value = (resolve ? (v2 ? resolvedV2 : resolved) : v2 ? snapshotV2 : snapshot).safeParse(
     await client.get(resolve ? 'coach-intent-target' : 'coach-intents', parsed.data),
   );
   if (!value.success) {

@@ -171,3 +171,19 @@ explain replacements, and use the athlete-intents revision. A focus is guidance,
 not an automatic prescription; a skip never earns work. Retain immutable commands
 after uncertain replies. Never apply a student’s temporary context to your own
 workout or to another student.
+
+For several focus interests, first read command help and the exact target with
+`representationVersion: 2`. Preserve the complete selection in one temporary
+focus; priority may be null and must never come from array order. V2 command data
+requires the representation marker and `focusSelection` (null for mono, skip,
+apply or cancel). This is coaching context, not a prescription, readiness result
+or XP award. A newly requested change replaces the whole overlapping instruction,
+so explain what will be retained and replaced. If too many interests are desired,
+ask which to keep. Never split or silently reduce a selection to fit v1.
+
+An unsupported client or disabled producer is not permission to downgrade the
+request, repeatedly poll or infer the missing capability. Stop with the returned
+remediation. After an uncertain response preserve the exact original journal
+request; after a policy or source conflict read current help and target data and
+prepare a newly reviewed operation. Retained stale/terminal focus is historical
+context only. See the versioned examples in `TEMPORARY_ACTIONS.md`.

@@ -188,13 +188,13 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_coach_intents',
-    'Read bounded temporary instructions for one athlete program. Own Premium actions or a named Coach with current control; no health data. Read before changing, disclose replacements and preserve immutable commands. Cancel does not undo performed or skipped work. No polling.',
+    'Read bounded temporary instructions for one athlete program. Omit representationVersion for unchanged legacy v1; explicitly choose 2 to read every selected focus interest and nullable priority. Preserve the whole selection. Null priority is undeclared, never the first axis. On client-update-required, stop and update the client; never hide a focus, infer one objective or retry in another version automatically. Own Premium actions or a named Coach with current control; no health data. Read before changing, disclose replacements and preserve immutable commands. Cancel does not undo performed or skipped work. No polling.',
     temporaryReadSchema,
     (input) => readTemporaryActions(client, input),
   );
   register(
     'fitness_coach_intent_target',
-    'Resolve current/next exercise in an active session, or one exact exercise/set of a scheduled occurrence. Never guess IDs. Returns sourceVersion and athlete-intents epoch/revision for coach.intent.set. Incompatible overlapping adjustments replace the earlier instruction, including exercise/set overlap. Focus changes guidance only, never weight, repetitions, baseline or XP. A live skip must subsequently be applied explicitly with coach.intent.apply; scheduled skips are not completed work. Reread after conflicts; never silently replace.',
+    'Resolve current/next exercise in an active session, or one exact exercise/set of a scheduled occurrence. Omit representationVersion for legacy v1; choose 2 explicitly before a structured focus command. V2 requires the full focusSelection and representationVersion:2 in command data; mono, skip, cancel and apply use focusSelection:null. Read command_help for the current selection policy. A nullable priority is not an inferred preference. Never guess IDs. Returns sourceVersion and athlete-intents epoch/revision for coach.intent.set. Incompatible overlapping adjustments replace the earlier instruction, including exercise/set overlap. Focus changes guidance only, never weight, repetitions, baseline or XP. A live skip must subsequently be applied explicitly with coach.intent.apply; scheduled skips are not completed work. Reread after conflicts; never silently replace.',
     temporaryResolveSchema,
     (input) => readTemporaryActions(client, input, true),
   );

@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Add explicit representation 2 for temporary focus reads and commands, preserving the complete selected interests and nullable priority. Legacy v1 stays strict; mismatched versions never trigger silent downgrade. Includes command-help policy, immutable retry and safe unavailable-feature guidance. Requires the matching backend and supported app readers; no producer activation or npm release is implied.
+
 - Validate optional precise muscle evidence and explain current catalogue attribution, unknown labels and parent/region overlap. Legacy responses remain supported; matching backend rollout is required.
 
 - Keep unknown session identities and incomplete daily measurements explicit.

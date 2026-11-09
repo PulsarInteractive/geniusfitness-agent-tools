@@ -788,6 +788,7 @@ export function commandHelp(kind) {
     requiredTier: definition.requiredTier ?? null,
     revisionScope: definition.revisionScope ?? 'resource',
     resourceChecksRequired: true,
+    ...(kind.startsWith('coach.intent.') ? { temporaryFocus: catalog.temporaryFocus } : {}),
     ...(definition.fields.includes('runPlan') && !definition.delete
       ? { encodedRun: runPayloadSpec(definition.module) }
       : {}),
@@ -796,7 +797,7 @@ export function commandHelp(kind) {
       ? { encodedSets: setPayloadSpec(definition.module) }
       : {}),
     workflow: kind.startsWith('coach.intent.')
-      ? 'Read coaching intents and resolve-intent / fitness_coach_intent_target. Use that athlete collection epoch/revision, never a program checkpoint. Set requires a new UUID, sourceVersion and exact target/time window. Explain overlapping replacements first. Apply consumes a live skip and skips only that occurrence; cancel never undoes completed work. Focus changes guidance only, never weight or XP. Preserve immutable journal bytes after uncertainty.'
+      ? 'Read coaching intents and resolve-intent / fitness_coach_intent_target. Use that athlete collection epoch/revision, never a program checkpoint. Set requires a new UUID, sourceVersion and exact target/time window. Explain overlapping replacements first. Apply consumes a live skip and skips only that occurrence; cancel never undoes completed work. Focus changes guidance only, never weight or XP. Omit representationVersion and focusSelection for strict v1. In v2 send representationVersion:2 and always include focusSelection: the entire selection for objective multiple_axes, otherwise null. Never infer priority from order or silently downgrade. Preserve immutable journal bytes after uncertainty.'
       : kind.startsWith('coach.push.')
         ? 'Read fitness_coach_push / coaching push-proposals for this athlete and occurrence. Use its epoch/revision, never the program checkpoint. New proposal: new UUID; pending edit: same proposal UUID and latest occurrence revision. Required exerciseId/setIndex may be null for a wider scope. Only propose or withdraw; the athlete must confirm separately. Preserve immutable journal bytes after uncertainty.'
         : definition.create

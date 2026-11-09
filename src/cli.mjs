@@ -89,11 +89,12 @@ export const commands = {
   },
   'coaching intents': {
     summary: 'Read temporary exercise instructions for one athlete program.',
-    options: ['scope', 'athleteId', 'sessionId'],
+    options: ['scope', 'athleteId', 'sessionId', 'representationVersion'],
   },
   'coaching resolve-intent': {
     summary: 'Resolve current/next or an exact exercise/set before a temporary action.',
     options: [
+      'representationVersion',
       'scope',
       'athleteId',
       'sessionId',
@@ -421,7 +422,10 @@ export async function main(
       const query = Object.fromEntries(
         commands[command].options
           .filter((k) => options[k] !== undefined)
-          .map((k) => [k, k === 'setIndex' ? Number(options[k]) : options[k]]),
+          .map((k) => [
+            k,
+            ['setIndex', 'representationVersion'].includes(k) ? Number(options[k]) : options[k],
+          ]),
       );
       data = await readTemporaryActions(client, query, command === 'coaching resolve-intent');
     } else if (command === 'coaching push-proposals') {
