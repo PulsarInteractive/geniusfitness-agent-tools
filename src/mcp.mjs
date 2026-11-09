@@ -4,6 +4,7 @@ import {
   readTemporaryActions,
 } from './temporary-actions.mjs';
 import { coachPushReadSchema, readCoachPush } from './coach-push.mjs';
+import { catalogueSearchSchema, readCatalogueSearch } from './catalogue-search.mjs';
 import subscriptionGuidance from '../remote/subscription-guidance.json' with { type: 'json' };
 import { agentPresentation } from './presentation.mjs';
 import { pushResultsSchema, readPushResults } from './push-results.mjs';
@@ -155,6 +156,12 @@ export function createMcpServer(client) {
     'Search exercise metadata with stable IDs, equipment and muscle filters. Prefer catalogue imports; follow nextAfter with the returned version.',
     catalogSchema,
     (input) => readCatalog(client, input),
+  );
+  register(
+    'fitness_catalog_search',
+    'Search one v2 catalogue page: existing French/English names and synonyms, exact legacy equipment tags and broad muscle groups. Variants are scored by text before grouping; expandVariants explicitly separates them. At most 48 evaluated variants per call. Scores are local to this page, not anatomy or equipment compatibility. Legacy evidence stays unreviewed. Reuse identical filters with nextCursor, even after an empty page; each continuation is a separate normal request. No automatic traversal, recommendations or exercise changes.',
+    catalogueSearchSchema,
+    (input) => readCatalogueSearch(client, input),
   );
   register(
     'fitness_workout_copy_preview',

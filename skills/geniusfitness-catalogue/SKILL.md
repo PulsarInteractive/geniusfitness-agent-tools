@@ -13,6 +13,23 @@ before creating a custom movement. Reuse a personal exercise associated with the
 same catalogKey; do not create duplicates for every workout. A slot references
 the personal exercise ID, not the catalogue key.
 
+Use `fitness_catalog_search` / `catalog explore` for v2 French/English names,
+existing synonyms, exact equipment tags and broad muscle groups. Results group
+matching variants by default; `expandVariants` separates them. Select the exact
+variant ID the user needs, not a family ID. A family is a display grouping and
+does not authorize copying weights between variants. Text scores rank only the
+current evaluated page. Legacy labels are unreviewed declarations, not muscle
+activation, physical equipment availability or documented exercise suitability.
+`facets` lists source-wide filter values, not filtered totals.
+
+Read at most the pages needed. A non-null `nextCursor` can accompany an empty
+page; continue explicitly with identical filters. Each call consumes a normal
+request. Do not crawl or silently fall back after a refusal. The v1
+`fitness_catalog` / `catalog search` retains its original strict envelope and
+version/nextAfter convention; never mix the two cursor formats. New tooling
+requires the corresponding backend rollout; installing a client does not enable
+a server endpoint or publish reviewed catalogue content.
+
 Inspect command help for tracking types and targetSets. Preserve requested units,
 rest and ordering. Exercise instructions use exdoc_<exercise ID>. Do not invent
 completion metrics when building a plan, or assume another athlete personal

@@ -184,6 +184,7 @@ export class AgentClient {
         'profiles',
         'changes',
         'catalog',
+        'catalog-v2',
         'metrics',
         'session-analysis',
         'push-results',
@@ -236,7 +237,10 @@ export class AgentClient {
     // No blanket retries, no automatic writes. Revocation and ACL errors remain
     // visible to the agent. A caller chooses how to recover using the envelope.
     try {
-      return await this.transport.request(`/api/agents/v1/${resource}`, { token, query });
+      return await this.transport.request(
+        resource === 'catalog-v2' ? '/api/agents/v2/catalog' : `/api/agents/v1/${resource}`,
+        { token, query },
+      );
     } catch (error) {
       this.invalidateReads();
       throw error;

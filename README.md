@@ -20,14 +20,15 @@ permissions, then approve. There is no token to copy into your terminal.
 
 ## What you can do
 
-| Feature                            | CLI                                   | MCP                                 |
-| ---------------------------------- | ------------------------------------- | ----------------------------------- |
-| Find your programs                 | `programs list`                       | `fitness_programs`                  |
-| Search exercises                   | `catalog search --query squat`        | `fitness_catalog`                   |
-| Read workouts, planning or results | `resources list`                      | `fitness_resources`                 |
-| Summarize activity                 | `metrics summary`                     | `fitness_metrics`                   |
-| Create or edit a plan              | `commands prepare` / `commands retry` | Journaled command tools             |
-| Follow changes                     | `changes list` / `changes watch`      | `fitness_changes` / `fitness_watch` |
+| Feature                            | CLI                                            | MCP                                 |
+| ---------------------------------- | ---------------------------------------------- | ----------------------------------- |
+| Find your programs                 | `programs list`                                | `fitness_programs`                  |
+| Search exercises                   | `catalog search --query squat`                 | `fitness_catalog`                   |
+| Explore grouped variants (v2)      | `catalog explore --query traction --locale fr` | `fitness_catalog_search`            |
+| Read workouts, planning or results | `resources list`                               | `fitness_resources`                 |
+| Summarize activity                 | `metrics summary`                              | `fitness_metrics`                   |
+| Create or edit a plan              | `commands prepare` / `commands retry`          | Journaled command tools             |
+| Follow changes                     | `changes list` / `changes watch`               | `fitness_changes` / `fitness_watch` |
 
 Choose from the exercise catalogue before creating a custom exercise. Private
 health measurements require separate permission. Managing another athlete’s

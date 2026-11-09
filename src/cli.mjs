@@ -1,5 +1,6 @@
 import { readTemporaryActions } from './temporary-actions.mjs';
 import { readCoachPush } from './coach-push.mjs';
+import { readCatalogueSearch } from './catalogue-search.mjs';
 import { workflow } from './workflows.mjs';
 import { readPushResults } from './push-results.mjs';
 import { readPushAdjustments } from './push-adjustments.mjs';
@@ -63,6 +64,11 @@ export const commands = {
     summary:
       'Search the canonical exercise catalogue; reuse stable catalogKey values instead of duplicating exercises.',
     options: ['query', 'key', 'equipment', 'muscle', 'after', 'version'],
+  },
+  'catalog explore': {
+    summary:
+      'Read one v2 catalogue page with FR/EN text search, grouped variants and explicit metadata coverage.',
+    options: ['query', 'equipment', 'muscle', 'locale', 'expand-variants', 'cursor'],
   },
   'workouts copy-preview': {
     summary:
@@ -382,6 +388,19 @@ export async function main(
                 ? {}
                 : { waitSeconds: Number(options['wait-seconds']) }),
             });
+    } else if (command === 'catalog explore') {
+      const input = Object.fromEntries(
+        commands[command].options
+          .filter((key) => options[key] !== undefined && key !== 'expand-variants')
+          .map((key) => [key, options[key]]),
+      );
+      if (options['expand-variants'] !== undefined) {
+        if (!['true', 'false'].includes(options['expand-variants'])) {
+          fail('invalid_arguments', '--expand-variants must be true or false.');
+        }
+        input.expandVariants = options['expand-variants'] === 'true';
+      }
+      data = await readCatalogueSearch(client, input);
     } else if (command === 'catalog search') {
       data = await readCatalog(
         client,

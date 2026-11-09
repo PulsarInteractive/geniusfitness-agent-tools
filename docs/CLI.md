@@ -4,27 +4,28 @@
 versioned result on stdout; progress and errors use stderr. MCP reserves stdout
 for protocol messages.
 
-| Command                                | Purpose                                                          |
-| -------------------------------------- | ---------------------------------------------------------------- |
-| `auth login`                           | Browser consent with PKCE; `--flow device` for a remote terminal |
-| `auth status`, `whoami`                | Current identity, profile and permission ceiling                 |
-| `auth logout`                          | Revoke the terminal session, then erase local credentials        |
-| `capabilities`                         | Server collections, commands and current limits                  |
-| `programs list`                        | Bounded list of accessible programs                              |
-| `catalog search`                       | Find catalogue exercises by query, key, equipment or muscle      |
-| `resources list`                       | One collection or exact record                                   |
-| `metrics summary`                      | Daily program totals within a date range                         |
-| `muscles insights`                     | Premium/Coach bounded per-exercise muscle evidence               |
-| `workouts vitals`                      | Consented Premium/Coach minute heart-rate observations           |
-| `changes list`, `changes watch`        | Bounded incremental follow-up                                    |
-| `commands describe [--kind KIND]`      | Targeted command schema, or full catalogue when omitted          |
-| `commands prepare`                     | Persist a draft with one immutable operation ID                  |
-| `commands execute`                     | Send a complete journaled operation once                         |
-| `commands retry`                       | Replay the exact saved operation                                 |
-| `commands inspect`                     | Inspect local operation evidence without a server call           |
-| `profiles list/create/restrict/select` | Manage narrower profiles                                         |
-| `doctor`                               | Inspect local setup without revealing credentials                |
-| `mcp`                                  | Run the local MCP server                                         |
+| Command                                | Purpose                                                                                  |
+| -------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `auth login`                           | Browser consent with PKCE; `--flow device` for a remote terminal                         |
+| `auth status`, `whoami`                | Current identity, profile and permission ceiling                                         |
+| `auth logout`                          | Revoke the terminal session, then erase local credentials                                |
+| `capabilities`                         | Server collections, commands and current limits                                          |
+| `programs list`                        | Bounded list of accessible programs                                                      |
+| `catalog search`                       | Find catalogue exercises by query, key, equipment or muscle                              |
+| `catalog explore`                      | Read one v2 page with FR/EN text, grouped variants and explicit legacy metadata coverage |
+| `resources list`                       | One collection or exact record                                                           |
+| `metrics summary`                      | Daily program totals within a date range                                                 |
+| `muscles insights`                     | Premium/Coach bounded per-exercise muscle evidence                                       |
+| `workouts vitals`                      | Consented Premium/Coach minute heart-rate observations                                   |
+| `changes list`, `changes watch`        | Bounded incremental follow-up                                                            |
+| `commands describe [--kind KIND]`      | Targeted command schema, or full catalogue when omitted                                  |
+| `commands prepare`                     | Persist a draft with one immutable operation ID                                          |
+| `commands execute`                     | Send a complete journaled operation once                                                 |
+| `commands retry`                       | Replay the exact saved operation                                                         |
+| `commands inspect`                     | Inspect local operation evidence without a server call                                   |
+| `profiles list/create/restrict/select` | Manage narrower profiles                                                                 |
+| `doctor`                               | Inspect local setup without revealing credentials                                        |
+| `mcp`                                  | Run the local MCP server                                                                 |
 
 ```bash
 geniusfitness resources list --scope project:PROGRAM_ID --collection workouts --json

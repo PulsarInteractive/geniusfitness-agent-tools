@@ -150,6 +150,42 @@
     "route": "catalog"
   },
   {
+    "name": "fitness_catalog_search",
+    "title": "Search grouped catalogue variants",
+    "description": "Read one bounded v2 catalogue page with existing French/English names and synonyms. Equipment is an exact legacy tag and muscle a broad legacy group. Text scores compare only this page, never anatomical evidence or equipment compatibility. Grouped by default; expandVariants separates matching variants. At most 48 evaluated variants per call. Follow nextCursor explicitly with identical filters, including after an empty page; each page consumes a normal request. No automatic traversal or mutations.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "equipment": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "muscle": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "locale": {
+          "type": "string",
+          "enum": ["en", "fr"]
+        },
+        "expandVariants": {
+          "type": "boolean"
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 2048
+        }
+      },
+      "additionalProperties": false
+    },
+    "scopes": ["exercises:read"],
+    "route": "catalog-search"
+  },
+  {
     "name": "fitness_workout_vitals",
     "title": "Workout heart rate and active calories",
     "description": "Premium/Coach heart-rate summaries by minute and optional recorded active kcal for one session. Energy requires the athlete’s separate calorie collection choice; preserve its observed interval, which may be partial. Never infer calories per set or combine overlapping sources. Requires health:read, metrics:read and explicit athlete connector sharing; another athlete also requires Coach, current program access and their named coach consent. Missing minutes are unmeasured, not zero. Match actual timestamps to sets; never infer continuous effort, recovery or diagnosis. For a student, their own Premium or Coach entitlement is required; the coach’s paid plan does not upgrade the student.",
