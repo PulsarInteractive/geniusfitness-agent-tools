@@ -1,3 +1,4 @@
+import { validateSessionSkipConfirmation, validSessionSkipReceipt } from './session-skip.mjs';
 import { validTemporaryCommand } from './temporary-actions.mjs';
 import { invalidRunPayload } from './run-payloads.mjs';
 import { coachPushProposalSchema, coachPushWithdrawalSchema } from './coach-push.mjs';
@@ -230,12 +231,20 @@ export class CommandJournal {
   }
   async inspect(id) {
     const row = await this.store(id).read();
-    if (!row || row.formatVersion !== 1 || row.input?.operationId !== id) {
+    if (
+      !row ||
+      row.formatVersion !== 1 ||
+      (row.protocol !== undefined && row.protocol !== 'session_skip') ||
+      (row.protocol === 'session_skip'
+        ? row.input?.request?.operationId
+        : row.input?.operationId) !== id
+    ) {
       fail('operation_not_found', 'This context has no valid local operation with that ID.');
     }
     return {
       operationId: id,
       source: 'local_journal',
+      ...(row.protocol === 'session_skip' ? { protocol: row.protocol } : {}),
       state: row.state,
       request: row.input,
       ...(row.receipt ? { receipt: row.receipt } : {}),
@@ -244,8 +253,20 @@ export class CommandJournal {
     };
   }
   async execute(value) {
-    const input = validateCommand(value),
-      store = this.store(input.operationId);
+    return this.#execute(value);
+  }
+  /** Additive canonical protocol; the same lock, identity binding and durable
+   * operation journal own both command kinds. No synthetic AgentCommand. */
+  async confirmSessionSkip(value) {
+    return this.#execute(value, 'session_skip');
+  }
+  async #execute(value, protocol) {
+    const input =
+        protocol === 'session_skip'
+          ? validateSessionSkipConfirmation(value)
+          : validateCommand(value),
+      operationId = protocol === 'session_skip' ? input.request.operationId : input.operationId,
+      store = this.store(operationId);
     return store.locked(async () => {
       // Capture token and identity together under the refresh lock. A later
       // logout/login cannot turn this pending operation into another profile.
@@ -262,7 +283,7 @@ export class CommandJournal {
           },
         );
       }
-      if (row && canonical(row.input) !== canonical(input)) {
+      if (row && (row.protocol !== protocol || canonical(row.input) !== canonical(input))) {
         fail(
           'idempotency_mismatch',
           'The operation ID already belongs to a different immutable request.',
@@ -270,6 +291,12 @@ export class CommandJournal {
         );
       }
       if (row?.state === 'confirmed') {
+        if (protocol === 'session_skip' && !validSessionSkipReceipt(row.receipt, input)) {
+          fail(
+            'invalid_response',
+            'The saved session receipt is invalid; retain the operation and inspect it before acting.',
+          );
+        }
         return { source: 'local_receipt', receipt: row.receipt };
       }
       requireRetryReady(row?.retryAt);
@@ -277,17 +304,33 @@ export class CommandJournal {
       if (canonical(binding(session)) !== canonical(identity)) {
         fail('operation_identity_mismatch', 'The connection changed before transmission.');
       }
-      row = { formatVersion: 1, binding: identity, input, state: 'uncertain' };
+      row = {
+        formatVersion: 1,
+        ...(protocol ? { protocol } : {}),
+        binding: identity,
+        input,
+        state: 'uncertain',
+      };
       await store.write(row);
       try {
-        const receipt = await this.client.transport.request('/api/agents/v1/commands', {
-          method: 'POST',
-          json: input,
-          token: session.access_token,
-        });
+        if (protocol) {
+          this.client.invalidateReads?.();
+        }
+        const receipt = await this.client.transport.request(
+          protocol === 'session_skip'
+            ? '/api/agents/v1/session-skip/confirm'
+            : '/api/agents/v1/commands',
+          {
+            method: 'POST',
+            json: input,
+            token: session.access_token,
+          },
+        );
         if (
-          !receiptSchema.safeParse(receipt).success ||
-          ['operationId', 'scope', 'kind', 'epoch'].some((key) => receipt[key] !== input[key])
+          protocol === 'session_skip'
+            ? !validSessionSkipReceipt(receipt, input)
+            : !receiptSchema.safeParse(receipt).success ||
+              ['operationId', 'scope', 'kind', 'epoch'].some((key) => receipt[key] !== input[key])
         ) {
           fail(
             'invalid_response',
@@ -305,7 +348,7 @@ export class CommandJournal {
           remediation: safe.remediation,
           execution: 'unknown',
           ...safe.details,
-          operationId: input.operationId,
+          operationId,
         });
         // The uncertainty marker is already durable. Preserve the useful original
         // error/operation ID even if disk pressure prevents saving diagnostics.
@@ -313,10 +356,17 @@ export class CommandJournal {
           .write({ ...row, retryAt: retryAt(result), error: result.toJSON() })
           .catch(() => {});
         throw result;
+      } finally {
+        if (protocol) {
+          this.client.invalidateReads?.();
+        }
       }
     }, this.client.transport.signal);
   }
   async retry(id) {
-    return this.execute((await this.inspect(id)).request);
+    const saved = await this.inspect(id);
+    return saved.protocol === 'session_skip'
+      ? this.confirmSessionSkip(saved.request)
+      : this.execute(saved.request);
   }
 }

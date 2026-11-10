@@ -123,3 +123,15 @@ safety. Read the exact variant's source limitations and unavailable-media state.
 The existing `catalog search`, `catalog explore`, and their MCP tools keep their
 legacy metadata contracts. This source feature is not an npm release or a claim
 that the complete catalogue is reviewed.
+
+### Skip or restore a planned session (unreleased source)
+
+Use `sessions skip-preview` / `fitness_session_skip_preview`, then confirm the
+reviewed request with `sessions skip-confirm` / `fitness_session_skip_confirm`.
+This changes one existing planned occurrence, not its recurring rule, completed
+activity, XP or exercise prescription. Own manual planning is Free with current
+`planning:write` access; another athlete also requires Coach and coaching rights.
+The local client retains an immutable confirmation in its existing journal.
+An old receipt is historical, not current state. See [the workflow and recovery
+rules](docs/SESSION_SKIP.md). Supporting server activation and npm publication
+remain separate.

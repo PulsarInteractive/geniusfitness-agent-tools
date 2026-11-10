@@ -1,3 +1,4 @@
+import { previewSessionSkip } from './session-skip.mjs';
 import { readTemporaryActions } from './temporary-actions.mjs';
 import { readCoachPush } from './coach-push.mjs';
 import { readCatalogueSearch } from './catalogue-search.mjs';
@@ -93,6 +94,16 @@ export const commands = {
   'muscles insights': {
     summary: 'Premium/Coach muscle evidence with catalogue attribution and explicit coverage.',
     options: ['scope', 'from', 'until', 'athleteId', 'after', 'epoch', 'checkpoint'],
+  },
+  'sessions skip-preview': {
+    summary:
+      'Preview skip or restore for one exact planned occurrence; no deletion, Done or automatic confirmation.',
+    options: ['file'],
+  },
+  'sessions skip-confirm': {
+    summary:
+      'Journal and confirm the exact reviewed session choice. Retry uncertain outcomes with commands retry; receipts are historical.',
+    options: ['file'],
   },
   'sessions analyze': {
     summary: 'Read one recorded session with set timing, rest and measurement coverage.',
@@ -363,6 +374,12 @@ export async function main(
       data = await new AgentProfiles(client).select({ profileId: options.profile });
     } else if (command === 'workflow show') {
       data = workflow({ topic: options.topic });
+    } else if (command === 'sessions skip-preview') {
+      data = await previewSessionSkip(client, await readCommandFile(options.file));
+    } else if (command === 'sessions skip-confirm') {
+      data = await new CommandJournal(client).confirmSessionSkip(
+        await readCommandFile(options.file),
+      );
     } else if (command === 'commands describe') {
       data = options.kind ? commandHelp(options.kind) : describeCommands();
     } else if (command === 'commands prepare') {

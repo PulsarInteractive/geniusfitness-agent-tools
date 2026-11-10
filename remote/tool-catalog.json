@@ -1941,5 +1941,168 @@
     },
     "scopes": ["exercises:read"],
     "route": "catalog-reviewed-detail"
+  },
+  {
+    "name": "fitness_session_skip_preview",
+    "title": "Review passing or restoring one scheduled session",
+    "description": "Preview skip or restore for one exact, already materialized future session. Read its scope, athlete, workout template and planning task first; retain one operation UUID. Does not change the routine, future recurrence, exercise sets, history or XP. Own planning requires planning:write; another athlete additionally requires coaching:write and current Coach control. A blocked preview cannot be confirmed. start_pending requires recovery of the original Start in the app; never invent a new ID to bypass it. Use fitness_session_skip_confirm with the exact returned review fields; do not use prepare_command.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": ["skip", "restore"],
+          "type": "string"
+        },
+        "operationId": {
+          "format": "uuid",
+          "maxLength": 36,
+          "type": "string"
+        },
+        "representationVersion": {
+          "enum": [1],
+          "type": "integer"
+        },
+        "target": {
+          "additionalProperties": false,
+          "properties": {
+            "athleteId": {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]{1,128}$",
+              "type": "string"
+            },
+            "scope": {
+              "maxLength": 256,
+              "minLength": 9,
+              "pattern": "^project:.+$",
+              "type": "string"
+            },
+            "taskId": {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            "trainingId": {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": ["athleteId", "scope", "taskId", "trainingId"],
+          "type": "object"
+        }
+      },
+      "required": ["action", "operationId", "representationVersion", "target"],
+      "type": "object"
+    },
+    "scopes": ["planning:write"],
+    "route": "session-skip/preview",
+    "write": false,
+    "destructive": false,
+    "idempotent": true
+  },
+  {
+    "name": "fitness_session_skip_confirm",
+    "title": "Pass or restore the reviewed scheduled session",
+    "description": "Apply the user-requested skip or restore using the complete canonical confirmation from fitness_session_skip_preview: request, epoch, decisionRevision, expectedRevision, preparedAt and key as previewKey. No default fields or AgentCommand envelope. After a timeout retain the exact operation and body; never mint a new ID or change the target. Hosted MCP has no local journal. A replay returns the original historical receipt, even after a subsequent restore; read a fresh preview for current state. Rights, activation and normal request quotas are checked on every call. This reversible decision never completes work or awards XP.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "decisionRevision": {
+          "format": "int32",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "epoch": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "expectedRevision": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "preparedAt": {
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "previewKey": {
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "request": {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "enum": ["skip", "restore"],
+              "type": "string"
+            },
+            "operationId": {
+              "format": "uuid",
+              "maxLength": 36,
+              "type": "string"
+            },
+            "representationVersion": {
+              "enum": [1],
+              "type": "integer"
+            },
+            "target": {
+              "additionalProperties": false,
+              "properties": {
+                "athleteId": {
+                  "maxLength": 128,
+                  "pattern": "^[A-Za-z0-9_-]{1,128}$",
+                  "type": "string"
+                },
+                "scope": {
+                  "maxLength": 256,
+                  "minLength": 9,
+                  "pattern": "^project:.+$",
+                  "type": "string"
+                },
+                "taskId": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "trainingId": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": ["athleteId", "scope", "taskId", "trainingId"],
+              "type": "object"
+            }
+          },
+          "required": ["action", "operationId", "representationVersion", "target"],
+          "type": "object"
+        }
+      },
+      "required": [
+        "decisionRevision",
+        "epoch",
+        "expectedRevision",
+        "preparedAt",
+        "previewKey",
+        "request"
+      ],
+      "type": "object"
+    },
+    "scopes": ["planning:write"],
+    "route": "session-skip/confirm",
+    "write": true,
+    "destructive": false,
+    "idempotent": true
   }
 ]

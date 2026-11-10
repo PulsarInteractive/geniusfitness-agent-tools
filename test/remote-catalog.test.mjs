@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import Ajv from 'ajv';
+import sessionWire from './fixtures/session-skip-wire.mjs';
 const tools = JSON.parse(await readFile(new URL('../remote/tool-catalog.json', import.meta.url)));
 test('remote catalogue has bounded explicit schemas and honest write annotations', () => {
   assert.equal(new Set(tools.map((t) => t.name)).size, tools.length);
@@ -13,7 +14,7 @@ test('remote catalogue has bounded explicit schemas and honest write annotations
     assert.equal(tool.inputSchema.additionalProperties, false);
     ajv.compile(tool.inputSchema);
     if (tool.write) {
-      assert.equal(tool.destructive, true);
+      assert.equal(tool.destructive, tool.name !== 'fitness_session_skip_confirm');
     }
     assert.ok(!tool.route || /^[a-z]+(?:[-/][a-z]+)*$/.test(tool.route));
   }
@@ -111,5 +112,42 @@ test('precise route tools require location consent and ordinary run commands exc
     !tools
       .find((t) => t.name === 'fitness_coach_metrics')
       .inputSchema.properties.kind.enum.includes('run.route.update'),
+  );
+});
+
+test('canonical session-skip tools remain typed, strictly authorized and separate from generic commands', () => {
+  const preview = tools.find((t) => t.name === 'fitness_session_skip_preview');
+  const confirm = tools.find((t) => t.name === 'fitness_session_skip_confirm');
+  for (const [tool, route, write, input] of [
+    [preview, 'session-skip/preview', false, sessionWire.request],
+    [confirm, 'session-skip/confirm', true, sessionWire.confirmation],
+  ]) {
+    assert.equal(tool.route, route);
+    assert.equal(tool.write, write);
+    assert.equal(tool.destructive, false);
+    assert.deepEqual(tool.scopes, ['planning:write']);
+    const validate = new Ajv({ strict: false }).compile(tool.inputSchema);
+    assert.equal(validate(input), true, JSON.stringify(validate.errors));
+    assert.equal(validate({ ...input, actorId: 'forged' }), false);
+    assert.equal(validate({}), false);
+  }
+  const validatePreview = new Ajv({ strict: false }).compile(preview.inputSchema);
+  const { operationId, ...missingId } = sessionWire.request;
+  assert.ok(operationId);
+  assert.equal(validatePreview(missingId), false);
+  const validateConfirm = new Ajv({ strict: false }).compile(confirm.inputSchema);
+  const { expectedRevision, ...missingRevision } = sessionWire.confirmation;
+  assert.equal(expectedRevision, null);
+  assert.equal(validateConfirm(missingRevision), false);
+  assert.equal(
+    validateConfirm({ ...sessionWire.confirmation, expectedRevision: 'opaque:revision' }),
+    true,
+  );
+  assert.equal(
+    validateConfirm({
+      ...sessionWire.confirmation,
+      request: { ...sessionWire.request, action: 'Done' },
+    }),
+    false,
   );
 });

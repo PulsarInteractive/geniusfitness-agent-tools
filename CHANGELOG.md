@@ -1,5 +1,12 @@
 ## Unreleased
 
+- Add whole-session skip/restore preview and confirmation to CLI/local MCP.
+  Preserve complete canonical targets and opaque revisions in the existing
+  immutable journal using a distinct protocol; generic commands stay unchanged.
+  Unknown outcomes replay the same confirmation, and old receipts remain
+  explicitly historical. Requires the supporting server and its activation;
+  no npm publication or deployment is implied.
+
 - Add explicit partial reviewed catalogue page and exact-variant reads in CLI/MCP, with generated public schemas, bounded matching and normal per-call authorization. Preserve legacy catalogue contracts.
 
 - Add `catalog explore` / `fitness_catalog_search` with a distinct v2 endpoint, French/English text and synonyms, per-variant text relevance before grouping, complete bounded family pages and explicit legacy evidence coverage. Every continuation remains a separate normal request; v1 stays strict and unchanged. Requires the matching backend; no npm publication, reviewed-content publication or production activation is implied.

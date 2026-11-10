@@ -1,0 +1,85 @@
+// Captured from a local synthetic OAuth + hosted MCP Worker journey.
+// Canonical DTOs only; no credentials, provider data or personal account data.
+export default {
+  request: {
+    representationVersion: 1,
+    operationId: 'cff784ca-7c33-4466-b0d8-26876f714e88',
+    action: 'skip',
+    target: {
+      scope: 'project:workouts',
+      athleteId: 'owner',
+      trainingId: 'routine',
+      taskId: 'dated',
+    },
+  },
+  preview: {
+    decision: null,
+    decisionRevision: 0,
+    epoch: '085a2654-fc93-43fe-9367-a2a9615156cd',
+    expectedRevision: null,
+    expiresAt: 1794276913978,
+    key: 'c26a4991967e17b5389e263291bb469aa0702ddc0e496758be0f70d74cb3b63a',
+    preparedAt: 1794276613978,
+    reason: 'review',
+    representationVersion: 1,
+    request: {
+      action: 'skip',
+      operationId: 'cff784ca-7c33-4466-b0d8-26876f714e88',
+      representationVersion: 1,
+      target: {
+        athleteId: 'owner',
+        scope: 'project:workouts',
+        taskId: 'dated',
+        trainingId: 'routine',
+      },
+    },
+    sourceVersion: 'c434be5bce56d25e6ca0da20744c76f201558b4baaec8b86261cbc887cd77428',
+    startsAt: '2026-11-11T02:10:10.841Z',
+    state: 'review',
+  },
+  confirmation: {
+    request: {
+      action: 'skip',
+      operationId: 'cff784ca-7c33-4466-b0d8-26876f714e88',
+      representationVersion: 1,
+      target: {
+        athleteId: 'owner',
+        scope: 'project:workouts',
+        taskId: 'dated',
+        trainingId: 'routine',
+      },
+    },
+    epoch: '085a2654-fc93-43fe-9367-a2a9615156cd',
+    decisionRevision: 0,
+    expectedRevision: null,
+    preparedAt: 1794276613978,
+    previewKey: 'c26a4991967e17b5389e263291bb469aa0702ddc0e496758be0f70d74cb3b63a',
+  },
+  result: {
+    cursor: '1',
+    decision: {
+      actorId: 'owner',
+      decidedAt: 1794276613990,
+      disposition: 'skipped',
+      operationId: 'cff784ca-7c33-4466-b0d8-26876f714e88',
+      sourceVersion: 'c434be5bce56d25e6ca0da20744c76f201558b4baaec8b86261cbc887cd77428',
+      startsAt: '2026-11-11T02:10:10.841Z',
+      target: {
+        athleteId: 'owner',
+        scope: 'project:workouts',
+        taskId: 'dated',
+        trainingId: 'routine',
+      },
+    },
+    epoch: '085a2654-fc93-43fe-9367-a2a9615156cd',
+    mutationId: 'session-skip:cff784ca-7c33-4466-b0d8-26876f714e88',
+    representationVersion: 1,
+    revision: '1',
+    target: {
+      athleteId: 'owner',
+      scope: 'project:workouts',
+      taskId: 'dated',
+      trainingId: 'routine',
+    },
+  },
+};

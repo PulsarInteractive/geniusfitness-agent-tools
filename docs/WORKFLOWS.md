@@ -16,6 +16,13 @@ Use command help for current field types rather than copying guessed payloads.
 For runs, see [Running plans and context](RUNNING.md).
 For timing and measurement coverage, see [Understand a training session](PROGRESS.md).
 
+For a whole planned session, use the typed `fitness_session_skip_preview` and
+`fitness_session_skip_confirm` workflow in [Session skip and restoration](SESSION_SKIP.md).
+It reuses a complete canonical confirmation, not `fitness_prepare_command` or a
+generic planning update. The existing local journal retains uncertainty; hosted
+MCP must retain and resend the full confirmation itself. A skip is neither Done
+nor deletion, and a restored skip does not fabricate completed activity.
+
 ## Example requests
 
 - “Find a catalogue squat variation using dumbbells and add it to my Tuesday workout.”

@@ -1,4 +1,9 @@
 import {
+  sessionSkipRequestSchema,
+  sessionSkipConfirmationSchema,
+  previewSessionSkip,
+} from './session-skip.mjs';
+import {
   temporaryReadSchema,
   temporaryResolveSchema,
   readTemporaryActions,
@@ -255,6 +260,20 @@ export function createMcpServer(client) {
   );
   const journal = new CommandJournal(client);
   register(
+    'fitness_session_skip_preview',
+    'Preview skip or restore of one exact materialized workout occurrence. Supply representationVersion 1, one stable operationId and canonical task/training/athlete IDs. Requires planning:write even for preview; another athlete also requires coaching:write, current Coach entitlement and project rights. Own manual planning is available to Free accounts. This does not delete a task, mark Done, record activity or grant XP. Do not expand recurrence. A blocked or unknown preview is not consent. start_pending requires resuming the original Start or its application recovery; a new operation ID cannot bypass it. Review the result before confirming; expiry limits the proposal, not an existing skip.',
+    sessionSkipRequestSchema,
+    (input) => previewSessionSkip(client, input),
+  );
+  register(
+    'fitness_session_skip_confirm',
+    'Confirm the explicitly requested skip or restoration using the complete canonical Confirmation from a review preview. The existing local journal saves the immutable request before sending. On a lost reply use fitness_retry_command with the SAME operationId; never refresh preview or regenerate the operation automatically. A receipt proves that past decision only: replay after a later restoration does not reapply a skip. Use a fresh preview to inspect current state. No deletion, Done, completed workout, XP or prescription change.',
+    sessionSkipConfirmationSchema,
+    (input) => journal.confirmSessionSkip(input),
+    true,
+    { destructiveHint: false },
+  );
+  register(
     'fitness_changes',
     'Read one bounded page of current changed resources. Start with changeCursor from the final resources page. Apply revisions monotonically, process remove markers and retain nextCursor only after applying the whole page. Omissions are not complete evidence. On restart_read replace the collection from resources.',
     changesSchema,
@@ -283,7 +302,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_retry_command',
-    'Replay the exact saved operation after an uncertain reply. Never rewrites the request or changes agent identity. A confirmed local receipt is explicitly labeled local_receipt.',
+    'Replay the exact saved generic command or session-skip confirmation after an uncertain reply. Never rewrites the request or changes agent identity. A confirmed local receipt is explicitly labeled local_receipt.',
     z.object({ operationId: operationIdSchema }).strict(),
     (input) => journal.retry(input.operationId),
     true,

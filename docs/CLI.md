@@ -63,3 +63,10 @@ all interests and a nullable priority in structured focus; omission keeps the
 legacy representation. Commands are still prepared and retried through the
 normal immutable command journal. See [Temporary exercise instructions](TEMPORARY_ACTIONS.md)
 for the complete v1/v2 fields and replacement rules.
+
+Whole-session planning decisions use `sessions skip-preview --file request.json`
+and `sessions skip-confirm --file confirmation.json` for both `skip` and
+`restore`. Preview is a separate authorized read; confirmation uses the existing
+immutable journal. `commands inspect` and `commands retry` dispatch the saved
+protocol without changing its UUID or fields. See [Session skip and restoration](SESSION_SKIP.md)
+for exact targets, permissions, unknown outcomes and historical receipts.
