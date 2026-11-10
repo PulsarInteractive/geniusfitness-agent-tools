@@ -45,3 +45,22 @@ preview. No receipt alone establishes current access.
 `capabilities.commands` lists generic commands, not every typed endpoint.
 Tool discovery and permissions do not establish producer activation. If preview
 returns unavailable/503, stop without a new UUID or another tool as a bypass.
+
+## Next recurring session without a task
+
+Use `fitness_recurring_session_skip_preview` only for one explicitly requested
+next cycle of a known schedule. Supply the real scope, schedule, athlete and
+workout IDs, representation 1 and one stable operation UUID. Follow the
+[recurring workflow](../../docs/SESSION_SKIP.md#one-next-recurring-session).
+Review the server date and target; pass its entire `confirmation` unchanged only
+after explicit approval. Never infer a task ID or calculate a different cycle.
+
+`materialized` has no recurring confirmation: review the returned canonical session
+preview and confirm only through the ordinary exact-session tool after explicit
+approval. Reread the same target if that preview has expired or changed. `blocked`, incomplete lookup and unavailable service are not success.
+This creates at most one skipped planned task, with audit metadata, never Done,
+activity, XP or a change to following cycles. Restore uses the existing exact-task
+path. Read bounded relevant pages only; normal quotas apply to every call.
+The same local journal dispatches recurring confirmations; hosted MCP resends
+the unchanged confirmation. Neither path automatically refreshes an unknown
+outcome, replaces its UUID or uses old receipts as current state or authority.

@@ -47,3 +47,10 @@ Writes do not manage subscriptions, billing or permission grants. The account’
 
 See [Muscle insights and wearable observations](INSIGHTS.md) for Premium evidence,
 measurement limits and the athlete-controlled sharing workflow.
+
+For the next not-yet-materialized cycle of a known schedule, use
+`fitness_recurring_session_skip_preview` and its complete returned confirmation
+with `fitness_recurring_session_skip_confirm`. A `materialized` result instead
+identifies the existing exact task for the ordinary session preview; it is not a
+skip receipt or automatic consent. Follow the [recurring boundary](SESSION_SKIP.md#one-next-recurring-session),
+including immutable unknown-result recovery and normal per-call quotas.

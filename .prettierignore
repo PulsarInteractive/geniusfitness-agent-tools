@@ -8,3 +8,4 @@ LICENSES/
 
 src/reviewed-catalogue-schemas.mjs
 src/reviewed-catalogue.d.mts
+src/recurring-session-skip-contract.mjs

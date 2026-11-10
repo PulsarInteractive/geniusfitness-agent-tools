@@ -14,7 +14,12 @@ test('remote catalogue has bounded explicit schemas and honest write annotations
     assert.equal(tool.inputSchema.additionalProperties, false);
     ajv.compile(tool.inputSchema);
     if (tool.write) {
-      assert.equal(tool.destructive, tool.name !== 'fitness_session_skip_confirm');
+      assert.equal(
+        tool.destructive,
+        !['fitness_session_skip_confirm', 'fitness_recurring_session_skip_confirm'].includes(
+          tool.name,
+        ),
+      );
     }
     assert.ok(!tool.route || /^[a-z]+(?:[-/][a-z]+)*$/.test(tool.route));
   }

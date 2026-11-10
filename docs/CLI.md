@@ -70,3 +70,11 @@ and `sessions skip-confirm --file confirmation.json` for both `skip` and
 immutable journal. `commands inspect` and `commands retry` dispatch the saved
 protocol without changing its UUID or fields. See [Session skip and restoration](SESSION_SKIP.md)
 for exact targets, permissions, unknown outcomes and historical receipts.
+
+Recurring next-session decisions use `sessions recurring-skip-preview --file
+request.json` and `sessions recurring-skip-confirm --file confirmation.json`.
+The preview takes exact schedule, athlete and workout IDs with one UUID; only
+the service resolves the occurrence. Pass the complete returned confirmation
+unchanged. `materialized` means review the existing exact-task workflow, with no
+automatic confirmation. Both typed confirmations use `commands inspect/retry`
+and the same durable journal. See [Session decisions](SESSION_SKIP.md).

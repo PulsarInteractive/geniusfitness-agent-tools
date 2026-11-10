@@ -1,3 +1,7 @@
+import {
+  validateRecurringSessionSkipConfirmation,
+  validRecurringSessionSkipReceipt,
+} from './recurring-session-skip.mjs';
 import { validateSessionSkipConfirmation, validSessionSkipReceipt } from './session-skip.mjs';
 import { validTemporaryCommand } from './temporary-actions.mjs';
 import { invalidRunPayload } from './run-payloads.mjs';
@@ -199,6 +203,21 @@ const receiptSchema = z
   })
   .strict();
 
+// Typed confirmations share the original durable journal and identity lock.
+// The discriminator prevents reusing a UUID through a different endpoint.
+const confirmationProtocols = {
+  session_skip: {
+    validate: validateSessionSkipConfirmation,
+    validReceipt: validSessionSkipReceipt,
+    path: '/api/agents/v1/session-skip/confirm',
+  },
+  recurring_session_skip: {
+    validate: validateRecurringSessionSkipConfirmation,
+    validReceipt: validRecurringSessionSkipReceipt,
+    path: '/api/agents/v1/session-skip/recurring/confirm',
+  },
+};
+
 /** A journal is bound to one authenticated terminal identity. Persist the full
  * request before the network call, never regenerate a UUID after a timeout.
  * It contains private project text but no access/refresh tokens. A process crash
@@ -234,17 +253,15 @@ export class CommandJournal {
     if (
       !row ||
       row.formatVersion !== 1 ||
-      (row.protocol !== undefined && row.protocol !== 'session_skip') ||
-      (row.protocol === 'session_skip'
-        ? row.input?.request?.operationId
-        : row.input?.operationId) !== id
+      (row.protocol !== undefined && !Object.hasOwn(confirmationProtocols, row.protocol)) ||
+      (row.protocol ? row.input?.request?.operationId : row.input?.operationId) !== id
     ) {
       fail('operation_not_found', 'This context has no valid local operation with that ID.');
     }
     return {
       operationId: id,
       source: 'local_journal',
-      ...(row.protocol === 'session_skip' ? { protocol: row.protocol } : {}),
+      ...(row.protocol ? { protocol: row.protocol } : {}),
       state: row.state,
       request: row.input,
       ...(row.receipt ? { receipt: row.receipt } : {}),
@@ -260,12 +277,13 @@ export class CommandJournal {
   async confirmSessionSkip(value) {
     return this.#execute(value, 'session_skip');
   }
+  async confirmRecurringSessionSkip(value) {
+    return this.#execute(value, 'recurring_session_skip');
+  }
   async #execute(value, protocol) {
-    const input =
-        protocol === 'session_skip'
-          ? validateSessionSkipConfirmation(value)
-          : validateCommand(value),
-      operationId = protocol === 'session_skip' ? input.request.operationId : input.operationId,
+    const typed = protocol ? confirmationProtocols[protocol] : null,
+      input = typed ? typed.validate(value) : validateCommand(value),
+      operationId = typed ? input.request.operationId : input.operationId,
       store = this.store(operationId);
     return store.locked(async () => {
       // Capture token and identity together under the refresh lock. A later
@@ -291,7 +309,7 @@ export class CommandJournal {
         );
       }
       if (row?.state === 'confirmed') {
-        if (protocol === 'session_skip' && !validSessionSkipReceipt(row.receipt, input)) {
+        if (typed && !typed.validReceipt(row.receipt, input)) {
           fail(
             'invalid_response',
             'The saved session receipt is invalid; retain the operation and inspect it before acting.',
@@ -317,9 +335,7 @@ export class CommandJournal {
           this.client.invalidateReads?.();
         }
         const receipt = await this.client.transport.request(
-          protocol === 'session_skip'
-            ? '/api/agents/v1/session-skip/confirm'
-            : '/api/agents/v1/commands',
+          typed ? typed.path : '/api/agents/v1/commands',
           {
             method: 'POST',
             json: input,
@@ -327,8 +343,8 @@ export class CommandJournal {
           },
         );
         if (
-          protocol === 'session_skip'
-            ? !validSessionSkipReceipt(receipt, input)
+          typed
+            ? !typed.validReceipt(receipt, input)
             : !receiptSchema.safeParse(receipt).success ||
               ['operationId', 'scope', 'kind', 'epoch'].some((key) => receipt[key] !== input[key])
         ) {
@@ -365,8 +381,6 @@ export class CommandJournal {
   }
   async retry(id) {
     const saved = await this.inspect(id);
-    return saved.protocol === 'session_skip'
-      ? this.confirmSessionSkip(saved.request)
-      : this.execute(saved.request);
+    return this.#execute(saved.request, saved.protocol);
   }
 }

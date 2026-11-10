@@ -14,7 +14,8 @@ grant XP, alter exercise prescriptions or rewrite the recurring rule. Restore
 withdraws that skip; it does not record activity or undo a workout. Temporary
 exercise/set instructions use [their separate workflow](TEMPORARY_ACTIONS.md).
 Do not expand a recurrence into invented task IDs or treat an exercise slot as a
-whole session.
+whole session. For its next not-yet-created cycle, use the separate recurring
+preview below; the server alone resolves and creates that occurrence.
 
 ## Preview and confirm
 
@@ -86,3 +87,57 @@ uncertainty. The hosted tool returns the canonical Result in its usual MCP data
 envelope. It must not be sent through the generic command tool, whose fields and
 revision limits are different. Current permissions are rechecked by the service;
 a receipt is never a grant to access the task now.
+
+## One next recurring session
+
+For an explicit request about the next cycle that has no planning task yet,
+read only the relevant program, schedule and workout. Both recurring endpoints
+require `planning:write`, current task creation/planning rights and exact athlete
+control; another athlete also requires `coaching:write` and current Coach access.
+Own manual planning remains available on Free. Neither discovery nor a grant
+guarantees feature activation. Each call consumes normal request budgets.
+
+1. Call `fitness_recurring_session_skip_preview` or
+   `geniusfitness sessions recurring-skip-preview --file request.json --json`
+   with the complete Request: `representationVersion: 1`, one retained UUID
+   `operationId`, and `target: {scope, scheduleId, athleteId, trainingId}`.
+   Resolve those IDs from bounded canonical reads. This request has no task ID,
+   action, date override or timezone override. Do not crawl all schedules or
+   calculate a substitute occurrence yourself.
+2. Read the returned date, target, `state` and `reason`. The supported boundary
+   is one standalone, explicitly dated next cycle with zero due offset, within
+   the service horizon. Workflow dependencies, ambiguous/deleted history,
+   incomplete lookup, activity uncertainty, pending Start and unavailable
+   service are refusals. Never turn missing coverage into absence or retry with
+   a new UUID to bypass a refusal.
+3. For `state: "review"`, explain that confirmation creates **one planned task
+   already marked skipped**, with normal task audit metadata. It does not mark
+   Done, add a workout log or XP, change exercise doses, move the schedule cursor
+   early, or skip subsequent cycles. Obtain explicit approval of this exact
+   session, then pass the **entire returned `confirmation` unchanged** to
+   `fitness_recurring_session_skip_confirm` or
+   `geniusfitness sessions recurring-skip-confirm --file confirmation.json --json`.
+   Preserve nested `session`, schedule revision, occurrence key and required
+   nulls. Do not pass it through `fitness_prepare_command` or a generic edit.
+4. For `state: "materialized"`, recurring `confirmation` is null: the task
+   already exists. Preserve the exact `session.request.target` returned by the
+   server and, if the user still wants this action, review that canonical `session` preview.
+   If it is reviewable, obtain explicit approval and use the ordinary
+   `fitness_session_skip_confirm` with its exact confirmation fields (step 4
+   above). If expired or changed, read a current ordinary preview for that same
+   target. Never invent a task ID, auto-confirm the nested session, or treat
+   materialized as successful skipping.
+5. Restore a task created by this operation with the ordinary exact-session
+   preview/confirmation using the receipt's `session.target`. Restore does not
+   delete the task or undo its audit. An old recurring skip receipt remains
+   historical after restore; it must not be reported as current disposition.
+
+Local confirmations use the same CommandJournal and operation locks with the
+explicit `recurring_session_skip` discriminator. `commands inspect/retry` and
+`fitness_inspect_operation` / `fitness_retry_command` dispatch the saved protocol.
+After an uncertain send, keep the original confirmation and identity, even if
+expired or subsequently inaccessible. A 403/409/503 after sending does not prove
+that no commit occurred. There is no automatic refresh or retry loop. Hosted
+MCP retains and resends the same Confirmation to its recurring confirm tool;
+it does not share the local disk journal. A new deliberate action after a
+resolved outcome is separate from retrying an uncertain operation.

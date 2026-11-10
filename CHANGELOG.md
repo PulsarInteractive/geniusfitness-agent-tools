@@ -1,5 +1,11 @@
 ## Unreleased
 
+- Add typed next-recurring-session skip preview/confirmation to CLI and MCP,
+  using generated TypeSpec schemas and the existing immutable command journal.
+  Materialized tasks require a separate explicit exact-session review; no
+  automatic confirmation, schedule expansion or following-cycle change.
+  Source only; server activation and npm publication remain separate.
+
 - Add whole-session skip/restore preview and confirmation to CLI/local MCP.
   Preserve complete canonical targets and opaque revisions in the existing
   immutable journal using a distinct protocol; generic commands stay unchanged.

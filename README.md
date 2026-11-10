@@ -135,3 +135,12 @@ The local client retains an immutable confirmation in its existing journal.
 An old receipt is historical, not current state. See [the workflow and recovery
 rules](docs/SESSION_SKIP.md). Supporting server activation and npm publication
 remain separate.
+
+For a next cycle that has no task yet, the additive
+`sessions recurring-skip-preview` / `fitness_recurring_session_skip_preview`
+returns the server's exact occurrence. Explicit confirmation uses
+`sessions recurring-skip-confirm` / `fitness_recurring_session_skip_confirm`
+and the same durable journal. A `materialized` result requires review through
+the existing exact-task path; no task ID or confirmation is invented.
+See [the bounded recurring workflow](docs/SESSION_SKIP.md#one-next-recurring-session).
+Source availability does not activate the backend or publish an npm release.

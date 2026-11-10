@@ -1,4 +1,9 @@
 import {
+  recurringSessionSkipRequestSchema,
+  recurringSessionSkipConfirmationSchema,
+  previewRecurringSessionSkip,
+} from './recurring-session-skip.mjs';
+import {
   sessionSkipRequestSchema,
   sessionSkipConfirmationSchema,
   previewSessionSkip,
@@ -260,6 +265,20 @@ export function createMcpServer(client) {
   );
   const journal = new CommandJournal(client);
   register(
+    'fitness_recurring_session_skip_preview',
+    'Preview passing one exact next cycle of a known standalone dated schedule. Supply the complete Request with one stable UUID, project scope, schedule, athlete and training IDs; never invent a task ID or expand a whole calendar. Requires planning:write and current task/planning rights; another athlete also needs coaching:write and Coach control. Preview creates nothing. A materialized result identifies an existing task: review its canonical session preview and obtain explicit approval before ordinary session-skip confirmation; reread that exact target if expired or changed. Blocked/incomplete/unavailable is not success; no automatic fallback, confirmation, pagination or retry.',
+    recurringSessionSkipRequestSchema,
+    (input) => previewRecurringSessionSkip(client, input),
+  );
+  register(
+    'fitness_recurring_session_skip_confirm',
+    'Confirm only the explicitly approved recurring review using its complete returned confirmation, including nested session and explicit nulls. The existing local journal preserves it before sending. This atomically creates one skipped planned task; it never marks Done, awards XP, changes prescriptions or skips following cycles. After uncertainty use fitness_retry_command for the SAME saved operation; never refresh fields or invent an ID. A receipt is historical, not current state or access. Restore the created occurrence through the ordinary exact-session preview and confirmation. Normal permissions, flags and quotas remain authoritative.',
+    recurringSessionSkipConfirmationSchema,
+    (input) => journal.confirmRecurringSessionSkip(input),
+    true,
+    { destructiveHint: false },
+  );
+  register(
     'fitness_session_skip_preview',
     'Preview skip or restore of one exact materialized workout occurrence. Supply representationVersion 1, one stable operationId and canonical task/training/athlete IDs. Requires planning:write even for preview; another athlete also requires coaching:write, current Coach entitlement and project rights. Own manual planning is available to Free accounts. This does not delete a task, mark Done, record activity or grant XP. Do not expand recurrence. A blocked or unknown preview is not consent. start_pending requires resuming the original Start or its application recovery; a new operation ID cannot bypass it. Review the result before confirming; expiry limits the proposal, not an existing skip.',
     sessionSkipRequestSchema,
@@ -302,7 +321,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_retry_command',
-    'Replay the exact saved generic command or session-skip confirmation after an uncertain reply. Never rewrites the request or changes agent identity. A confirmed local receipt is explicitly labeled local_receipt.',
+    'Replay the exact saved generic command, session-skip or recurring-session confirmation after an uncertain reply. Never rewrites the request or changes agent identity. A confirmed local receipt is explicitly labeled local_receipt.',
     z.object({ operationId: operationIdSchema }).strict(),
     (input) => journal.retry(input.operationId),
     true,
