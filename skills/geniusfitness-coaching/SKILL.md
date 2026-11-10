@@ -187,3 +187,32 @@ remediation. After an uncertain response preserve the exact original journal
 request; after a policy or source conflict read current help and target data and
 prepare a newly reviewed operation. Retained stale/terminal focus is historical
 context only. See the versioned examples in `TEMPORARY_ACTIONS.md`.
+
+For mixed exercise and regional workout preferences, explicitly use
+`fitness_coach_intents_v3` and `fitness_coach_intent_target_v3` (CLI
+`coaching intents-v3` / `coaching resolve-intent-v3`, each with a complete JSON
+`--file`). Read `command_help` first: `dataSchemas.v3` is the closed command body;
+`temporaryRegional` provides its current qualitative policy. Include explicit
+sessionId (null for scheduled targets), targetKind and both branch fields, with
+exactly one non-null. Discover actual workout occurrence/exercise IDs; never turn
+a date into an invented target. Null upper/lower means no temporary preference,
+not low effort or consent. Non-null regions need current durable inclusion.
+Do not infer percentages, muscles, load, extra sets or readiness from these levels.
+
+Explain the exact occurrence, dates and replacements before preparing the
+user-requested instruction. Regional preferences coexist with exercise focus and
+skip; replacement stays within its group. Keep all selected exercise interests
+and the nullable priority. Use `fitness_prepare_command` then
+`fitness_edit_planning` on hosted MCP or `fitness_execute_command` on local MCP, preserving the athlete-intents epoch/revision/source and
+complete V3 body. Cancel retains its typed branch with all proposal fields null;
+apply is only for a live exercise skip, never a regional preference. These tools
+do not confirm or decline an app CoachMessage and do not alter durable settings.
+
+A retained regional entry still needs the V3 reader after cancellation. Keep
+V1/V2 strict; never downgrade or flatten a pending operation. The existing journal
+replays its original UUID, issuedAt and body after uncertainty; a receipt remains
+historical, not proof of current effect or permission. Each explicit API read
+has the normal authorization and request cost. No polling, new receipt route or
+local cache can substitute for that read. Stop on missing support or revoked
+access. Full request examples and versioned fields are in
+[`TEMPORARY_ACTIONS.md`](../../docs/TEMPORARY_ACTIONS.md).

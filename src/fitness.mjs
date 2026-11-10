@@ -1,3 +1,4 @@
+import temporaryV3Contract from './temporary-actions-v3-contract.mjs';
 import { runPayloadSpec } from './run-payloads.mjs';
 import * as z from 'zod/v4';
 import catalog from './command-catalog.mjs';
@@ -788,7 +789,13 @@ export function commandHelp(kind) {
     requiredTier: definition.requiredTier ?? null,
     revisionScope: definition.revisionScope ?? 'resource',
     resourceChecksRequired: true,
-    ...(kind.startsWith('coach.intent.') ? { temporaryFocus: catalog.temporaryFocus } : {}),
+    ...(kind.startsWith('coach.intent.')
+      ? {
+          temporaryFocus: catalog.temporaryFocus,
+          temporaryRegional: temporaryV3Contract.RegionalPolicy,
+          dataSchemas: { v3: temporaryV3Contract.AgentData },
+        }
+      : {}),
     ...(definition.fields.includes('runPlan') && !definition.delete
       ? { encodedRun: runPayloadSpec(definition.module) }
       : {}),
@@ -797,7 +804,7 @@ export function commandHelp(kind) {
       ? { encodedSets: setPayloadSpec(definition.module) }
       : {}),
     workflow: kind.startsWith('coach.intent.')
-      ? 'Read coaching intents and resolve-intent / fitness_coach_intent_target. Use that athlete collection epoch/revision, never a program checkpoint. Set requires a new UUID, sourceVersion and exact target/time window. Explain overlapping replacements first. Apply consumes a live skip and skips only that occurrence; cancel never undoes completed work. Focus changes guidance only, never weight or XP. Omit representationVersion and focusSelection for strict v1. In v2 send representationVersion:2 and always include focusSelection: the entire selection for objective multiple_axes, otherwise null. Never infer priority from order or silently downgrade. Preserve immutable journal bytes after uncertainty.'
+      ? 'Read coaching intents and resolve-intent / fitness_coach_intent_target. Use that athlete collection epoch/revision, never a program checkpoint. Set requires a new UUID, sourceVersion and exact target/time window. Explain overlapping replacements first. Apply consumes a live skip and skips only that occurrence; cancel never undoes completed work. Focus changes guidance only, never weight or XP. Omit representationVersion and focusSelection for strict v1. In v2 send representationVersion:2 and always include focusSelection: the entire selection for objective multiple_axes, otherwise null. Never infer priority from order or silently downgrade. For mixed collections use the explicit V3 tools / coaching intents-v3 and resolve-intent-v3. dataSchemas.v3 is the closed V3 body; dataSchema is only the multi-version help carrier. V3 has exactly one exercise/regional branch and null for the other, without flattened proposal fields. Regional preference is qualitative for one exact workout and coexists with exercise focus/skip; null means no temporary override. Cancel uses a typed branch with all proposal fields null; regional apply is forbidden. Do not confirm an app coach message through these commands. Preserve immutable journal bytes after uncertainty.'
       : kind.startsWith('coach.push.')
         ? 'Read fitness_coach_push / coaching push-proposals for this athlete and occurrence. Use its epoch/revision, never the program checkpoint. New proposal: new UUID; pending edit: same proposal UUID and latest occurrence revision. Required exerciseId/setIndex may be null for a wider scope. Only propose or withdraw; the athlete must confirm separately. Preserve immutable journal bytes after uncertainty.'
         : definition.create

@@ -1,3 +1,4 @@
+import remoteTools from '../remote/tool-catalog.json' with { type: 'json' };
 import {
   recurringSessionSkipRequestSchema,
   recurringSessionSkipConfirmationSchema,
@@ -13,6 +14,11 @@ import {
   temporaryResolveSchema,
   readTemporaryActions,
 } from './temporary-actions.mjs';
+import {
+  temporaryReadV3Schema,
+  temporaryResolveV3Schema,
+  readTemporaryActionsV3,
+} from './temporary-actions-v3.mjs';
 import { coachPushReadSchema, readCoachPush } from './coach-push.mjs';
 import { catalogueSearchSchema, readCatalogueSearch } from './catalogue-search.mjs';
 import {
@@ -220,6 +226,20 @@ export function createMcpServer(client) {
     'Read verified Push bonus results for one selected program and live session UUID. Requires metrics:read and current program access; another athlete requires Coach and current control of that athlete’s program. Read-only: compare actual with base/offeredTarget using explicit units and loadMilliunits / 1000. Set includeRewardDetails true to request awardedXp: exact settled cosmetic bonus after caps; absent/null means unknown, never a nominal or promised award. Incomplete or unconfirmed is unknown, not failure or zero. Corrections supersede earlier outcome IDs. No permission to attempt a bonus, award XP or change a future prescription. No history enumeration or automatic retry loop.',
     pushResultsSchema,
     (input) => readPushResults(client, input),
+  );
+  register(
+    'fitness_coach_intents_v3',
+    remoteTools.find((tool) => tool.name === 'fitness_coach_intents_v3').description,
+    temporaryReadV3Schema,
+    (input) => readTemporaryActionsV3(client, input),
+  );
+  register(
+    'fitness_coach_intent_target_v3',
+    remoteTools
+      .find((tool) => tool.name === 'fitness_coach_intent_target_v3')
+      .description.replace('fitness_edit_planning', 'fitness_execute_command'),
+    temporaryResolveV3Schema,
+    (input) => readTemporaryActionsV3(client, input, true),
   );
   register(
     'fitness_coach_intents',

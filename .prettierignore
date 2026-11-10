@@ -9,3 +9,8 @@ LICENSES/
 src/reviewed-catalogue-schemas.mjs
 src/reviewed-catalogue.d.mts
 src/recurring-session-skip-contract.mjs
+src/temporary-actions-v3-contract.mjs
+src/temporary-actions-v3-contract.d.mts
+
+# Preserve the exact canonical HTTP evidence bytes.
+test/fixtures/temporary-actions-v3-wire.json

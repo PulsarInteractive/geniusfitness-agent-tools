@@ -8,7 +8,10 @@ test('remote catalogue has bounded explicit schemas and honest write annotations
   assert.equal(new Set(tools.map((t) => t.name)).size, tools.length);
   const ajv = new Ajv({ strict: false });
   for (const tool of tools) {
-    assert.match(tool.name, /^(tasker|fitness)_[a-z_]+$/);
+    assert.ok(
+      /^(tasker|fitness)_[a-z_]+$/.test(tool.name) ||
+        ['fitness_coach_intents_v3', 'fitness_coach_intent_target_v3'].includes(tool.name),
+    );
     assert.ok(tool.title && tool.description);
     assert.equal(tool.inputSchema.type, 'object');
     assert.equal(tool.inputSchema.additionalProperties, false);
@@ -21,7 +24,11 @@ test('remote catalogue has bounded explicit schemas and honest write annotations
         ),
       );
     }
-    assert.ok(!tool.route || /^[a-z]+(?:[-/][a-z]+)*$/.test(tool.route));
+    assert.ok(
+      !tool.route ||
+        /^[a-z]+(?:[-/][a-z]+)*$/.test(tool.route) ||
+        ['coach-intents/v3/read', 'coach-intents/v3/resolve'].includes(tool.route),
+    );
   }
   const execute = tools.find((t) => t.name.endsWith('_execute_command'));
   assert.equal(execute.write, true);
@@ -70,9 +77,13 @@ test('every command can request its exact permission without unrelated write gra
   }
   for (const tool of tools.filter((candidate) => candidate.name.includes('_coach_'))) {
     if (
-      ['fitness_coach_push', 'fitness_coach_intents', 'fitness_coach_intent_target'].includes(
-        tool.name,
-      )
+      [
+        'fitness_coach_push',
+        'fitness_coach_intents',
+        'fitness_coach_intent_target',
+        'fitness_coach_intents_v3',
+        'fitness_coach_intent_target_v3',
+      ].includes(tool.name)
     ) {
       assert.deepEqual(tool.scopes, ['planning:read']);
       assert.equal(
@@ -81,6 +92,8 @@ test('every command can request its exact permission without unrelated write gra
           fitness_coach_push: 'coach-push',
           fitness_coach_intents: 'coach-intents',
           fitness_coach_intent_target: 'coach-intent-target',
+          fitness_coach_intents_v3: 'coach-intents/v3/read',
+          fitness_coach_intent_target_v3: 'coach-intents/v3/resolve',
         }[tool.name],
       );
       assert.ok(!tool.write);

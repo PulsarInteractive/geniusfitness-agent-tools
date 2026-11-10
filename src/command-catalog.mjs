@@ -32,20 +32,17 @@ export default {
         "startsAt",
         "endsAt",
         "representationVersion",
-        "focusSelection"
+        "focusSelection",
+        "targetKind",
+        "exercise",
+        "regional"
       ],
-      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentDataSupported",
+      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentDataSupportedV3",
       "module": "Project/CoachIntent",
       "permission": "planning:write",
       "requiredFields": [
         "athleteId",
-        "sessionId",
-        "kind",
-        "objective",
-        "target",
-        "sourceVersion",
-        "startsAt",
-        "endsAt"
+        "sessionId"
       ],
       "revisionMode": "occurrence",
       "revisionScope": "athlete_intents"
@@ -61,20 +58,17 @@ export default {
         "startsAt",
         "endsAt",
         "representationVersion",
-        "focusSelection"
+        "focusSelection",
+        "targetKind",
+        "exercise",
+        "regional"
       ],
-      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentDataSupported",
+      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentDataSupportedV3",
       "module": "Project/CoachIntent",
       "permission": "planning:write",
       "requiredFields": [
         "athleteId",
-        "sessionId",
-        "kind",
-        "objective",
-        "target",
-        "sourceVersion",
-        "startsAt",
-        "endsAt"
+        "sessionId"
       ],
       "revisionMode": "occurrence",
       "revisionScope": "athlete_intents"
@@ -90,20 +84,17 @@ export default {
         "startsAt",
         "endsAt",
         "representationVersion",
-        "focusSelection"
+        "focusSelection",
+        "targetKind",
+        "exercise",
+        "regional"
       ],
-      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentDataSupported",
+      "inputSchema": "GeniusFitness.CoachIntents.TemporaryActionAgentDataSupportedV3",
       "module": "Project/CoachIntent",
       "permission": "planning:write",
       "requiredFields": [
         "athleteId",
-        "sessionId",
-        "kind",
-        "objective",
-        "target",
-        "sourceVersion",
-        "startsAt",
-        "endsAt"
+        "sessionId"
       ],
       "revisionMode": "occurrence",
       "revisionScope": "athlete_intents"
@@ -866,7 +857,8 @@ export default {
               "focus",
               "skip"
             ],
-            "type": "string"
+            "type": "string",
+            "description": "Required in v1/v2; forbidden in v3, which places this field in exercise."
           },
           {
             "type": "null"
@@ -884,8 +876,7 @@ export default {
               "skip_once",
               "multiple_axes"
             ],
-            "type": "string",
-            "description": "V1 accepts only legacy single objectives. multiple_axes is permitted only by explicit v2 with a complete non-null focusSelection."
+            "type": "string"
           },
           {
             "type": "null"
@@ -999,11 +990,21 @@ export default {
         ]
       },
       "representationVersion": {
-        "description": "Omit for strict legacy v1. Exact 2 opts into the complete focus representation; it grants no write permission or feature activation.",
-        "enum": [
-          2
-        ],
-        "type": "integer"
+        "description": "Absent selects strict legacy v1; exact2 selects complete exercise focus; exact3 selects closed exercise/regional branches. Never downgrade or rewrite a pending command.",
+        "oneOf": [
+          {
+            "enum": [
+              2
+            ],
+            "type": "integer"
+          },
+          {
+            "enum": [
+              3
+            ],
+            "type": "integer"
+          }
+        ]
       },
       "focusSelection": {
         "anyOf": [
@@ -1015,7 +1016,7 @@ export default {
               "selected"
             ],
             "type": "object",
-            "description": "Required in v2: full selected interests and nullable priority for multiple_axes; null for legacy mono/skip/cancel/apply. Forbidden in v1. No inferred priority or data reduction.",
+            "description": "Required in v2, forbidden in v1; in v3 this belongs only to exercise. Null is not an inferred priority.",
             "properties": {
               "policyVersion": {
                 "maxLength": 80,
@@ -1042,6 +1043,402 @@ export default {
                 "items": {
                   "type": "string"
                 }
+              }
+            }
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "targetKind": {
+        "enum": [
+          "exercise",
+          "regional"
+        ],
+        "type": "string",
+        "description": "Required only in v3. Exactly one non-null branch must match targetKind."
+      },
+      "exercise": {
+        "anyOf": [
+          {
+            "additionalProperties": false,
+            "required": [
+              "endsAt",
+              "focusSelection",
+              "kind",
+              "objective",
+              "sourceVersion",
+              "startsAt",
+              "target"
+            ],
+            "type": "object",
+            "description": "Required in v3; non-null exactly for exercise. Cancel/apply preserve a typed branch with null proposal fields.",
+            "properties": {
+              "endsAt": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "focusSelection": {
+                "anyOf": [
+                  {
+                    "additionalProperties": false,
+                    "required": [
+                      "policyVersion",
+                      "priority",
+                      "selected"
+                    ],
+                    "type": "object",
+                    "properties": {
+                      "policyVersion": {
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "priority": {
+                        "anyOf": [
+                          {
+                            "maxLength": 80,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "selected": {
+                        "maxItems": 3,
+                        "minItems": 1,
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "kind": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "focus",
+                      "skip"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "objective": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "comfort",
+                      "hypertrophy",
+                      "strength",
+                      "consistency",
+                      "skip_once",
+                      "multiple_axes"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "sourceVersion": {
+                "anyOf": [
+                  {
+                    "maxLength": 64,
+                    "pattern": "^[a-f0-9]{64}$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "startsAt": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "target": {
+                "anyOf": [
+                  {
+                    "additionalProperties": false,
+                    "required": [
+                      "exerciseId",
+                      "occurrenceId",
+                      "projectId",
+                      "sessionId",
+                      "setIndex",
+                      "trainingId"
+                    ],
+                    "type": "object",
+                    "properties": {
+                      "exerciseId": {
+                        "maxLength": 128,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "occurrenceId": {
+                        "anyOf": [
+                          {
+                            "maxLength": 128,
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "projectId": {
+                        "maxLength": 128,
+                        "pattern": "^[A-Za-z0-9_-]{1,128}$",
+                        "type": "string"
+                      },
+                      "sessionId": {
+                        "anyOf": [
+                          {
+                            "format": "uuid",
+                            "maxLength": 36,
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "setIndex": {
+                        "anyOf": [
+                          {
+                            "format": "int32",
+                            "maximum": 1000,
+                            "minimum": 1,
+                            "type": "integer"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "trainingId": {
+                        "maxLength": 128,
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "regional": {
+        "anyOf": [
+          {
+            "additionalProperties": false,
+            "required": [
+              "endsAt",
+              "kind",
+              "objective",
+              "regionalEmphasis",
+              "sourceVersion",
+              "startsAt",
+              "target"
+            ],
+            "type": "object",
+            "description": "Required in v3; non-null exactly for regional. Qualitative preference for one exact workout, never load, sets or percentages. Null region means no override. Regional apply is forbidden.",
+            "properties": {
+              "endsAt": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "kind": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "regional_emphasis"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "objective": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "regional_distribution"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "regionalEmphasis": {
+                "anyOf": [
+                  {
+                    "additionalProperties": false,
+                    "required": [
+                      "lower",
+                      "policyVersion",
+                      "upper"
+                    ],
+                    "type": "object",
+                    "properties": {
+                      "lower": {
+                        "anyOf": [
+                          {
+                            "enum": [
+                              "low",
+                              "moderate",
+                              "high"
+                            ],
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "policyVersion": {
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "upper": {
+                        "anyOf": [
+                          {
+                            "enum": [
+                              "low",
+                              "moderate",
+                              "high"
+                            ],
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "sourceVersion": {
+                "anyOf": [
+                  {
+                    "maxLength": 64,
+                    "pattern": "^[a-f0-9]{64}$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "startsAt": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "target": {
+                "anyOf": [
+                  {
+                    "additionalProperties": false,
+                    "required": [
+                      "occurrenceId",
+                      "projectId",
+                      "sessionId",
+                      "targetType",
+                      "trainingId"
+                    ],
+                    "type": "object",
+                    "properties": {
+                      "occurrenceId": {
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "projectId": {
+                        "maxLength": 128,
+                        "pattern": "^[A-Za-z0-9_-]{1,128}$",
+                        "type": "string"
+                      },
+                      "sessionId": {
+                        "format": "uuid",
+                        "maxLength": 36,
+                        "minLength": 36,
+                        "type": "string"
+                      },
+                      "targetType": {
+                        "enum": [
+                          "workout_occurrence"
+                        ],
+                        "type": "string"
+                      },
+                      "trainingId": {
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               }
             }
           },

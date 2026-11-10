@@ -1,5 +1,12 @@
 ## Unreleased
 
+- Add explicit V3 mixed exercise/regional temporary reads to CLI and MCP,
+  generated closed schemas, exact-target validation and qualitative upper/lower
+  workout preferences. Keep the existing command kinds and immutable journal;
+  legacy V1/V2 operations and receipts remain unchanged. Regional apply and
+  delegated CoachMessage confirmation are not supported. Source only: requires
+  the matching service, app support and activation; no npm release or deployment.
+
 - Add typed next-recurring-session skip preview/confirmation to CLI and MCP,
   using generated TypeSpec schemas and the existing immutable command journal.
   Materialized tasks require a separate explicit exact-session review; no

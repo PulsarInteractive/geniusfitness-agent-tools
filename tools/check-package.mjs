@@ -27,8 +27,13 @@ if (readme.split('\n')[0] !== '# GeniusFitness CLI & MCP' || /private beta/i.tes
 }
 const allowed =
   /^(remote\/(?:tool-catalog|workflows|subscription-guidance)\.json|LICENSE|LICENSES\/Apache-2\.0\.txt|THIRD_PARTY_NOTICES\.md|package\.json|README\.md|CHANGELOG\.md|CONTRIBUTING\.md|SECURITY\.md|examples\/(?:mcp\.json|codex\.toml)|plugin\.json|mcp\.json|docs\/[A-Z][A-Z_]*\.md|bin\/[a-z-]+\.mjs|src\/[a-z-]+\.(?:mjs|d\.mts)|skills\/[a-z-]+\/SKILL\.md|skills\/[a-z-]+\/references\/[a-z-]+\.md|skills\/[a-z-]+\/agents\/openai\.yaml)$/;
+const temporaryV3Files = new Set([
+  'src/temporary-actions-v3.mjs',
+  'src/temporary-actions-v3-contract.mjs',
+  'src/temporary-actions-v3-contract.d.mts',
+]);
 for (const entry of pack.files) {
-  if (!allowed.test(entry.path)) {
+  if (!allowed.test(entry.path) && !temporaryV3Files.has(entry.path)) {
     throw Error(`Unexpected package file: ${entry.path}`);
   }
   const path = join(root, entry.path),

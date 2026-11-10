@@ -78,3 +78,13 @@ the service resolves the occurrence. Pass the complete returned confirmation
 unchanged. `materialized` means review the existing exact-task workflow, with no
 automatic confirmation. Both typed confirmations use `commands inspect/retry`
 and the same durable journal. See [Session decisions](SESSION_SKIP.md).
+
+Mixed temporary exercise and regional workout instructions use
+`coaching intents-v3 --file read.json` and
+`coaching resolve-intent-v3 --file resolve.json`. Both files contain complete
+representation-3 requests, including explicit nullable sessionId and, for resolve,
+exactly one exercise/regional branch. These commands only read. Use the same
+commands prepare/execute/retry journal for user-authorized set/cancel or live
+exercise-skip apply. Regional apply is unsupported. Never rewrite a saved V1/V2
+operation or downgrade a mixed collection. See the complete V3 schema, examples
+and recovery rules in [Temporary instructions](TEMPORARY_ACTIONS.md).

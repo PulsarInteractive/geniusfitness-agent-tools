@@ -2324,5 +2324,317 @@
     "write": true,
     "destructive": false,
     "idempotent": true
+  },
+  {
+    "name": "fitness_coach_intents_v3",
+    "title": "Read mixed temporary exercise and workout preferences",
+    "description": "Read one bounded collection for an exact program and athlete. Version 3 preserves exercise focus/skip and qualitative upper/lower workout preferences, including retained cancelled history. One explicit API call; no polling, page aggregation or automatic downgrade. Scheduled, active and historical are distinct. Read before a user-requested change; preserve all axes and nullable priority. Current grants and normal request budgets are checked on every call. This read neither prepares nor confirms a Coach dialogue and never completes work or awards XP.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "athleteId": {
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+          "type": "string"
+        },
+        "representationVersion": {
+          "enum": [3],
+          "type": "integer"
+        },
+        "scope": {
+          "maxLength": 160,
+          "pattern": "^project:[A-Za-z0-9_-]{1,128}$",
+          "type": "string"
+        },
+        "sessionId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "maxLength": 36,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": ["athleteId", "representationVersion", "scope", "sessionId"],
+      "type": "object"
+    },
+    "scopes": ["planning:read"],
+    "route": "coach-intents/v3/read",
+    "write": false,
+    "destructive": false,
+    "idempotent": true
+  },
+  {
+    "name": "fitness_coach_intent_target_v3",
+    "title": "Resolve one exact exercise or workout preference target",
+    "description": "Resolve one explicit exercise or regional workout target and its current revision/source before preparing a user-requested temporary command. Supply representationVersion 3, scope, athleteId, nullable sessionId and exactly one non-null branch matching targetKind. Regional targets name one exact materialized workout occurrence; do not invent IDs from dates. Qualitative low/moderate/high are preferences, never load, sets, percentages or consent to include an excluded region. Review returned replacements, dates and coverage. Use fitness_prepare_command then fitness_edit_planning for the approved instruction; no delegated CoachMessage confirmation. Every explicit read has its normal quota cost and creates no command, receipt or reservation.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "athleteId": {
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+          "type": "string"
+        },
+        "exercise": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "selection": {
+                  "oneOf": [
+                    {
+                      "enum": ["current"],
+                      "type": "string"
+                    },
+                    {
+                      "enum": ["next"],
+                      "type": "string"
+                    },
+                    {
+                      "enum": ["exact"],
+                      "type": "string"
+                    }
+                  ]
+                },
+                "target": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "exerciseId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "occurrenceId": {
+                          "anyOf": [
+                            {
+                              "maxLength": 128,
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "projectId": {
+                          "maxLength": 128,
+                          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+                          "type": "string"
+                        },
+                        "sessionId": {
+                          "anyOf": [
+                            {
+                              "format": "uuid",
+                              "maxLength": 36,
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "setIndex": {
+                          "anyOf": [
+                            {
+                              "format": "int32",
+                              "maximum": 1000,
+                              "minimum": 1,
+                              "type": "integer"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "trainingId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "exerciseId",
+                        "occurrenceId",
+                        "projectId",
+                        "sessionId",
+                        "setIndex",
+                        "trainingId"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": ["selection", "target"],
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "regional": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "endsAt": {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "regionalEmphasis": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "lower": {
+                      "anyOf": [
+                        {
+                          "enum": ["low", "moderate", "high"],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "policyVersion": {
+                      "maxLength": 80,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "upper": {
+                      "anyOf": [
+                        {
+                          "enum": ["low", "moderate", "high"],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["lower", "policyVersion", "upper"],
+                  "type": "object"
+                },
+                "selection": {
+                  "enum": ["exact"],
+                  "type": "string"
+                },
+                "startsAt": {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "target": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "occurrenceId": {
+                      "anyOf": [
+                        {
+                          "maxLength": 256,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "projectId": {
+                      "maxLength": 128,
+                      "pattern": "^[A-Za-z0-9_-]{1,128}$",
+                      "type": "string"
+                    },
+                    "sessionId": {
+                      "anyOf": [
+                        {
+                          "format": "uuid",
+                          "maxLength": 36,
+                          "minLength": 36,
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "targetType": {
+                      "enum": ["workout_occurrence"],
+                      "type": "string"
+                    },
+                    "trainingId": {
+                      "maxLength": 256,
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "occurrenceId",
+                    "projectId",
+                    "sessionId",
+                    "targetType",
+                    "trainingId"
+                  ],
+                  "type": "object"
+                }
+              },
+              "required": ["endsAt", "regionalEmphasis", "selection", "startsAt", "target"],
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "representationVersion": {
+          "enum": [3],
+          "type": "integer"
+        },
+        "scope": {
+          "maxLength": 160,
+          "pattern": "^project:[A-Za-z0-9_-]{1,128}$",
+          "type": "string"
+        },
+        "sessionId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "maxLength": 36,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "targetKind": {
+          "enum": ["exercise", "regional"],
+          "type": "string"
+        }
+      },
+      "required": [
+        "athleteId",
+        "exercise",
+        "regional",
+        "representationVersion",
+        "scope",
+        "sessionId",
+        "targetKind"
+      ],
+      "type": "object"
+    },
+    "scopes": ["planning:read"],
+    "route": "coach-intents/v3/resolve",
+    "write": false,
+    "destructive": false,
+    "idempotent": true
   }
 ]

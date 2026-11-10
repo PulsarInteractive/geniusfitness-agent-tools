@@ -20,15 +20,19 @@ permissions, then approve. There is no token to copy into your terminal.
 
 ## What you can do
 
-| Feature                            | CLI                                            | MCP                                 |
-| ---------------------------------- | ---------------------------------------------- | ----------------------------------- |
-| Find your programs                 | `programs list`                                | `fitness_programs`                  |
-| Search exercises                   | `catalog search --query squat`                 | `fitness_catalog`                   |
-| Explore grouped variants (v2)      | `catalog explore --query traction --locale fr` | `fitness_catalog_search`            |
-| Read workouts, planning or results | `resources list`                               | `fitness_resources`                 |
-| Summarize activity                 | `metrics summary`                              | `fitness_metrics`                   |
-| Create or edit a plan              | `commands prepare` / `commands retry`          | Journaled command tools             |
-| Follow changes                     | `changes list` / `changes watch`               | `fitness_changes` / `fitness_watch` |
+| Feature                            | CLI                                              | MCP                                 |
+| ---------------------------------- | ------------------------------------------------ | ----------------------------------- |
+| Find your programs                 | `programs list`                                  | `fitness_programs`                  |
+| Search exercises                   | `catalog search --query squat`                   | `fitness_catalog`                   |
+| Explore grouped variants (v2)      | `catalog explore --query traction --locale fr`   | `fitness_catalog_search`            |
+| Read workouts, planning or results | `resources list`                                 | `fitness_resources`                 |
+| Summarize activity                 | `metrics summary`                                | `fitness_metrics`                   |
+| Create or edit a plan              | `commands prepare` / `commands retry`            | Journaled command tools             |
+| Read mixed temporary preferences   | `coaching intents-v3 --file read.json`           | `fitness_coach_intents_v3`          |
+| Resolve one temporary target       | `coaching resolve-intent-v3 --file resolve.json` | `fitness_coach_intent_target_v3`    |
+| Follow changes                     | `changes list` / `changes watch`                 | `fitness_changes` / `fitness_watch` |
+
+For these source-only V3 temporary workflows, read [Temporary instructions](docs/TEMPORARY_ACTIONS.md): matching server support and activation are separate from installing the client.
 
 Choose from the exercise catalogue before creating a custom exercise. Private
 health measurements require separate permission. Managing another athlete’s

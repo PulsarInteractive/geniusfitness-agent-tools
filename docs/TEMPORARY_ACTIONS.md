@@ -109,3 +109,136 @@ permission to invent current semantics. A policy conflict requires fresh help,
 fresh target data and a newly reviewed operation. A disabled producer returns
 `temporary_focus_not_activated` with `wait_for_feature`; do not poll or silently
 fall back. Payment, grants and named athlete control are checked separately.
+
+## Explicit representation 3: exercise and workout preferences
+
+This source extension requires the matching service and supported app readers.
+It does not enable a producer or publish an npm release. Use the separate
+`fitness_coach_intents_v3` and `fitness_coach_intent_target_v3` tools, or
+`coaching intents-v3 --file read.json` and
+`coaching resolve-intent-v3 --file resolve.json`. They make one authorized POST
+read each. They neither prepare a command nor confirm a coach dialogue.
+
+V3 keeps exercise focus/skip and a qualitative upper/lower preference for one
+exact workout in the same bounded collection. A retained regional entry still
+needs V3 after it is cancelled or expires. V1/V2 remain strict and unchanged;
+never silently fall back, hide an entry, or flatten a saved V3 operation.
+
+A complete program read uses an explicit nullable session ID:
+
+```json
+{
+  "representationVersion": 3,
+  "scope": "project:PROGRAM_ID",
+  "athleteId": "ATHLETE_ID",
+  "sessionId": null
+}
+```
+
+For a live-session read, replace null with its actual session UUID. For a
+scheduled exact target, retain null and use its real occurrence ID. Discover
+these identifiers from authorized planning/session reads; a date does not create
+an occurrence. Unmaterialized recurring schedules use their separate workflow.
+
+Read `fitness_command_help` for `coach.intent.set` (CLI `commands describe
+--kind coach.intent.set`). `dataSchemas.v3` is the closed V3 command-data schema;
+`dataSchema` is the multi-version help carrier, not an admission schema.
+`temporaryRegional` publishes the current policy and qualitative levels.
+`temporaryFocus` still describes the complete exercise-interest selection.
+
+An illustrative regional resolve request follows. Replace all IDs, dates and
+policy with the observed target, the user's requested window and current help;
+do not derive them from these example values. Include the exact workout start
+inside a window of at most seven days. Ask for a timezone when dates are ambiguous.
+
+```json
+{
+  "representationVersion": 3,
+  "scope": "project:PROGRAM_ID",
+  "athleteId": "ATHLETE_ID",
+  "sessionId": null,
+  "targetKind": "regional",
+  "exercise": null,
+  "regional": {
+    "selection": "exact",
+    "target": {
+      "targetType": "workout_occurrence",
+      "projectId": "PROGRAM_ID",
+      "trainingId": "TRAINING_ID",
+      "occurrenceId": "EXACT_OCCURRENCE_ID",
+      "sessionId": null
+    },
+    "regionalEmphasis": {
+      "policyVersion": "1",
+      "upper": "high",
+      "lower": null
+    },
+    "startsAt": "2026-11-11T10:00:00Z",
+    "endsAt": "2026-11-12T10:00:00Z"
+  }
+}
+```
+
+`low`, `moderate` and `high` describe a light, moderate or important place in
+that workout. They are not percentages, effort measurements, extra sets,
+training load or permission to train through pain. Null means no temporary
+preference for that region. It does not mean low, excluded, equal weighting or
+unknown data that the agent may fill. Use a durable preference only when it is
+actually known. A non-null region must already be explicitly included in the
+current durable configuration; neither resolving nor setting this preference
+enables it or supplies consent.
+
+For an exercise resolve, use `targetKind: "exercise"`, `regional: null` and
+`exercise: {"selection": "exact", "target": ...}` with the complete exercise
+target. `current`/`next` instead require an actual live session UUID and
+`target: null`. Exactly one branch must be non-null; both branch fields are
+always required. Do not move regional values into an exercise or infer muscles
+from an exercise's name.
+
+Prepare and execute only the requested adjustment:
+
+1. Inspect the resolved target, `replaces` and time window. Explain which complete
+   instruction will be replaced. Regional preferences replace their own workout
+   preference group; they coexist with exercise focus/skip. Exercise/set overlap
+   retains the existing whole-instruction replacement rules. Replaced instructions
+   do not resume when the new one is withdrawn or expires.
+2. Use `fitness_prepare_command`, then `fitness_edit_planning` on hosted MCP
+   or `fitness_execute_command` on local MCP (CLI
+   `commands prepare`, then `commands retry` or `commands execute`). Keep the
+   existing `coach.intent.set` kind, a new instruction UUID and the returned
+   athlete-intents `epoch`/`revision`, never a program checkpoint.
+3. V3 data has exactly `athleteId`, `sessionId`, `representationVersion: 3`,
+   `targetKind`, `exercise` and `regional`. A regional set's selected branch has
+   `kind: "regional_emphasis"`, `objective: "regional_distribution"`, the complete
+   `regionalEmphasis`, exact `target`, returned `sourceVersion`, `startsAt` and
+   `endsAt`. Its `exercise` branch is null. An exercise set instead puts its
+   existing focus/skip values and explicit `focusSelection` inside `exercise`,
+   with `regional: null`. Full focus interests and nullable priority stay intact.
+4. `coach.intent.cancel` keeps the instruction ID, fresh collection revision and
+   correct targetKind. The selected typed branch remains an object with **every
+   proposal field null**; the other branch is null. Regional branch fields are
+   `kind`, `objective`, `regionalEmphasis`, `target`, `sourceVersion`, `startsAt`,
+   `endsAt`. Exercise uses `focusSelection` in place of `regionalEmphasis`.
+5. `coach.intent.apply` is only for a live exercise skip, using the exercise
+   branch with null proposal fields. Regional apply is refused. A preference is
+   not completed work, readiness, a prescription change or an XP award.
+
+The agent does not confirm or decline the application's CoachMessage through
+these commands. Its delegated prepared instruction is a separate explicit user
+request with normal current permissions. Reading your own collection does not
+promise Premium activation; another athlete still needs current named Coach
+control, the appropriate grants and subscription. Neither a target preview nor
+local command help grants that authority.
+
+After uncertainty, `commands retry` sends the saved complete operation without
+changing version, branch, UUID, issuedAt, target, source or revision. A known
+local receipt is historical evidence only; it does not avoid an explicitly
+requested current read. Every read/resolve and command sent to the server uses
+normal request authorization and budgets, including exact server replay. The
+agent journal already obtains an exact command receipt without requiring an
+old-format collection snapshot; there is no extra public receipt route. A
+replayed old v1/v2 receipt can therefore remain valid after a regional entry is
+retained, but its old collection reader must not pretend to understand V3.
+On revoked access or source/policy conflict, follow the returned remediation;
+do not erase an uncertain operation, invent a new UUID, poll, or reconstruct a
+smaller body to force success.

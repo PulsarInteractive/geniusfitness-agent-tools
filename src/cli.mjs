@@ -1,6 +1,7 @@
 import { previewRecurringSessionSkip } from './recurring-session-skip.mjs';
 import { previewSessionSkip } from './session-skip.mjs';
 import { readTemporaryActions } from './temporary-actions.mjs';
+import { readTemporaryActionsV3 } from './temporary-actions-v3.mjs';
 import { readCoachPush } from './coach-push.mjs';
 import { readCatalogueSearch } from './catalogue-search.mjs';
 import { readReviewedCatalogue, readReviewedCatalogueDetail } from './reviewed-catalogue.mjs';
@@ -123,6 +124,15 @@ export const commands = {
     summary:
       'Read verified Push outcomes for one exact live session; never authorizes an attempt, XP or prescription change.',
     options: ['scope', 'sessionId', 'athleteId', 'includeRewardDetails'],
+  },
+  'coaching intents-v3': {
+    summary: 'Read one bounded mixed exercise/regional collection from a complete V3 JSON request.',
+    options: ['file'],
+  },
+  'coaching resolve-intent-v3': {
+    summary:
+      'Resolve one exact V3 exercise or workout preference; read only, no automatic command.',
+    options: ['file'],
   },
   'coaching intents': {
     summary: 'Read temporary exercise instructions for one athlete program.',
@@ -486,6 +496,12 @@ export async function main(
             .filter((key) => options[key] !== undefined)
             .map((key) => [key, options[key]]),
         ),
+      );
+    } else if (command === 'coaching intents-v3' || command === 'coaching resolve-intent-v3') {
+      data = await readTemporaryActionsV3(
+        client,
+        await readCommandFile(options.file),
+        command === 'coaching resolve-intent-v3',
       );
     } else if (command === 'coaching intents' || command === 'coaching resolve-intent') {
       const query = Object.fromEntries(

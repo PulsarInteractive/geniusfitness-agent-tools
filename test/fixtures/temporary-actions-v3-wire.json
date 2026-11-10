@@ -1,0 +1,1292 @@
+{
+  "provenance": {
+    "kind": "real_oauth_gateway_agents_data_sqlite_mcp",
+    "providerCalls": 0
+  },
+  "read": {
+    "scope": "project:program1",
+    "athleteId": "athlete1",
+    "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+    "representationVersion": 3
+  },
+  "initial": {
+    "entries": [],
+    "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+    "representationVersion": 3,
+    "revision": null,
+    "serverTime": "2026-11-10T11:21:23.037Z"
+  },
+  "legacy": [
+    {
+      "command": {
+        "scope": "project:program1",
+        "operationId": "a48032e0-c1eb-489d-89a1-af1665e27066",
+        "id": "1ff77c9c-86a6-47b1-ad36-03c52843d25d",
+        "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+        "expectedRevision": null,
+        "issuedAt": 1794309683043,
+        "kind": "coach.intent.set",
+        "data": {
+          "athleteId": "athlete1",
+          "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+          "kind": "focus",
+          "objective": "comfort",
+          "target": {
+            "exerciseId": "bench",
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "setIndex": null,
+            "trainingId": "training"
+          },
+          "sourceVersion": "ea231792479e1b8f643ec9d39fca4e5764c2aa29720a5078b87f8558c43bd9b1",
+          "startsAt": "2026-11-10T11:21:23.043Z",
+          "endsAt": "2026-11-10T12:21:23.043Z"
+        }
+      },
+      "receipt": {
+        "affectedCollections": [
+          "coachIntents"
+        ],
+        "cursor": "1",
+        "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+        "items": [
+          {
+            "collection": "coachIntents",
+            "deleted": false,
+            "id": "1ff77c9c-86a6-47b1-ad36-03c52843d25d",
+            "revision": "1"
+          }
+        ],
+        "kind": "coach.intent.set",
+        "operationId": "a48032e0-c1eb-489d-89a1-af1665e27066",
+        "scope": "project:program1"
+      }
+    },
+    {
+      "command": {
+        "scope": "project:program1",
+        "operationId": "1d801353-266d-402b-bad6-e69010a7c869",
+        "id": "b4956743-8c69-4414-b84f-24bb996c4a5c",
+        "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+        "expectedRevision": "1",
+        "issuedAt": 1794309683052,
+        "kind": "coach.intent.set",
+        "data": {
+          "athleteId": "athlete1",
+          "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+          "kind": "focus",
+          "objective": "multiple_axes",
+          "target": {
+            "exerciseId": "bench",
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "setIndex": null,
+            "trainingId": "training"
+          },
+          "sourceVersion": "ea231792479e1b8f643ec9d39fca4e5764c2aa29720a5078b87f8558c43bd9b1",
+          "startsAt": "2026-11-10T11:21:23.052Z",
+          "endsAt": "2026-11-10T12:21:23.052Z",
+          "representationVersion": 2,
+          "focusSelection": {
+            "policyVersion": "1",
+            "selected": [
+              "strength",
+              "endurance"
+            ],
+            "priority": "strength"
+          }
+        }
+      },
+      "receipt": {
+        "affectedCollections": [
+          "coachIntents"
+        ],
+        "cursor": "2",
+        "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+        "items": [
+          {
+            "collection": "coachIntents",
+            "deleted": false,
+            "id": "b4956743-8c69-4414-b84f-24bb996c4a5c",
+            "revision": "2"
+          }
+        ],
+        "kind": "coach.intent.set",
+        "operationId": "1d801353-266d-402b-bad6-e69010a7c869",
+        "scope": "project:program1"
+      }
+    }
+  ],
+  "regional": {
+    "request": {
+      "scope": "project:program1",
+      "athleteId": "athlete1",
+      "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+      "representationVersion": 3,
+      "targetKind": "regional",
+      "exercise": null,
+      "regional": {
+        "selection": "exact",
+        "target": {
+          "projectId": "program1",
+          "trainingId": "training",
+          "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+          "occurrenceId": null,
+          "targetType": "workout_occurrence"
+        },
+        "regionalEmphasis": {
+          "policyVersion": "1",
+          "upper": "high",
+          "lower": null
+        },
+        "startsAt": "2026-11-10T11:21:23.058Z",
+        "endsAt": "2026-11-10T12:21:23.058Z"
+      }
+    },
+    "resolved": {
+      "entries": [
+        {
+          "exercise": {
+            "actorId": "coach1",
+            "endsAt": "2026-11-10T12:21:23.052Z",
+            "exerciseName": "bench",
+            "focusSelection": {
+              "policyVersion": "1",
+              "priority": "strength",
+              "selected": [
+                "strength",
+                "endurance"
+              ]
+            },
+            "id": "b4956743-8c69-4414-b84f-24bb996c4a5c",
+            "kind": "focus",
+            "objective": "multiple_axes",
+            "origin": "mcp",
+            "revision": 1,
+            "startsAt": "2026-11-10T11:21:23.056Z",
+            "state": "active",
+            "supersededBy": null,
+            "target": {
+              "exerciseId": "bench",
+              "occurrenceId": null,
+              "projectId": "program1",
+              "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+              "setIndex": null,
+              "trainingId": "training"
+            }
+          },
+          "kind": "focus",
+          "regional": null
+        },
+        {
+          "exercise": {
+            "actorId": "coach1",
+            "endsAt": "2026-11-10T12:21:23.043Z",
+            "exerciseName": "bench",
+            "focusSelection": null,
+            "id": "1ff77c9c-86a6-47b1-ad36-03c52843d25d",
+            "kind": "focus",
+            "objective": "comfort",
+            "origin": "mcp",
+            "revision": 2,
+            "startsAt": "2026-11-10T11:21:23.047Z",
+            "state": "superseded",
+            "supersededBy": "b4956743-8c69-4414-b84f-24bb996c4a5c",
+            "target": {
+              "exerciseId": "bench",
+              "occurrenceId": null,
+              "projectId": "program1",
+              "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+              "setIndex": null,
+              "trainingId": "training"
+            }
+          },
+          "kind": "focus",
+          "regional": null
+        }
+      ],
+      "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+      "exercise": null,
+      "regional": {
+        "occurrenceStartsAt": null,
+        "replaces": [],
+        "sourceVersion": "2b6fd7bb3e2ddb90496fffea68a43ef9106750978aae1e8a4bc705f782a3fa11",
+        "target": {
+          "occurrenceId": null,
+          "projectId": "program1",
+          "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+          "targetType": "workout_occurrence",
+          "trainingId": "training"
+        },
+        "trainingName": "Upper body"
+      },
+      "representationVersion": 3,
+      "revision": "2",
+      "serverTime": "2026-11-10T11:21:23.063Z",
+      "targetKind": "regional"
+    },
+    "command": {
+      "kind": "coach.intent.set",
+      "scope": "project:program1",
+      "id": "4ee3c68c-bc21-45fb-847c-a8d594c3741f",
+      "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+      "expectedRevision": "2",
+      "data": {
+        "athleteId": "athlete1",
+        "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+        "representationVersion": 3,
+        "targetKind": "regional",
+        "exercise": null,
+        "regional": {
+          "target": {
+            "projectId": "program1",
+            "trainingId": "training",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "occurrenceId": null,
+            "targetType": "workout_occurrence"
+          },
+          "sourceVersion": "2b6fd7bb3e2ddb90496fffea68a43ef9106750978aae1e8a4bc705f782a3fa11",
+          "startsAt": "2026-11-10T11:21:23.058Z",
+          "endsAt": "2026-11-10T12:21:23.058Z",
+          "kind": "regional_emphasis",
+          "objective": "regional_distribution",
+          "regionalEmphasis": {
+            "policyVersion": "1",
+            "upper": "high",
+            "lower": null
+          }
+        }
+      },
+      "operationId": "fdfa780d-ac2a-431a-bf45-a2246e0f49b2",
+      "issuedAt": 1794309683095
+    },
+    "receipt": {
+      "affectedCollections": [
+        "coachIntents"
+      ],
+      "cursor": "3",
+      "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+      "items": [
+        {
+          "collection": "coachIntents",
+          "deleted": false,
+          "id": "4ee3c68c-bc21-45fb-847c-a8d594c3741f",
+          "revision": "3"
+        }
+      ],
+      "kind": "coach.intent.set",
+      "operationId": "fdfa780d-ac2a-431a-bf45-a2246e0f49b2",
+      "scope": "project:program1"
+    },
+    "cancel": {
+      "kind": "coach.intent.cancel",
+      "scope": "project:program1",
+      "id": "4ee3c68c-bc21-45fb-847c-a8d594c3741f",
+      "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+      "expectedRevision": "5",
+      "data": {
+        "athleteId": "athlete1",
+        "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+        "representationVersion": 3,
+        "targetKind": "regional",
+        "exercise": null,
+        "regional": {
+          "kind": null,
+          "objective": null,
+          "regionalEmphasis": null,
+          "target": null,
+          "sourceVersion": null,
+          "startsAt": null,
+          "endsAt": null
+        }
+      },
+      "operationId": "4ad0697f-a09e-4a87-833a-01ba28fe5356",
+      "issuedAt": 1794309683171
+    },
+    "cancelReceipt": {
+      "affectedCollections": [
+        "coachIntents"
+      ],
+      "cursor": "6",
+      "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+      "items": [
+        {
+          "collection": "coachIntents",
+          "deleted": false,
+          "id": "4ee3c68c-bc21-45fb-847c-a8d594c3741f",
+          "revision": "6"
+        }
+      ],
+      "kind": "coach.intent.cancel",
+      "operationId": "4ad0697f-a09e-4a87-833a-01ba28fe5356",
+      "scope": "project:program1"
+    }
+  },
+  "exercise": {
+    "request": {
+      "scope": "project:program1",
+      "athleteId": "athlete1",
+      "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+      "representationVersion": 3,
+      "targetKind": "exercise",
+      "exercise": {
+        "selection": "exact",
+        "target": {
+          "projectId": "program1",
+          "trainingId": "training",
+          "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+          "occurrenceId": null,
+          "exerciseId": "bench",
+          "setIndex": 1
+        }
+      },
+      "regional": null
+    },
+    "resolved": {
+      "entries": [
+        {
+          "exercise": {
+            "actorId": "coach1",
+            "endsAt": "2026-11-10T12:21:23.052Z",
+            "exerciseName": "bench",
+            "focusSelection": {
+              "policyVersion": "1",
+              "priority": "strength",
+              "selected": [
+                "strength",
+                "endurance"
+              ]
+            },
+            "id": "b4956743-8c69-4414-b84f-24bb996c4a5c",
+            "kind": "focus",
+            "objective": "multiple_axes",
+            "origin": "mcp",
+            "revision": 1,
+            "startsAt": "2026-11-10T11:21:23.056Z",
+            "state": "active",
+            "supersededBy": null,
+            "target": {
+              "exerciseId": "bench",
+              "occurrenceId": null,
+              "projectId": "program1",
+              "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+              "setIndex": null,
+              "trainingId": "training"
+            }
+          },
+          "kind": "focus",
+          "regional": null
+        },
+        {
+          "exercise": null,
+          "kind": "regional_emphasis",
+          "regional": {
+            "actorId": "coach1",
+            "endsAt": "2026-11-10T12:21:23.058Z",
+            "id": "4ee3c68c-bc21-45fb-847c-a8d594c3741f",
+            "kind": "regional_emphasis",
+            "objective": "regional_distribution",
+            "origin": "mcp",
+            "regionalEmphasis": {
+              "lower": null,
+              "policyVersion": "1",
+              "upper": "high"
+            },
+            "revision": 1,
+            "startsAt": "2026-11-10T11:21:23.107Z",
+            "state": "active",
+            "supersededBy": null,
+            "target": {
+              "occurrenceId": null,
+              "projectId": "program1",
+              "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+              "targetType": "workout_occurrence",
+              "trainingId": "training"
+            },
+            "trainingName": "Upper body"
+          }
+        },
+        {
+          "exercise": {
+            "actorId": "coach1",
+            "endsAt": "2026-11-10T12:21:23.043Z",
+            "exerciseName": "bench",
+            "focusSelection": null,
+            "id": "1ff77c9c-86a6-47b1-ad36-03c52843d25d",
+            "kind": "focus",
+            "objective": "comfort",
+            "origin": "mcp",
+            "revision": 2,
+            "startsAt": "2026-11-10T11:21:23.047Z",
+            "state": "superseded",
+            "supersededBy": "b4956743-8c69-4414-b84f-24bb996c4a5c",
+            "target": {
+              "exerciseId": "bench",
+              "occurrenceId": null,
+              "projectId": "program1",
+              "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+              "setIndex": null,
+              "trainingId": "training"
+            }
+          },
+          "kind": "focus",
+          "regional": null
+        }
+      ],
+      "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+      "exercise": {
+        "exerciseName": "bench",
+        "occurrenceStartsAt": null,
+        "replaces": [
+          "b4956743-8c69-4414-b84f-24bb996c4a5c"
+        ],
+        "sourceVersion": "d62cd7eed613d299eff4f78f511ae292506b4ca9d4533d7d84041fe6ac17a21c",
+        "target": {
+          "exerciseId": "bench",
+          "occurrenceId": null,
+          "projectId": "program1",
+          "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+          "setIndex": 1,
+          "trainingId": "training"
+        }
+      },
+      "regional": null,
+      "representationVersion": 3,
+      "revision": "3",
+      "serverTime": "2026-11-10T11:21:23.122Z",
+      "targetKind": "exercise"
+    },
+    "command": {
+      "scope": "project:program1",
+      "operationId": "de9d4aa9-8b67-4ad2-9138-b0d424be7836",
+      "id": "568f3554-6169-4713-bff7-8b98f0172463",
+      "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+      "expectedRevision": "3",
+      "issuedAt": 1794309683124,
+      "kind": "coach.intent.set",
+      "data": {
+        "athleteId": "athlete1",
+        "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+        "representationVersion": 3,
+        "targetKind": "exercise",
+        "exercise": {
+          "target": {
+            "projectId": "program1",
+            "trainingId": "training",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "occurrenceId": null,
+            "exerciseId": "bench",
+            "setIndex": 1
+          },
+          "sourceVersion": "d62cd7eed613d299eff4f78f511ae292506b4ca9d4533d7d84041fe6ac17a21c",
+          "startsAt": "2026-11-10T11:21:23.118Z",
+          "endsAt": "2026-11-10T12:21:23.118Z",
+          "kind": "focus",
+          "objective": "multiple_axes",
+          "focusSelection": {
+            "policyVersion": "1",
+            "selected": [
+              "hypertrophy",
+              "strength",
+              "endurance"
+            ],
+            "priority": null
+          }
+        },
+        "regional": null
+      }
+    },
+    "receipt": {
+      "affectedCollections": [
+        "coachIntents"
+      ],
+      "cursor": "4",
+      "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+      "items": [
+        {
+          "collection": "coachIntents",
+          "deleted": false,
+          "id": "568f3554-6169-4713-bff7-8b98f0172463",
+          "revision": "4"
+        }
+      ],
+      "kind": "coach.intent.set",
+      "operationId": "de9d4aa9-8b67-4ad2-9138-b0d424be7836",
+      "scope": "project:program1"
+    },
+    "cancel": {
+      "scope": "project:program1",
+      "operationId": "5b5a6b2a-309f-48c0-86a5-bde0b19d6f61",
+      "id": "568f3554-6169-4713-bff7-8b98f0172463",
+      "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+      "expectedRevision": "6",
+      "issuedAt": 1794309683183,
+      "kind": "coach.intent.cancel",
+      "data": {
+        "athleteId": "athlete1",
+        "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+        "representationVersion": 3,
+        "targetKind": "exercise",
+        "exercise": {
+          "kind": null,
+          "objective": null,
+          "focusSelection": null,
+          "target": null,
+          "sourceVersion": null,
+          "startsAt": null,
+          "endsAt": null
+        },
+        "regional": null
+      }
+    },
+    "cancelReceipt": {
+      "affectedCollections": [
+        "coachIntents"
+      ],
+      "cursor": "7",
+      "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+      "items": [
+        {
+          "collection": "coachIntents",
+          "deleted": false,
+          "id": "568f3554-6169-4713-bff7-8b98f0172463",
+          "revision": "7"
+        }
+      ],
+      "kind": "coach.intent.cancel",
+      "operationId": "5b5a6b2a-309f-48c0-86a5-bde0b19d6f61",
+      "scope": "project:program1"
+    }
+  },
+  "skip": {
+    "request": {
+      "scope": "project:program1",
+      "athleteId": "athlete1",
+      "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+      "representationVersion": 3,
+      "targetKind": "exercise",
+      "exercise": {
+        "selection": "exact",
+        "target": {
+          "projectId": "program1",
+          "trainingId": "training",
+          "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+          "occurrenceId": null,
+          "exerciseId": "bench",
+          "setIndex": 2
+        }
+      },
+      "regional": null
+    },
+    "resolved": {
+      "entries": [
+        {
+          "exercise": null,
+          "kind": "regional_emphasis",
+          "regional": {
+            "actorId": "coach1",
+            "endsAt": "2026-11-10T12:21:23.058Z",
+            "id": "4ee3c68c-bc21-45fb-847c-a8d594c3741f",
+            "kind": "regional_emphasis",
+            "objective": "regional_distribution",
+            "origin": "mcp",
+            "regionalEmphasis": {
+              "lower": null,
+              "policyVersion": "1",
+              "upper": "high"
+            },
+            "revision": 1,
+            "startsAt": "2026-11-10T11:21:23.107Z",
+            "state": "active",
+            "supersededBy": null,
+            "target": {
+              "occurrenceId": null,
+              "projectId": "program1",
+              "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+              "targetType": "workout_occurrence",
+              "trainingId": "training"
+            },
+            "trainingName": "Upper body"
+          }
+        },
+        {
+          "exercise": {
+            "actorId": "coach1",
+            "endsAt": "2026-11-10T12:21:23.118Z",
+            "exerciseName": "bench",
+            "focusSelection": {
+              "policyVersion": "1",
+              "priority": null,
+              "selected": [
+                "hypertrophy",
+                "strength",
+                "endurance"
+              ]
+            },
+            "id": "568f3554-6169-4713-bff7-8b98f0172463",
+            "kind": "focus",
+            "objective": "multiple_axes",
+            "origin": "mcp",
+            "revision": 1,
+            "startsAt": "2026-11-10T11:21:23.129Z",
+            "state": "active",
+            "supersededBy": null,
+            "target": {
+              "exerciseId": "bench",
+              "occurrenceId": null,
+              "projectId": "program1",
+              "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+              "setIndex": 1,
+              "trainingId": "training"
+            }
+          },
+          "kind": "focus",
+          "regional": null
+        },
+        {
+          "exercise": {
+            "actorId": "coach1",
+            "endsAt": "2026-11-10T12:21:23.052Z",
+            "exerciseName": "bench",
+            "focusSelection": {
+              "policyVersion": "1",
+              "priority": "strength",
+              "selected": [
+                "strength",
+                "endurance"
+              ]
+            },
+            "id": "b4956743-8c69-4414-b84f-24bb996c4a5c",
+            "kind": "focus",
+            "objective": "multiple_axes",
+            "origin": "mcp",
+            "revision": 2,
+            "startsAt": "2026-11-10T11:21:23.056Z",
+            "state": "superseded",
+            "supersededBy": "568f3554-6169-4713-bff7-8b98f0172463",
+            "target": {
+              "exerciseId": "bench",
+              "occurrenceId": null,
+              "projectId": "program1",
+              "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+              "setIndex": null,
+              "trainingId": "training"
+            }
+          },
+          "kind": "focus",
+          "regional": null
+        },
+        {
+          "exercise": {
+            "actorId": "coach1",
+            "endsAt": "2026-11-10T12:21:23.043Z",
+            "exerciseName": "bench",
+            "focusSelection": null,
+            "id": "1ff77c9c-86a6-47b1-ad36-03c52843d25d",
+            "kind": "focus",
+            "objective": "comfort",
+            "origin": "mcp",
+            "revision": 2,
+            "startsAt": "2026-11-10T11:21:23.047Z",
+            "state": "superseded",
+            "supersededBy": "b4956743-8c69-4414-b84f-24bb996c4a5c",
+            "target": {
+              "exerciseId": "bench",
+              "occurrenceId": null,
+              "projectId": "program1",
+              "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+              "setIndex": null,
+              "trainingId": "training"
+            }
+          },
+          "kind": "focus",
+          "regional": null
+        }
+      ],
+      "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+      "exercise": {
+        "exerciseName": "bench",
+        "occurrenceStartsAt": null,
+        "replaces": [],
+        "sourceVersion": "e1d32624181af4eef06b6499413c5b787acb5bc40888f5923756b1ead67b56eb",
+        "target": {
+          "exerciseId": "bench",
+          "occurrenceId": null,
+          "projectId": "program1",
+          "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+          "setIndex": 2,
+          "trainingId": "training"
+        }
+      },
+      "regional": null,
+      "representationVersion": 3,
+      "revision": "4",
+      "serverTime": "2026-11-10T11:21:23.135Z",
+      "targetKind": "exercise"
+    },
+    "command": {
+      "scope": "project:program1",
+      "operationId": "1f409a13-a059-453f-828c-2f8aed910590",
+      "id": "f9e48c93-483d-489b-9a28-56513612d7b7",
+      "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+      "expectedRevision": "4",
+      "issuedAt": 1794309683137,
+      "kind": "coach.intent.set",
+      "data": {
+        "athleteId": "athlete1",
+        "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+        "representationVersion": 3,
+        "targetKind": "exercise",
+        "exercise": {
+          "target": {
+            "projectId": "program1",
+            "trainingId": "training",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "occurrenceId": null,
+            "exerciseId": "bench",
+            "setIndex": 2
+          },
+          "sourceVersion": "e1d32624181af4eef06b6499413c5b787acb5bc40888f5923756b1ead67b56eb",
+          "startsAt": "2026-11-10T11:21:23.131Z",
+          "endsAt": "2026-11-10T12:21:23.131Z",
+          "kind": "skip",
+          "objective": "skip_once",
+          "focusSelection": null
+        },
+        "regional": null
+      }
+    },
+    "receipt": {
+      "affectedCollections": [
+        "coachIntents"
+      ],
+      "cursor": "5",
+      "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+      "items": [
+        {
+          "collection": "coachIntents",
+          "deleted": false,
+          "id": "f9e48c93-483d-489b-9a28-56513612d7b7",
+          "revision": "5"
+        }
+      ],
+      "kind": "coach.intent.set",
+      "operationId": "1f409a13-a059-453f-828c-2f8aed910590",
+      "scope": "project:program1"
+    }
+  },
+  "mixed": {
+    "entries": [
+      {
+        "exercise": null,
+        "kind": "regional_emphasis",
+        "regional": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.058Z",
+          "id": "4ee3c68c-bc21-45fb-847c-a8d594c3741f",
+          "kind": "regional_emphasis",
+          "objective": "regional_distribution",
+          "origin": "mcp",
+          "regionalEmphasis": {
+            "lower": null,
+            "policyVersion": "1",
+            "upper": "high"
+          },
+          "revision": 1,
+          "startsAt": "2026-11-10T11:21:23.107Z",
+          "state": "active",
+          "supersededBy": null,
+          "target": {
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "targetType": "workout_occurrence",
+            "trainingId": "training"
+          },
+          "trainingName": "Upper body"
+        }
+      },
+      {
+        "exercise": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.118Z",
+          "exerciseName": "bench",
+          "focusSelection": {
+            "policyVersion": "1",
+            "priority": null,
+            "selected": [
+              "hypertrophy",
+              "strength",
+              "endurance"
+            ]
+          },
+          "id": "568f3554-6169-4713-bff7-8b98f0172463",
+          "kind": "focus",
+          "objective": "multiple_axes",
+          "origin": "mcp",
+          "revision": 1,
+          "startsAt": "2026-11-10T11:21:23.129Z",
+          "state": "active",
+          "supersededBy": null,
+          "target": {
+            "exerciseId": "bench",
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "setIndex": 1,
+            "trainingId": "training"
+          }
+        },
+        "kind": "focus",
+        "regional": null
+      },
+      {
+        "exercise": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.131Z",
+          "exerciseName": "bench",
+          "focusSelection": null,
+          "id": "f9e48c93-483d-489b-9a28-56513612d7b7",
+          "kind": "skip",
+          "objective": "skip_once",
+          "origin": "mcp",
+          "revision": 1,
+          "startsAt": "2026-11-10T11:21:23.141Z",
+          "state": "active",
+          "supersededBy": null,
+          "target": {
+            "exerciseId": "bench",
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "setIndex": 2,
+            "trainingId": "training"
+          }
+        },
+        "kind": "skip",
+        "regional": null
+      },
+      {
+        "exercise": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.052Z",
+          "exerciseName": "bench",
+          "focusSelection": {
+            "policyVersion": "1",
+            "priority": "strength",
+            "selected": [
+              "strength",
+              "endurance"
+            ]
+          },
+          "id": "b4956743-8c69-4414-b84f-24bb996c4a5c",
+          "kind": "focus",
+          "objective": "multiple_axes",
+          "origin": "mcp",
+          "revision": 2,
+          "startsAt": "2026-11-10T11:21:23.056Z",
+          "state": "superseded",
+          "supersededBy": "568f3554-6169-4713-bff7-8b98f0172463",
+          "target": {
+            "exerciseId": "bench",
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "setIndex": null,
+            "trainingId": "training"
+          }
+        },
+        "kind": "focus",
+        "regional": null
+      },
+      {
+        "exercise": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.043Z",
+          "exerciseName": "bench",
+          "focusSelection": null,
+          "id": "1ff77c9c-86a6-47b1-ad36-03c52843d25d",
+          "kind": "focus",
+          "objective": "comfort",
+          "origin": "mcp",
+          "revision": 2,
+          "startsAt": "2026-11-10T11:21:23.047Z",
+          "state": "superseded",
+          "supersededBy": "b4956743-8c69-4414-b84f-24bb996c4a5c",
+          "target": {
+            "exerciseId": "bench",
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "setIndex": null,
+            "trainingId": "training"
+          }
+        },
+        "kind": "focus",
+        "regional": null
+      }
+    ],
+    "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+    "representationVersion": 3,
+    "revision": "5",
+    "serverTime": "2026-11-10T11:21:23.154Z"
+  },
+  "cancelled": {
+    "entries": [
+      {
+        "exercise": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.131Z",
+          "exerciseName": "bench",
+          "focusSelection": null,
+          "id": "f9e48c93-483d-489b-9a28-56513612d7b7",
+          "kind": "skip",
+          "objective": "skip_once",
+          "origin": "mcp",
+          "revision": 1,
+          "startsAt": "2026-11-10T11:21:23.141Z",
+          "state": "active",
+          "supersededBy": null,
+          "target": {
+            "exerciseId": "bench",
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "setIndex": 2,
+            "trainingId": "training"
+          }
+        },
+        "kind": "skip",
+        "regional": null
+      },
+      {
+        "exercise": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.118Z",
+          "exerciseName": "bench",
+          "focusSelection": {
+            "policyVersion": "1",
+            "priority": null,
+            "selected": [
+              "hypertrophy",
+              "strength",
+              "endurance"
+            ]
+          },
+          "id": "568f3554-6169-4713-bff7-8b98f0172463",
+          "kind": "focus",
+          "objective": "multiple_axes",
+          "origin": "mcp",
+          "revision": 2,
+          "startsAt": "2026-11-10T11:21:23.129Z",
+          "state": "cancelled",
+          "supersededBy": null,
+          "target": {
+            "exerciseId": "bench",
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "setIndex": 1,
+            "trainingId": "training"
+          }
+        },
+        "kind": "focus",
+        "regional": null
+      },
+      {
+        "exercise": null,
+        "kind": "regional_emphasis",
+        "regional": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.058Z",
+          "id": "4ee3c68c-bc21-45fb-847c-a8d594c3741f",
+          "kind": "regional_emphasis",
+          "objective": "regional_distribution",
+          "origin": "mcp",
+          "regionalEmphasis": {
+            "lower": null,
+            "policyVersion": "1",
+            "upper": "high"
+          },
+          "revision": 2,
+          "startsAt": "2026-11-10T11:21:23.107Z",
+          "state": "cancelled",
+          "supersededBy": null,
+          "target": {
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "targetType": "workout_occurrence",
+            "trainingId": "training"
+          },
+          "trainingName": "Upper body"
+        }
+      },
+      {
+        "exercise": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.052Z",
+          "exerciseName": "bench",
+          "focusSelection": {
+            "policyVersion": "1",
+            "priority": "strength",
+            "selected": [
+              "strength",
+              "endurance"
+            ]
+          },
+          "id": "b4956743-8c69-4414-b84f-24bb996c4a5c",
+          "kind": "focus",
+          "objective": "multiple_axes",
+          "origin": "mcp",
+          "revision": 2,
+          "startsAt": "2026-11-10T11:21:23.056Z",
+          "state": "superseded",
+          "supersededBy": "568f3554-6169-4713-bff7-8b98f0172463",
+          "target": {
+            "exerciseId": "bench",
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "setIndex": null,
+            "trainingId": "training"
+          }
+        },
+        "kind": "focus",
+        "regional": null
+      },
+      {
+        "exercise": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.043Z",
+          "exerciseName": "bench",
+          "focusSelection": null,
+          "id": "1ff77c9c-86a6-47b1-ad36-03c52843d25d",
+          "kind": "focus",
+          "objective": "comfort",
+          "origin": "mcp",
+          "revision": 2,
+          "startsAt": "2026-11-10T11:21:23.047Z",
+          "state": "superseded",
+          "supersededBy": "b4956743-8c69-4414-b84f-24bb996c4a5c",
+          "target": {
+            "exerciseId": "bench",
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "setIndex": null,
+            "trainingId": "training"
+          }
+        },
+        "kind": "focus",
+        "regional": null
+      }
+    ],
+    "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+    "representationVersion": 3,
+    "revision": "7",
+    "serverTime": "2026-11-10T11:21:23.192Z"
+  },
+  "apply": {
+    "scope": "project:program1",
+    "operationId": "a311a198-ae7f-409f-a246-3da70c6c49b4",
+    "id": "f9e48c93-483d-489b-9a28-56513612d7b7",
+    "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+    "expectedRevision": "7",
+    "issuedAt": 1794309683192,
+    "kind": "coach.intent.apply",
+    "data": {
+      "athleteId": "athlete1",
+      "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+      "representationVersion": 3,
+      "targetKind": "exercise",
+      "exercise": {
+        "kind": null,
+        "objective": null,
+        "focusSelection": null,
+        "target": null,
+        "sourceVersion": null,
+        "startsAt": null,
+        "endsAt": null
+      },
+      "regional": null
+    }
+  },
+  "applyReceipt": {
+    "affectedCollections": [
+      "coachIntents",
+      "liveTraining"
+    ],
+    "cursor": "8",
+    "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+    "items": [
+      {
+        "collection": "coachIntents",
+        "deleted": false,
+        "id": "f9e48c93-483d-489b-9a28-56513612d7b7",
+        "revision": "8"
+      }
+    ],
+    "kind": "coach.intent.apply",
+    "operationId": "a311a198-ae7f-409f-a246-3da70c6c49b4",
+    "scope": "project:program1"
+  },
+  "applied": {
+    "entries": [
+      {
+        "exercise": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.131Z",
+          "exerciseName": "bench",
+          "focusSelection": null,
+          "id": "f9e48c93-483d-489b-9a28-56513612d7b7",
+          "kind": "skip",
+          "objective": "skip_once",
+          "origin": "mcp",
+          "revision": 2,
+          "startsAt": "2026-11-10T11:21:23.141Z",
+          "state": "consumed",
+          "supersededBy": null,
+          "target": {
+            "exerciseId": "bench",
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "setIndex": 2,
+            "trainingId": "training"
+          }
+        },
+        "kind": "skip",
+        "regional": null
+      },
+      {
+        "exercise": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.118Z",
+          "exerciseName": "bench",
+          "focusSelection": {
+            "policyVersion": "1",
+            "priority": null,
+            "selected": [
+              "hypertrophy",
+              "strength",
+              "endurance"
+            ]
+          },
+          "id": "568f3554-6169-4713-bff7-8b98f0172463",
+          "kind": "focus",
+          "objective": "multiple_axes",
+          "origin": "mcp",
+          "revision": 2,
+          "startsAt": "2026-11-10T11:21:23.129Z",
+          "state": "cancelled",
+          "supersededBy": null,
+          "target": {
+            "exerciseId": "bench",
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "setIndex": 1,
+            "trainingId": "training"
+          }
+        },
+        "kind": "focus",
+        "regional": null
+      },
+      {
+        "exercise": null,
+        "kind": "regional_emphasis",
+        "regional": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.058Z",
+          "id": "4ee3c68c-bc21-45fb-847c-a8d594c3741f",
+          "kind": "regional_emphasis",
+          "objective": "regional_distribution",
+          "origin": "mcp",
+          "regionalEmphasis": {
+            "lower": null,
+            "policyVersion": "1",
+            "upper": "high"
+          },
+          "revision": 2,
+          "startsAt": "2026-11-10T11:21:23.107Z",
+          "state": "cancelled",
+          "supersededBy": null,
+          "target": {
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "targetType": "workout_occurrence",
+            "trainingId": "training"
+          },
+          "trainingName": "Upper body"
+        }
+      },
+      {
+        "exercise": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.052Z",
+          "exerciseName": "bench",
+          "focusSelection": {
+            "policyVersion": "1",
+            "priority": "strength",
+            "selected": [
+              "strength",
+              "endurance"
+            ]
+          },
+          "id": "b4956743-8c69-4414-b84f-24bb996c4a5c",
+          "kind": "focus",
+          "objective": "multiple_axes",
+          "origin": "mcp",
+          "revision": 2,
+          "startsAt": "2026-11-10T11:21:23.056Z",
+          "state": "superseded",
+          "supersededBy": "568f3554-6169-4713-bff7-8b98f0172463",
+          "target": {
+            "exerciseId": "bench",
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "setIndex": null,
+            "trainingId": "training"
+          }
+        },
+        "kind": "focus",
+        "regional": null
+      },
+      {
+        "exercise": {
+          "actorId": "coach1",
+          "endsAt": "2026-11-10T12:21:23.043Z",
+          "exerciseName": "bench",
+          "focusSelection": null,
+          "id": "1ff77c9c-86a6-47b1-ad36-03c52843d25d",
+          "kind": "focus",
+          "objective": "comfort",
+          "origin": "mcp",
+          "revision": 2,
+          "startsAt": "2026-11-10T11:21:23.047Z",
+          "state": "superseded",
+          "supersededBy": "b4956743-8c69-4414-b84f-24bb996c4a5c",
+          "target": {
+            "exerciseId": "bench",
+            "occurrenceId": null,
+            "projectId": "program1",
+            "sessionId": "4eb6aaad-c1e2-4708-872b-dd05d1292476",
+            "setIndex": null,
+            "trainingId": "training"
+          }
+        },
+        "kind": "focus",
+        "regional": null
+      }
+    ],
+    "epoch": "42f97262-b7e5-4dae-89a5-a7d66bfa01ca",
+    "representationVersion": 3,
+    "revision": "8",
+    "serverTime": "2026-11-10T11:21:23.223Z"
+  }
+}
