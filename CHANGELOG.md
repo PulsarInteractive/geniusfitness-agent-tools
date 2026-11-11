@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Reviewed catalogue: optional primary/secondary muscle-role filters, exact role validation and guidance; older requests retain their response shape. No automatic traversal or exercise changes.
+
 - Add explicit V3 mixed exercise/regional temporary reads to CLI and MCP,
   generated closed schemas, exact-target validation and qualitative upper/lower
   workout preferences. Keep the existing command kinds and immutable journal;

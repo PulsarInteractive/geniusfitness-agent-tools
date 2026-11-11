@@ -1761,6 +1761,18 @@ export default {
                 "attribution_unknown"
               ],
               "type": "string"
+            },
+            {
+              "enum": [
+                "role_unspecified"
+              ],
+              "type": "string"
+            },
+            {
+              "enum": [
+                "different_role"
+              ],
+              "type": "string"
             }
           ]
         },
@@ -2016,6 +2028,28 @@ export default {
             }
           ]
         },
+        "muscleRole": {
+          "oneOf": [
+            {
+              "enum": [
+                "any"
+              ],
+              "type": "string"
+            },
+            {
+              "enum": [
+                "primary"
+              ],
+              "type": "string"
+            },
+            {
+              "enum": [
+                "secondary"
+              ],
+              "type": "string"
+            }
+          ]
+        },
         "muscleTargets": {
           "items": {
             "maxLength": 80,
@@ -2079,6 +2113,28 @@ export default {
           "maxLength": 64,
           "pattern": "^[a-f0-9]{64}$",
           "type": "string"
+        },
+        "requestedRole": {
+          "oneOf": [
+            {
+              "enum": [
+                "any"
+              ],
+              "type": "string"
+            },
+            {
+              "enum": [
+                "primary"
+              ],
+              "type": "string"
+            },
+            {
+              "enum": [
+                "secondary"
+              ],
+              "type": "string"
+            }
+          ]
         },
         "requestedTargets": {
           "items": {

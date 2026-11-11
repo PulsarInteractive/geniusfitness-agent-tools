@@ -37,6 +37,7 @@ export async function readReviewedCatalogue(client, input) {
     (result.nextCursor !== null && result.evaluatedUnits === 0) ||
     result.continuationUnit !== (query.filters?.expandVariants ? 'variant' : 'family_block') ||
     result.matching.expanded !== (query.filters?.expandVariants ?? false) ||
+    (result.matching.requestedRole ?? 'any') !== (query.filters?.muscleRole ?? 'any') ||
     result.catalogue.page.contentVersion !== result.catalogue.subsetVersion ||
     result.matching.contentVersion !== result.catalogue.subsetVersion ||
     (query.version !== undefined && query.version !== result.catalogue.subsetVersion) ||

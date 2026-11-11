@@ -1892,6 +1892,22 @@
                 }
               ]
             },
+            "muscleRole": {
+              "oneOf": [
+                {
+                  "enum": ["any"],
+                  "type": "string"
+                },
+                {
+                  "enum": ["primary"],
+                  "type": "string"
+                },
+                {
+                  "enum": ["secondary"],
+                  "type": "string"
+                }
+              ]
+            },
             "muscleTargets": {
               "items": {
                 "maxLength": 80,

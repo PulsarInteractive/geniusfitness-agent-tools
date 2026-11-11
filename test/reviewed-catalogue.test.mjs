@@ -161,9 +161,13 @@ test('CLI exposes an explicit reviewed read without changing legacy commands', a
 test('local MCP lists and invokes the two distinct readonly reviewed tools with generated strict schemas', async () => {
   let calls = 0;
   const server = createMcpServer({
-      reviewedCatalogue: async () => {
+      reviewedCatalogue: async (input) => {
         calls++;
-        return page();
+        const result = page();
+        if (input.filters?.muscleRole) {
+          result.matching.requestedRole = input.filters.muscleRole;
+        }
+        return result;
       },
     }),
     client = new Client({ name: 'reviewed-test', version: '1.0.0' }),
@@ -182,8 +186,51 @@ test('local MCP lists and invokes the two distinct readonly reviewed tools with 
     const result = await client.callTool({ name: 'fitness_catalog_reviewed', arguments: {} });
     assert.equal(result.isError, undefined);
     assert.equal(calls, 1);
+    const roleResult = await client.callTool({
+      name: 'fitness_catalog_reviewed',
+      arguments: {
+        filters: {
+          inventory: { coverage: 'unknown', items: [] },
+          muscleTargets: ['quads'],
+          muscleMode: 'all',
+          muscleRole: 'secondary',
+        },
+      },
+    });
+    assert.equal(roleResult.isError, undefined);
+    assert.equal(calls, 2);
+    assert.match(JSON.stringify(roleResult), /secondary/);
   } finally {
     await client.close();
     await server.close();
   }
+});
+
+test('precise role filters survive one client request and reject mismatched responses', async (t) => {
+  let calls = 0;
+  const query = {
+    filters: {
+      inventory: { coverage: 'unknown', items: [] },
+      muscleTargets: ['quads'],
+      muscleMode: 'any',
+      muscleRole: 'secondary',
+    },
+  };
+  const f = await fixture(t, async (_url, options) => {
+    calls++;
+    assert.deepEqual(JSON.parse(options.body), query);
+    const response = page();
+    response.matching.requestedRole = 'secondary';
+    return Response.json(response);
+  });
+  assert.equal((await readReviewedCatalogue(f.client, query)).matching.requestedRole, 'secondary');
+  assert.equal(calls, 1);
+  await assert.rejects(readReviewedCatalogue({ reviewedCatalogue: async () => page() }, query), {
+    code: 'invalid_response',
+  });
+  await assert.rejects(
+    readReviewedCatalogue(f.client, { filters: { ...query.filters, muscleRole: 'strongest' } }),
+    { code: 'invalid_arguments' },
+  );
+  assert.equal(calls, 1);
 });
