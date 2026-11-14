@@ -6,6 +6,31 @@ import subscription from '../remote/subscription-guidance.json' with { type: 'js
 import { workflow } from '../src/workflows.mjs';
 import { main } from '../src/cli.mjs';
 
+test('selected-progress guidance separates local personal observations from UTC metrics and students', () => {
+  const guide = workflow({ topic: 'progress-selection' });
+  const text = guide.steps.join(' ');
+  for (const detail of [
+    'fitness_progress_selection',
+    'last_7_days',
+    'last_28_days',
+    'latest_training_session',
+    'metrics:read',
+    'programs:read',
+    'owner',
+    'UTC',
+    'insufficient_data',
+    'omitted',
+    'AI credits',
+    'without retrying automatically',
+  ]) {
+    assert.ok(text.toLowerCase().includes(detail.toLowerCase()), detail);
+  }
+  assert.ok(JSON.stringify(guide).length < 10000);
+  assert.ok(
+    workflow({ topic: 'progress' }).steps.some((step) => step.includes('progress-selection')),
+  );
+});
+
 test('workflow discovery is exhaustive, bounded, and rejects unknown topics', async () => {
   const tool = tools.find((t) => t.name.endsWith('_workflow'));
   assert.deepEqual(tool.inputSchema.properties.topic.enum, Object.keys(guides.topics));

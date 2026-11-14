@@ -11,6 +11,8 @@ src/reviewed-catalogue.d.mts
 src/recurring-session-skip-contract.mjs
 src/temporary-actions-v3-contract.mjs
 src/temporary-actions-v3-contract.d.mts
+src/progress-selection-contract.mjs
+src/progress-selection.d.mts
 
 # Preserve the exact canonical HTTP evidence bytes.
 test/fixtures/temporary-actions-v3-wire.json

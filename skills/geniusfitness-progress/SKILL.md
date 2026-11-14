@@ -5,6 +5,33 @@ description: Analyze recorded GeniusFitness workouts, exercise progression, set 
 
 # Review training progress
 
+For the connected owner's seven-day, twenty-eight-day or latest-session
+overview, read `fitness_workflow` with `topic: progress-selection`, then call
+`fitness_progress_selection` with the exact owned programme `scope` and
+`selection: last_7_days | last_28_days | latest_training_session`.
+CLI: `geniusfitness metrics selected --scope project:ID --selection last_7_days --json`.
+This requires Premium or Coach, `metrics:read` and `programs:read`. It reads only
+the programme owner's own observations; never supply an athlete, guessed
+programme, date or time zone. Student reviews use the separate workflow below.
+
+The period selections use local calendar dates including today, with the saved
+time zone and returned `asOf`; existing `fitness_metrics` dates are UTC. Preserve
+partial coverage and open periods. Observed minima are not complete totals;
+running observations are not guaranteed to be the latest runs. A latest session
+is selected by its recorded ending, with skipped and unfinished sets retained.
+If that source is unusable, do not substitute an older workout. Elapsed time
+includes pauses. `insufficient_data` means no usable observations for that
+selection, never zero activity or declining fitness. Do not infer hypertrophy,
+strength, adherence or a reason to increase a prescription from this overview.
+
+One explicit selection makes one normal data request, without a generated
+message or AI-credit charge. Do not poll, follow hidden pages, search until a
+result appears or fall back to a paid coach question. Stop on revoked access or
+changed context; do not serve cached advice. A review grants no permission to
+change a plan. Unsupported services remain unavailable until updated.
+
+## Review a specific session or a student
+
 Read `fitness_workflow` with `topic: progress`. Identify the program and athlete,
 then request a bounded period. For details use `fitness_session_analysis` with
 the session's real ID, or `geniusfitness sessions analyze --scope project:ID --id ID --json`.

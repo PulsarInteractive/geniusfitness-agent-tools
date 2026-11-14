@@ -1,5 +1,56 @@
 # Understand a training session
 
+## Your recent progress
+
+Use `fitness_progress_selection` for a recorded overview of your own programme:
+
+```json
+{ "scope": "project:PROGRAM_ID", "selection": "last_7_days" }
+```
+
+The CLI equivalent is:
+
+```sh
+geniusfitness metrics selected --scope project:PROGRAM_ID --selection last_7_days --json
+```
+
+Choose `last_7_days`, `last_28_days` or `latest_training_session`. The first two
+cover seven or twenty-eight local calendar dates, including today, in your
+saved time zone. Today is observed only through the returned `asOf`. These are
+not calendar weeks or months. The existing `fitness_metrics` / `metrics summary`
+tool uses inclusive UTC dates and remains available for its separate workflow.
+
+This detailed view requires Premium or Coach, `metrics:read`, `programs:read`
+and current ownership of the selected programme. It includes only the connected
+owner's observations, even when the programme has other participants. There is
+no `athleteId` option. Use the existing authorized student-analysis tools for a
+student; this selection does not grant access to their records.
+
+Each selection makes one ordinary data request. It returns recorded facts,
+without generating a coach message, spending AI credits or changing a plan.
+Missing or incomplete observations remain explicit:
+
+- For a period, use the dated observations and their coverage. Partial counts
+  are observed minima, not exact totals. Do not compare an open or partial
+  period with a complete period or claim measured strength or muscle growth.
+- Running observations come from one bounded page of candidate IDs. They are
+  not necessarily the latest runs. Omitted observations prevent a complete
+  running total, even when the candidate page covers the requested window.
+- The latest training session is selected by its recorded ending within the
+  retained personal history. It is not the current prescribed workout or a GPS
+  run. A session can contain skipped or unfinished sets. Elapsed time includes
+  pauses; it is not measured active exercise time.
+- If that latest session is unavailable or invalid, no older session is
+  substituted. `insufficient_data` is not zero activity or a failure to train.
+
+Do not poll, extend the period, search for a substitute or call a paid coach
+tool to fill a gap. On preparation, access or context errors, explain the
+specific limitation and stop that read. A fresh request can be made explicitly
+when appropriate. This command requires a supporting service; source changes
+do not imply that the public package or remote service has been updated.
+
+## Review a specific session
+
 Ask ChatGPT: “Compare my recent squat sessions. Check the time spent on each set
 and my rests before interpreting the total duration.”
 

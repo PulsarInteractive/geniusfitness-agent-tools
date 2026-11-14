@@ -31,6 +31,7 @@ import subscriptionGuidance from '../remote/subscription-guidance.json' with { t
 import { agentPresentation } from './presentation.mjs';
 import { pushResultsSchema, readPushResults } from './push-results.mjs';
 import { pushAdjustmentsSchema, readPushAdjustments } from './push-adjustments.mjs';
+import { progressSelectionSchema, readProgressSelection } from './progress-selection.mjs';
 import { workflow, workflowSchema } from './workflows.mjs';
 import {
   workoutCopyPreviewSchema,
@@ -270,6 +271,12 @@ export function createMcpServer(client) {
     'Read bounded daily activity counts for one authorized program. Pass athleteId for individual progress; otherwise all visible participants are included. With measurementCoverage recorded, durationSeconds is null unless every session/run has a measured duration; distanceMeters is null unless every run has measured distance (also null when there are no runs). Compare durationMeasuredActivities with sessions+runs and distanceMeasuredRuns with runs. Explicit zero is measured; missing or legacy coverage is unknown, never zero or declining progress. Free includes four weeks; Premium up to 24 calendar months, checked for requester and athletes. A Coach subscription cannot extend Free student history.',
     metricsSchema,
     (input) => readMetrics(client, input),
+  );
+  register(
+    'fitness_progress_selection',
+    remoteTools.find((tool) => tool.name === 'fitness_progress_selection').description,
+    progressSelectionSchema,
+    (input) => readProgressSelection(client, input),
   );
   register(
     'fitness_resources',

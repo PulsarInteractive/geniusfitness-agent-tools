@@ -1556,7 +1556,8 @@
             "coaching",
             "workout-vitals",
             "subscriptions",
-            "running"
+            "running",
+            "progress-selection"
           ]
         }
       },
@@ -2649,6 +2650,32 @@
     },
     "scopes": ["planning:read"],
     "route": "coach-intents/v3/resolve",
+    "write": false,
+    "destructive": false,
+    "idempotent": true
+  },
+  {
+    "name": "fitness_progress_selection",
+    "title": "Read your selected training progress",
+    "description": "Read only the connected programme owner’s own observations over 7 or 28 local calendar dates including today, or the latest retained training session by recorded ending. Requires Premium or Coach, metrics:read and programs:read. One bounded data request, no generated dialogue, AI credits or plan changes. Preserve open periods, partial coverage, omitted running observations, skipped and unfinished sets. The latest unusable session is not replaced by an older one. Insufficient data is not zero activity. Never infer strength, hypertrophy, adherence or a progression prescription. No student, date, time-zone, pagination or automatic fallback inputs.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "scope": {
+          "maxLength": 136,
+          "pattern": "^project:[A-Za-z0-9_-]{1,128}$",
+          "type": "string"
+        },
+        "selection": {
+          "enum": ["last_7_days", "last_28_days", "latest_training_session"],
+          "type": "string"
+        }
+      },
+      "required": ["scope", "selection"],
+      "type": "object"
+    },
+    "scopes": ["metrics:read", "programs:read"],
+    "route": "progress-selection",
     "write": false,
     "destructive": false,
     "idempotent": true

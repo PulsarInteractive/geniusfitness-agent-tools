@@ -4,6 +4,22 @@ import { readFile } from 'node:fs/promises';
 import Ajv from 'ajv';
 import sessionWire from './fixtures/session-skip-wire.mjs';
 const tools = JSON.parse(await readFile(new URL('../remote/tool-catalog.json', import.meta.url)));
+test('selected progress is a closed personal read with both required grants', () => {
+  const tool = tools.find((entry) => entry.name === 'fitness_progress_selection');
+  assert.equal(tool.route, 'progress-selection');
+  assert.equal(tool.write, false);
+  assert.equal(tool.destructive, false);
+  assert.equal(tool.idempotent, true);
+  assert.deepEqual(tool.scopes, ['metrics:read', 'programs:read']);
+  const validate = new Ajv({ strict: false }).compile(tool.inputSchema);
+  for (const selection of ['last_7_days', 'last_28_days', 'latest_training_session']) {
+    assert.equal(validate({ scope: 'project:owned', selection }), true);
+    assert.equal(validate({ scope: 'project:owned', selection, athleteId: 'student' }), false);
+  }
+  assert.equal(validate({ scope: 'personal:owner', selection: 'last_7_days' }), false);
+  assert.equal(validate({ scope: 'project:owned', selection: 'week' }), false);
+  assert.equal(validate({ scope: 'project:owned' }), false);
+});
 test('remote catalogue has bounded explicit schemas and honest write annotations', () => {
   assert.equal(new Set(tools.map((t) => t.name)).size, tools.length);
   const ajv = new Ajv({ strict: false });

@@ -8,6 +8,7 @@ import { readReviewedCatalogue, readReviewedCatalogueDetail } from './reviewed-c
 import { workflow } from './workflows.mjs';
 import { readPushResults } from './push-results.mjs';
 import { readPushAdjustments } from './push-adjustments.mjs';
+import { readProgressSelection } from './progress-selection.mjs';
 import {
   commandHelp,
   readWorkoutCopyPreview,
@@ -166,6 +167,11 @@ export const commands = {
     summary:
       'Read daily activity totals for one authorized program within current history access: four weeks for Free, up to 24 calendar months for Premium. Specify athleteId for individual progress.',
     options: ['scope', 'from', 'until', 'athleteId'],
+  },
+  'metrics selected': {
+    summary:
+      'Read your recorded progress over 7 or 28 local dates, or your latest retained training session. No generated advice or plan changes.',
+    options: ['scope', 'selection'],
   },
   'programs list': {
     summary: 'Read a bounded program page; follow nextAfter even for an empty page.',
@@ -553,6 +559,11 @@ export async function main(
         id: options.id,
         ...(options.offset === undefined ? {} : { offset: Number(options.offset) }),
         ...(options.revision === undefined ? {} : { revision: options.revision }),
+      });
+    } else if (command === 'metrics selected') {
+      data = await readProgressSelection(client, {
+        scope: options.scope,
+        selection: options.selection,
       });
     } else if (command === 'metrics summary') {
       data = await readMetrics(client, {

@@ -1,5 +1,11 @@
 ## Unreleased
 
+- Add `metrics selected` / `fitness_progress_selection` for the connected
+  programme owner's 7 or 28 local dates, or latest retained training session.
+  One bounded read returns facts and coverage, without a generated coach
+  message, AI-credit charge or plan changes. Requires Premium or Coach and the
+  matching service; no npm publication or deployment is implied.
+
 - Reviewed catalogue: optional primary/secondary muscle-role filters, exact role validation and guidance; older requests retain their response shape. No automatic traversal or exercise changes.
 
 - Add explicit V3 mixed exercise/regional temporary reads to CLI and MCP,

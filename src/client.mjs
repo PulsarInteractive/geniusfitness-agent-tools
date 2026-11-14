@@ -187,6 +187,7 @@ export class AgentClient {
         'catalog-v2',
         'catalog-reviewed-detail',
         'metrics',
+        'progress-selection',
         'session-analysis',
         'push-results',
         'push-adjustments',
