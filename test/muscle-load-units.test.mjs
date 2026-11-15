@@ -252,6 +252,9 @@ test('precise muscle evidence survives MCP and rejects impossible or invented st
     (e) => {
       e.targets.push({ ...e.targets[0], id: 'rectus_upper' });
     },
+    (e) => {
+      e.targets[0].rawLabels = [];
+    },
   ]) {
     const invalid = structuredClone(page);
     edit(invalid.exercises[0].muscleEvidence);
@@ -286,7 +289,7 @@ const reviewedEvidence = () => ({
       kind: 'muscle',
       parentId: 'pectorals',
       role: 'primary',
-      rawLabels: ['pectoralis_major'],
+      rawLabels: [],
     },
     {
       id: 'triceps',
@@ -295,7 +298,7 @@ const reviewedEvidence = () => ({
       kind: 'muscle',
       parentId: null,
       role: 'primary',
-      rawLabels: ['triceps'],
+      rawLabels: [],
     },
     {
       id: 'core',
@@ -304,7 +307,7 @@ const reviewedEvidence = () => ({
       kind: 'group',
       parentId: null,
       role: 'unspecified',
-      rawLabels: ['core'],
+      rawLabels: [],
     },
   ],
   unmappedLabels: [],
@@ -408,4 +411,26 @@ test('reviewed evidence rejects invented fields, roles, source pins and duplicat
     );
     assert.equal(calls, 1);
   }
+});
+
+test('empty reviewed targets stay unknown without legacy attribution fallback', async () => {
+  const page = fixture();
+  page.exercises[0].muscleEvidence = { ...reviewedEvidence(), targets: [] };
+  const original = structuredClone(page);
+  let calls = 0;
+  const result = await readMuscleInsights(
+    {
+      get: async () => {
+        calls++;
+        return page;
+      },
+    },
+    query,
+  );
+  assert.deepEqual(result, original);
+  assert.equal(result.exercises[0].primaryMuscle, null);
+  assert.deepEqual(result.exercises[0].secondaryMuscles, []);
+  assert.equal(result.exercises[0].attribution, 'unmapped');
+  assert.equal(result.exercises[0].recordedVolumeKg, null);
+  assert.equal(calls, 1);
 });

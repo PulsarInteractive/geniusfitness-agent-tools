@@ -199,6 +199,7 @@ measures which fibres a past set recruited. Preserve taxonomy/catalogue versions
 and optional `sourceContentVersion`/`subsetVersion`; do not invent missing pins.
 `targets` distinguishes `group`, `muscle` and `region`. Preserve documented
 primary/secondary roles; reviewed evidence can have several primary targets.
+Reviewed targets can have empty `rawLabels`; never invent legacy source labels.
 `unspecified` means the role is unknown, not secondary or zero involvement.
 `primaryMuscle: null` may reflect that no single primary target is established,
 even when precise evidence exists. Do not choose one or split workload equally.

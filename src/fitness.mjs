@@ -363,7 +363,7 @@ const muscleEvidenceTarget = z
       .regex(/^[a-z][a-z0-9_]{0,79}$/)
       .nullable(),
     role: z.enum(['primary', 'secondary', 'unspecified']),
-    rawLabels: z.array(z.string().min(1).max(120)).min(1).max(16),
+    rawLabels: z.array(z.string().min(1).max(120)).max(16),
   })
   .strict()
   .refine((row) => row.parentId !== row.id && (row.kind !== 'region' || row.parentId !== null));
@@ -390,7 +390,8 @@ const muscleEvidence = z
       // Reviewed movements can document multiple main targets. Preserve those
       // roles without choosing one or turning them into workload percentages.
       (value.basis === 'reviewed_catalogue_not_historical' ||
-        value.targets.filter((row) => row.role === 'primary').length <= 1),
+        (value.targets.every((row) => row.rawLabels.length > 0) &&
+          value.targets.filter((row) => row.role === 'primary').length <= 1)),
   );
 const musclePage = z.object({
   scope,
