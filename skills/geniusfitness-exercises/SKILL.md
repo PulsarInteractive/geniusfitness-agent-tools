@@ -17,11 +17,13 @@ or stance can change both the cue and the documented muscular emphasis.
 Read the returned limits and permitted tracking/equipment values rather than
 inventing schema fields.
 
-When a counting rule is known, preserve `countingConvention`; see the four
+When a counting rule is known, preserve `countingConvention`; see the five
 explicit meanings in [personal exercise guidance](../../docs/CUSTOM_EXERCISES.md#what-one-repetition-or-duration-means).
 The field does not prescribe a dose or identify a performed side. Never double
 repetitions, divide a duration or infer a missing convention from the label.
-Keep load convention separate from repetition counting.
+Keep load convention separate from repetition counting. Alternating one side
+and moving an opposite arm/leg pair are different counting rules; preserve
+the exact declared value rather than converting one into the other.
 
 Use canonical muscle target IDs. Personal contributions, including suggestions
 from an agent, retain `qualification: declared_estimate`. Qualitative roles are

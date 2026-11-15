@@ -21,7 +21,9 @@ exercise IDs; an imported catalogue key or family ID is not a slot reference.
 units, rest and order. A movement change can make earlier weights incomparable;
 show the before/after and obtain the person's decision about the new prescription.
 Do not silently carry weights into a different exercise or convert a plan into
-completed activity.
+completed activity. Preserve the exercise’s explicit counting rule when preparing
+sets; read [counting meanings](../../docs/CUSTOM_EXERCISES.md#what-one-repetition-or-duration-means)
+before comparing an alternating, per-side or bilateral prescription.
 
 Apply the exact requested edit under current permissions and revisions. If the
 service supplies a typed preview/confirmation flow, use that flow rather than

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-beta.11 — 2026-11-15
+
+- Support the explicit `alternating_side_repetitions` convention in exercise
+  edits and reviewed imports. Each completed movement of one side counts once,
+  then the other side follows. Opposite arm/leg pairs remain a separate rule.
+- Preserve source counting through CLI and MCP without changing recorded
+  quantities, inferring a performed side or filling unknown historical values.
+  Updated workflow guidance explains all five conventions.
+
+This candidate needs the matching server contract and hosted acceptance before
+publication. Beta.10 remains validated against its earlier deployed contract;
+neither beta.9 nor beta.10 has been published to npm by this release process.
+
 ## 0.1.0-beta.10 — 2026-11-15
 
 - Add explicit reviewed catalogue import preview and confirmation to CLI and

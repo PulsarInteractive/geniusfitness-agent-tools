@@ -46,7 +46,7 @@ When supplied, preserve `countingConvention` with the exercise definition.
 A per-side count describes one side; a bilateral count describes one simultaneous
 movement. It never supplies a target dose or a performed side. Do not multiply
 recorded repetitions or weight, or split recorded time, to fill gaps.
-See [the four counting rules](CUSTOM_EXERCISES.md#what-one-repetition-or-duration-means).
+See [the five counting rules](CUSTOM_EXERCISES.md#what-one-repetition-or-duration-means).
 
 ## Change a workout safely
 

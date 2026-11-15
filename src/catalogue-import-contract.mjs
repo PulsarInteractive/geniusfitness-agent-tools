@@ -43,6 +43,7 @@ export default {
               "countingConvention": {
                 "enum": [
                   "alternating_opposite_pair_repetitions",
+                  "alternating_side_repetitions",
                   "per_side_repetitions",
                   "per_side_duration",
                   "bilateral_repetitions"
@@ -137,6 +138,7 @@ export default {
               "countingConvention": {
                 "enum": [
                   "alternating_opposite_pair_repetitions",
+                  "alternating_side_repetitions",
                   "per_side_repetitions",
                   "per_side_duration",
                   "bilateral_repetitions"
@@ -377,6 +379,7 @@ export default {
           "countingConvention": {
             "enum": [
               "alternating_opposite_pair_repetitions",
+              "alternating_side_repetitions",
               "per_side_repetitions",
               "per_side_duration",
               "bilateral_repetitions"

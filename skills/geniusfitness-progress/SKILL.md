@@ -76,6 +76,9 @@ read, and this tool grants no preparation, prescription, health, XP or attempt
 permission. Current named-coach control and subscriptions still apply.
 
 Compare the same exercise, recorded units and load convention across sessions.
+Keep the counting convention attached to its observation. A current exercise
+setting cannot establish how old repetitions were counted; never double or halve
+history when switching between alternating, per-side and bilateral rules.
 Use `recordedLoad` with `recordedLoadUnit`; unknown is not kg. `weightKg` is only
 populated for explicit kg and must not be used to infer units for legacy data.
 Do not resolve historical units from today's exercise setting or silently convert

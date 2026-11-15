@@ -81,7 +81,7 @@ import { changesSchema, watchSchema, readChanges, watchChanges } from './changes
  */
 export function createMcpServer(client) {
   const server = new McpServer(
-    { name: 'geniusfitness', version: '0.1.0-beta.10' },
+    { name: 'geniusfitness', version: '0.1.0-beta.11' },
     {
       instructions:
         subscriptionGuidance.instructions +

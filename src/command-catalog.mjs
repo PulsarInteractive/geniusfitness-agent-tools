@@ -24,6 +24,7 @@ export default {
     "counting": {
       "conventions": [
         "alternating_opposite_pair_repetitions",
+        "alternating_side_repetitions",
         "per_side_repetitions",
         "per_side_duration",
         "bilateral_repetitions"
@@ -38,7 +39,7 @@ export default {
         "Duration",
         "DurationWeight"
       ],
-      "guidance": "A repetition count or elapsed duration keeps its explicit meaning across import, copies and snapshots. Alternating opposite-pair repetitions counts one extension-and-return of one arm/leg pair; per-side repetitions and duration cover one side only; bilateral repetitions count one simultaneous movement. Do not double, split or aggregate historical values by assuming left/right. This field prescribes no dose and does not capture which physical side was performed. Absence stays unknown."
+      "guidance": "A repetition count or elapsed duration keeps its explicit meaning across import, copies and snapshots. Alternating opposite-pair repetitions counts one extension-and-return of one arm/leg pair; alternating-side repetitions counts one complete movement of one side, then switches sides, without counting a left/right pair as one; per-side repetitions and duration cover one side only; bilateral repetitions count one simultaneous movement. Do not double, split or aggregate historical values by assuming left/right. This field prescribes no dose and does not capture which physical side was performed. Absence stays unknown."
     },
     "taxonomyVersion": "fitness-muscle-evidence-v1",
     "targets": [
@@ -1852,6 +1853,7 @@ export default {
           {
             "enum": [
               "alternating_opposite_pair_repetitions",
+              "alternating_side_repetitions",
               "per_side_repetitions",
               "per_side_duration",
               "bilateral_repetitions"

@@ -32,12 +32,20 @@ On supporting services, `countingConvention` records an explicit counting rule.
 Use the exercise's known convention or the user's requested choice. An absent
 value stays unknown; do not infer it from a name, picture or muscle target.
 
-| Value                                   | Meaning                                                                         |
-| --------------------------------------- | ------------------------------------------------------------------------------- |
-| `alternating_opposite_pair_repetitions` | One extension and return of one opposite arm/leg pair counts as one repetition. |
-| `per_side_repetitions`                  | The repetition count covers one side.                                           |
-| `per_side_duration`                     | The duration covers one side.                                                   |
-| `bilateral_repetitions`                 | One movement performed on both sides together counts as one repetition.         |
+| Value                                   | Meaning                                                                                 |
+| --------------------------------------- | --------------------------------------------------------------------------------------- |
+| `alternating_opposite_pair_repetitions` | One extension and return of one opposite arm/leg pair counts as one repetition.         |
+| `alternating_side_repetitions`          | One complete movement of one side counts once; the next repetition uses the other side. |
+| `per_side_repetitions`                  | The repetition count covers one side.                                                   |
+| `per_side_duration`                     | The duration covers one side.                                                           |
+| `bilateral_repetitions`                 | One movement performed on both sides together counts as one repetition.                 |
+
+The two alternating rules have different units of work. An opposite arm/leg
+pair moves together in `alternating_opposite_pair_repetitions`. In
+`alternating_side_repetitions`, each complete left or right movement counts
+separately; a left/right cycle is not one repetition. Neither rule assigns
+the total to each side. Preserve the returned rule and source instructions;
+never replace one with the other to satisfy an older client or service.
 
 Repetition conventions require a repetition tracking type: `WeightReps`,
 `BodyweightReps`, `WeightedBodyweight` or `AssistedBodyweight`. Per-side duration

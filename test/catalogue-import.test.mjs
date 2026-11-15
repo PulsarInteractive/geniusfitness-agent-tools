@@ -240,7 +240,7 @@ test('generated counting rules validate explicit combinations without filling sp
     data,
   });
   const help = commandHelp('exercise.update').customExercise.counting;
-  assert.equal(help.conventions.length, 4);
+  assert.equal(help.conventions.length, 5);
   for (const convention of help.conventions) {
     const types = convention === 'per_side_duration' ? help.durationTypes : help.repetitionTypes;
     for (const exerciseType of types) {
@@ -254,6 +254,7 @@ test('generated counting rules validate explicit combinations without filling sp
     { countingConvention: 'both' },
     { countingConvention: 8 },
     { exerciseType: 'Duration', countingConvention: 'bilateral_repetitions' },
+    { exerciseType: 'Duration', countingConvention: 'alternating_side_repetitions' },
     { exerciseType: 'WeightReps', countingConvention: 'per_side_duration' },
   ]) {
     assert.throws(() => validateCommand(command(data)), { code: 'invalid_arguments' });
@@ -312,6 +313,69 @@ test('actual CLI and MCP expose explicit preview and journaled confirmation with
       (await new CommandJournal(f.client).inspect(input.operationId)).protocol,
       'catalogue_import',
     );
+  } finally {
+    await client.close();
+    await server.close();
+  }
+});
+
+test('actual CLI and MCP preserve alternating-side and opposite-pair rules and reject substitutions', async (t) => {
+  let value = preview();
+  let calls = 0;
+  const f = await fixture(t, async () => {
+    calls++;
+    return Response.json(value);
+  });
+  const file = join(f.directory, 'alternating-query.json');
+  await writeFile(file, JSON.stringify(query));
+  const cli = async () => {
+    const out = [],
+      err = [];
+    const exitCode = await main(
+      ['catalog', 'import-preview', '--file', file, '--origin', origin, '--allow-local', '--json'],
+      {
+        directory: f.directory,
+        fetchImpl: f.transport.fetch,
+        stdout: { write: (text) => out.push(text) },
+        stderr: { write: (text) => err.push(text) },
+      },
+    );
+    assert.equal((exitCode === 0 ? err : out).join(''), '');
+    return { exitCode, result: JSON.parse((exitCode === 0 ? out : err).join('')) };
+  };
+  const server = createMcpServer(f.client),
+    client = new Client({ name: 'alternating-import-test', version: '1' }),
+    [a, b] = InMemoryTransport.createLinkedPair();
+  try {
+    await Promise.all([server.connect(a), client.connect(b)]);
+    const conventions = ['alternating_opposite_pair_repetitions', 'alternating_side_repetitions'];
+    for (const convention of conventions) {
+      value = preview();
+      value.origin.countingConvention = convention;
+      value.definition.countingConvention = convention;
+      const accepted = await cli();
+      assert.equal(accepted.exitCode, 0);
+      assert.equal(accepted.result.data.definition.countingConvention, convention);
+      assert.equal(accepted.result.data.definition.movementIntent, value.definition.movementIntent);
+      const mcp = await client.callTool({
+        name: 'fitness_catalogue_import_preview',
+        arguments: query,
+      });
+      assert.equal(mcp.isError, undefined);
+      assert.equal(mcp.structuredContent.data.definition.countingConvention, convention);
+      assert.equal(mcp.structuredContent.data.origin.countingConvention, convention);
+      value.definition.countingConvention = conventions.find((item) => item !== convention);
+      const rejected = await cli();
+      assert.equal(rejected.exitCode, 1);
+      assert.equal(rejected.result.error.code, 'invalid_response');
+      const refused = await client.callTool({
+        name: 'fitness_catalogue_import_preview',
+        arguments: query,
+      });
+      assert.equal(refused.isError, true);
+      assert.equal(refused.structuredContent.error.code, 'invalid_response');
+    }
+    assert.equal(calls, 8, 'Each explicit CLI/MCP call sends exactly one request.');
   } finally {
     await client.close();
     await server.close();

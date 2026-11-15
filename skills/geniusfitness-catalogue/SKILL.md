@@ -33,7 +33,8 @@ contains the technical steps. Preserve the requested FR/EN source text when a
 supported import copies it, including its limitations. Do not turn a shorter
 personal cue into reviewed source advice or assume every import endpoint copies
 the same fields. A documented counting convention does not authorize doubling
-repetitions or load; see [counting rules](../../docs/CUSTOM_EXERCISES.md#what-one-repetition-or-duration-means).
+repetitions or load. Preserve the distinction between alternating one side
+and moving an opposite arm/leg pair; see [counting rules](../../docs/CUSTOM_EXERCISES.md#what-one-repetition-or-duration-means).
 
 Use `fitness_catalog_search` / `catalog explore` for v2 French/English names,
 existing synonyms, exact equipment tags and broad muscle groups. Results group
