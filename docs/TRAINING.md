@@ -63,13 +63,41 @@ marker does not establish a weight unit. Keep the original value and explain
 that its unit is unavailable. The user's preferred display unit cannot fill
 that gap.
 
-This client exposes the marker for reading. The current
-`workout.exercise.create` and `workout.exercise.update` contracts do not accept
-`massFormat`; they do not provide a new canonical-weight write protocol. For a
-marked slot, use the supported application flow for dose or movement changes.
-Rest and ordering remain available under the existing command rules. Do not
-remove a marker or retry a failed dose change without it. Read current command
-help before preparing a write, and preserve the exact saved command on retry.
+## Prepare a new prescription in kilograms
+
+Read `fitness_capabilities` (CLI `capabilities`) before preparing a new weight
+change. Two separate facts matter:
+
+- `commands` must include the requested `workout.exercise.create` or
+  `workout.exercise.update`, with `massFormat` in its `fields`. This describes
+  supported syntax under the current grant; it does not enable new kg values.
+- `newPrescriptionMassProtocol: "canonical-kg-v1"` announces that the host accepts
+  new kilogram prescriptions. An absent field, including on an older host,
+  does not establish that capability.
+
+When enabled, convert every known lb weight to kg using `lb * 0.45359237` before
+preparing the command. Keep full numerical precision in `targetSets`, and set
+`massFormat: "kg-v1"` in that same intent. Already marked values stay unchanged.
+For example, 27.5 lb becomes `12.473790175` kg; round only the displayed number,
+to at most two decimals. Never infer a source unit from the display preference.
+`targetSets` replaces the whole field, so preserve other sets and metrics. Do not
+mark an empty or unweighted prescription. A new declaration requires explicit
+`targetSets`; adding a marker alone cannot convert inherited values.
+
+An existing `kg-v1` slot can still be edited when the host has disabled new kg
+prescriptions, provided the live command fields support the marker. Echo
+`massFormat: "kg-v1"` on a dose or movement edit and keep its values in kg.
+Metadata-only changes preserve the existing representation. If a legacy dose
+cannot be safely prepared under the current capability, use the supported app
+flow or explain the restriction; never invent a unit or strip a marker to pass
+validation. Movement replacement must still follow its guarded preview when
+available.
+
+Preparation is local and does not silently fetch capabilities. Freeze the values,
+marker, revision and operation UUID together. A retry reuses that exact command,
+even after a capability change; it never converts, adds or removes a marker.
+The server checks current access and admission again. A rejected intent needs
+review before a distinct new operation, not automatic rewriting.
 
 ## Change a workout safely
 

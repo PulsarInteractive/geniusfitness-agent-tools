@@ -3,8 +3,11 @@
 ## Unreleased
 
 - Expose the saved prescription `massFormat` in workout-exercise reads and explain
-  how canonical kg values differ from legacy definition units. This adds no
-  canonical-weight write permission.
+  how canonical kg values differ from legacy definition units.
+- Support explicit `massFormat` in workout-exercise commands. Discover new kg
+  prescription activation through live capabilities, separately from supported
+  command fields. Freeze converted values before journaling; retries preserve
+  the original request, including during rollback.
 
 - Clarify current exercise translations, per-field language fallback and unchanged
   source text in agent guidance. Reading never generates a translation.
@@ -13,7 +16,7 @@
   source-image limits and server compression.
 
 These changes do not enable hosted file import or publish a new package. The
-read-field addition requires the matching server projection. Existing beta.11
+prescription fields require the matching server contract and admission. Existing beta.11
 acceptance remains attached to its previously inspected archive.
 
 ## 0.1.0-beta.11 — 2026-11-15

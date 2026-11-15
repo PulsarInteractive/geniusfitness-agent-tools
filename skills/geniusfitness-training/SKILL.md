@@ -28,9 +28,13 @@ before comparing an alternating, per-side or bilateral prescription.
 For saved weights, `massFormat: "kg-v1"` takes precedence over a definition's
 legacy `defaultUnit`. An absent marker needs an explicit legacy unit; an unknown
 marker or source stays unknown. Read [prescription units](../../docs/TRAINING.md#read-the-unit-of-a-saved-prescription)
-before interpreting or changing weights. The current agent commands expose this
-marker for reading only; use the supported app flow for dose or movement edits
-on a marked slot.
+before interpreting or changing weights. For a new kilogram prescription,
+require both the live command field `massFormat` and capability
+`newPrescriptionMassProtocol: "canonical-kg-v1"`. Convert known lb values once
+before preparing the whole `targetSets` field with `massFormat: "kg-v1"`.
+Existing marked slots require the format echo for dose edits, including during
+rollback when new kg prescriptions are disabled. Never infer activation from
+the newer command schema or change a saved operation's values or marker on retry.
 
 Apply the exact requested edit under current permissions and revisions. If the
 service supplies a typed preview/confirmation flow, use that flow rather than

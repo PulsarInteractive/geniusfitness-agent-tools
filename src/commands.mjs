@@ -97,6 +97,16 @@ export function validateCommand(value) {
     validateExerciseCountingMetadata(command.data);
   }
   if (
+    definition.module === 'Project/SportTrainingExercise' &&
+    Object.hasOwn(command.data, 'massFormat') &&
+    command.data.massFormat !== 'kg-v1'
+  ) {
+    fail(
+      'invalid_arguments',
+      'A prescription format must be kg-v1 when explicitly supplied. Read live capabilities before a new prescription; never relabel an unknown format.',
+    );
+  }
+  if (
     Buffer.byteLength(JSON.stringify(command)) > catalog.maxCommandBytes ||
     Object.keys(command.data).some((key) => !definition.fields.includes(key)) ||
     (definition.revisionMode !== 'occurrence' &&

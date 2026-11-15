@@ -25,6 +25,15 @@ test('CLI and MCP preserve changing server capabilities, including older service
   try {
     for (const value of [
       {
+        newPrescriptionMassProtocol: 'canonical-kg-v1',
+        writesAvailable: true,
+        commands: [{ kind: 'workout.exercise.update', fields: ['targetSets', 'massFormat'] }],
+      },
+      {
+        writesAvailable: true,
+        commands: [{ kind: 'workout.exercise.update', fields: ['targetSets', 'massFormat'] }],
+      },
+      {
         resourceChecksRequired: true,
         coachingWriteAvailable: true,
         writesAvailable: true,

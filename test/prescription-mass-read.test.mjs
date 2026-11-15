@@ -30,10 +30,10 @@ const canonical = () => ({
   exerciseSnapshot: '{"name":"Bench press","defaultUnit":"lb","exerciseType":"WeightReps"}',
 });
 
-test('prescription representation is discoverable for reads without granting a new write field', () => {
+test('prescription representation is discoverable without proving runtime activation', () => {
   assert.ok(catalog.collections.workoutExercises.fields.includes('massFormat'));
   for (const kind of ['workout.exercise.create', 'workout.exercise.update']) {
-    assert.equal(commandHelp(kind).fields.includes('massFormat'), false);
+    assert.equal(commandHelp(kind).fields.includes('massFormat'), true);
     const input = {
       operationId: randomUUID(),
       issuedAt: Date.now(),
@@ -45,7 +45,11 @@ test('prescription representation is discoverable for reads without granting a n
       data: { training: 'day-one', element: 'exercise', targetSets: '[{"w":20,"r":8}]' },
     };
     assert.deepEqual(validateCommand(input).data, input.data);
-    for (const massFormat of ['kg-v1', 'future-v2', null]) {
+    assert.deepEqual(
+      validateCommand({ ...input, data: { ...input.data, massFormat: 'kg-v1' } }).data,
+      { ...input.data, massFormat: 'kg-v1' },
+    );
+    for (const massFormat of ['future-v2', null, true, 1]) {
       assert.throws(() => validateCommand({ ...input, data: { ...input.data, massFormat } }), {
         code: 'invalid_arguments',
       });

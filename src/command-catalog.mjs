@@ -885,6 +885,7 @@ export default {
         "training",
         "element",
         "targetSets",
+        "massFormat",
         "restSeconds",
         "order"
       ],
@@ -902,6 +903,7 @@ export default {
         "training",
         "element",
         "targetSets",
+        "massFormat",
         "restSeconds",
         "order"
       ],
@@ -3093,6 +3095,10 @@ export default {
         "type": "string",
         "minLength": 2,
         "maxLength": 4000
+      },
+      "massFormat": {
+        "maxLength": 16,
+        "type": "string"
       },
       "restSeconds": {
         "default": 90,
