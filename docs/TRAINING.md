@@ -29,6 +29,12 @@ Reuse the existing personal exercise ID when it already uses the same key.
 Create `exercise.create` only when the intended movement is not in the catalogue.
 Never copy an arbitrary image URL into the exercise library.
 
+Personal exercises also support a separate `description`, a short
+`movementIntent` and explicitly estimated `declaredMuscleContributions`.
+Read [Personal exercises and photos](CUSTOM_EXERCISES.md) before using these
+fields or adding an optional photo sequence. Personal estimates never become
+reviewed catalogue evidence; omit unknown shares rather than guessing.
+
 `fitness_command_help` describes the actual editable field types, enums and
 required values. Tracking types include `WeightReps`, `BodyweightReps`,
 `Duration` and other declared types; do not invent enum values.

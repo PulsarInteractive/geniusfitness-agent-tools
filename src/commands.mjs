@@ -17,6 +17,13 @@ import catalog from './command-catalog.mjs';
 import { CredentialStore } from './store.mjs';
 import { AgentError, fail, safeError } from './errors.mjs';
 import { invalidSetPayload } from './set-payloads.mjs';
+import { validateCustomExerciseMetadata } from './custom-exercise.mjs';
+import {
+  validateExerciseMediaOpen,
+  validateExerciseMediaChange,
+  validExerciseMediaSession,
+  validExerciseMediaChange,
+} from './exercise-media.mjs';
 
 export const operationIdSchema = z
   .string()
@@ -71,6 +78,9 @@ const checked = (schema, value) => {
 export function validateCommand(value) {
   const command = checked(commandSchema, value),
     definition = catalog.commands[command.kind];
+  if (['exercise.create', 'exercise.update'].includes(command.kind)) {
+    validateCustomExerciseMetadata(command.data);
+  }
   if (
     Buffer.byteLength(JSON.stringify(command)) > catalog.maxCommandBytes ||
     Object.keys(command.data).some((key) => !definition.fields.includes(key)) ||
@@ -212,6 +222,19 @@ const receiptSchema = z
 // Typed confirmations share the original durable journal and identity lock.
 // The discriminator prevents reusing a UUID through a different endpoint.
 const confirmationProtocols = {
+  exercise_media_open: {
+    validate: validateExerciseMediaOpen,
+    validReceipt: validExerciseMediaSession,
+    operationId: (input) => input.request.id,
+    path: (input) => `/api/agents/v1/exercises/${input.exerciseId}/media/uploads`,
+    body: (input) => input.request,
+  },
+  exercise_media_change: {
+    validate: validateExerciseMediaChange,
+    validReceipt: validExerciseMediaChange,
+    path: (input) => `/api/agents/v1/exercises/${input.exerciseId}/media/change`,
+    body: (input) => input.request,
+  },
   session_skip: {
     validate: validateSessionSkipConfirmation,
     validReceipt: validSessionSkipReceipt,
@@ -260,7 +283,10 @@ export class CommandJournal {
       !row ||
       row.formatVersion !== 1 ||
       (row.protocol !== undefined && !Object.hasOwn(confirmationProtocols, row.protocol)) ||
-      (row.protocol ? row.input?.request?.operationId : row.input?.operationId) !== id
+      (row.protocol
+        ? (confirmationProtocols[row.protocol].operationId?.(row.input) ??
+          row.input?.request?.operationId)
+        : row.input?.operationId) !== id
     ) {
       fail('operation_not_found', 'This context has no valid local operation with that ID.');
     }
@@ -273,6 +299,13 @@ export class CommandJournal {
       ...(row.receipt ? { receipt: row.receipt } : {}),
       ...(row.error ? { error: row.error } : {}),
       ...(row.retryAt ? { retryAt: row.retryAt } : {}),
+      ...(row.uploadState
+        ? {
+            uploadState: row.uploadState,
+            uploadReceipt: row.uploadReceipt,
+            uploadRetryAt: row.uploadRetryAt,
+          }
+        : {}),
     };
   }
   async execute(value) {
@@ -286,10 +319,95 @@ export class CommandJournal {
   async confirmRecurringSessionSkip(value) {
     return this.#execute(value, 'recurring_session_skip');
   }
+  async openExerciseMedia(value) {
+    return this.#execute(value, 'exercise_media_open');
+  }
+  async changeExerciseMedia(value) {
+    return this.#execute(value, 'exercise_media_change');
+  }
+  /** Binary transfer uses the already-confirmed immutable reservation. It
+   * never renews an uncertain reservation or retries another request silently. */
+  async uploadExerciseMediaBytes(id, bytes, sha256) {
+    const store = this.store(id);
+    return store.locked(async () => {
+      const local = await this.client.session(),
+        identity = binding(local),
+        row = await store.read();
+      if (
+        !row ||
+        row.protocol !== 'exercise_media_open' ||
+        row.state !== 'confirmed' ||
+        !validExerciseMediaSession(row.receipt, row.input)
+      ) {
+        fail(
+          'operation_not_found',
+          'Confirm the saved upload reservation first. Recover an uncertain reservation with commands retry.',
+        );
+      }
+      if (canonical(row.binding) !== canonical(identity)) {
+        fail(
+          'operation_identity_mismatch',
+          'The upload belongs to another connection, profile, session or environment.',
+        );
+      }
+      if (
+        !Buffer.isBuffer(bytes) ||
+        bytes.length !== row.input.request.size ||
+        sha256 !== row.input.request.sha256
+      ) {
+        fail(
+          'idempotency_mismatch',
+          'The image bytes changed after preparation. Do not reuse this reservation.',
+        );
+      }
+      requireRetryReady(row.uploadRetryAt);
+      const session = await this.client.authorizedSession();
+      if (canonical(binding(session)) !== canonical(identity)) {
+        fail('operation_identity_mismatch', 'The connection changed before upload.');
+      }
+      await store.write({ ...row, uploadState: 'uncertain' });
+      this.client.invalidateReads?.();
+      try {
+        const result = await this.client.transport.request(row.receipt.uploadPath, {
+          method: 'PUT',
+          token: session.access_token,
+          bytes,
+        });
+        if (!validExerciseMediaSession(result, row.input) || result.state !== 'ready') {
+          fail(
+            'invalid_response',
+            'The photo upload receipt is invalid. Retry the same bytes and reservation.',
+            { execution: 'unknown' },
+          );
+        }
+        await store.write({ ...row, uploadState: 'confirmed', uploadReceipt: result });
+        return result;
+      } catch (error) {
+        const safe = safeError(error);
+        await store
+          .write({
+            ...row,
+            uploadState: 'uncertain',
+            uploadRetryAt: retryAt(error),
+            uploadError: safe.toJSON(),
+          })
+          .catch(() => {});
+        throw new AgentError(safe.code, safe.message, {
+          status: safe.status,
+          retryable: safe.retryable,
+          ...safe.details,
+          execution: 'unknown',
+          operationId: id,
+        });
+      }
+    }, this.client.transport.signal);
+  }
   async #execute(value, protocol) {
     const typed = protocol ? confirmationProtocols[protocol] : null,
       input = typed ? typed.validate(value) : validateCommand(value),
-      operationId = typed ? input.request.operationId : input.operationId,
+      operationId = typed
+        ? (typed.operationId?.(input) ?? input.request.operationId)
+        : input.operationId,
       store = this.store(operationId);
     return store.locked(async () => {
       // Capture token and identity together under the refresh lock. A later
@@ -341,10 +459,14 @@ export class CommandJournal {
           this.client.invalidateReads?.();
         }
         const receipt = await this.client.transport.request(
-          typed ? typed.path : '/api/agents/v1/commands',
+          typed
+            ? typeof typed.path === 'function'
+              ? typed.path(input)
+              : typed.path
+            : '/api/agents/v1/commands',
           {
             method: 'POST',
-            json: input,
+            json: typed?.body ? typed.body(input) : input,
             token: session.access_token,
           },
         );

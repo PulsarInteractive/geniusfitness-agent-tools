@@ -33,9 +33,14 @@ test('edge refusals retain intent; recognized API denial and CF-Ray alone retain
   const binary = new Transport(origin, {
     fetchImpl: async () => new Response('challenge', { headers: { 'cf-mitigated': 'challenge' } }),
   });
-  await assert.rejects(binary.request('/api/agents/v1/media/content', { binary: true }), {
-    code: 'edge_challenge',
-  });
+  await assert.rejects(
+    binary.request('/api/agents/v1/exercise-media/9ee8fe0e-72ed-49ce-bbc5-384f5748110d/content', {
+      binary: true,
+    }),
+    {
+      code: 'edge_challenge',
+    },
+  );
 });
 
 test('HTTP-date uses server clock; long delays and extreme waits are never shortened', () => {

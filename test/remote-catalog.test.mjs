@@ -35,9 +35,12 @@ test('remote catalogue has bounded explicit schemas and honest write annotations
     if (tool.write) {
       assert.equal(
         tool.destructive,
-        !['fitness_session_skip_confirm', 'fitness_recurring_session_skip_confirm'].includes(
-          tool.name,
-        ),
+        ![
+          'fitness_session_skip_confirm',
+          'fitness_recurring_session_skip_confirm',
+          'fitness_exercise_media_open',
+          'fitness_exercise_media_import',
+        ].includes(tool.name),
       );
     }
     assert.ok(

@@ -140,6 +140,20 @@
         "Running observations come from a bounded ID-ordered candidate page and are not necessarily the latest runs. Omitted observations prevent complete run totals. The latest_training_session selection uses the latest retained personal session by recorded ending, not the current prescribed workout or a GPS run. Keep skipped, unfinished and completed sets distinct. Elapsed time includes pauses. If the latest source is unusable, no older session is substituted; insufficient_data does not mean zero activity or failure to train.",
         "Each explicit tool call makes one ordinary data request. It returns facts without generating a dialogue, spending AI credits, creating an episode or changing a plan. Do not poll, crawl other pages, extend the range or call a paid coach question as a fallback. On 401/403 stop; on 409 request fresh context explicitly; on 429 respect Retry-After; on preparation/unavailable responses explain the limitation without retrying automatically. A supporting service is required; an unavailable tool is not permission to reconstruct a denied view."
       ]
+    },
+    "custom-exercises": {
+      "summary": "Create a personal movement with an intention cue, estimated muscle targets and optional private photo sequence.",
+      "steps": [
+        "Search a bounded catalogue page and the personal library first. Reuse a suitable stable ID; absence in one page is not an exhaustive no-match.",
+        "Read fitness_command_help for exercise.create/update. description is detailed explanation (4000 characters); movementIntent is a short mental cue (280). Use the existing immutable prepare/execute workflow.",
+        "declaredMuscleContributions has qualification declared_estimate and at most 17 canonical targets from command help. Roles primary/secondary/unspecified and optional integer relativeShare 1–100: known shares total at most 100, remainder unknown. No duplicate or ancestor/descendant targets. Never normalize, invent physiological activation or promote estimates to reviewed catalogue evidence.",
+        "Omit a field to preserve it, null to clear. catalogueOrigin is protected historical provenance, not review of personal edits. A catalogue key or photo cannot qualify a personal estimate.",
+        "Optional photos: fitness_exercise_media reads the exact personal sequence. Local CLI/stdio prepares one authorized image file, fitness_exercise_media_open reserves a pending reference, then explicit upload sends identical bytes. Keep operation IDs and full bodies on uncertainty; never recreate the exercise or image reservation as recovery.",
+        "fitness_exercise_media_change uses the current sequence epoch/revision to attach one owned ready asset, detach one reference, or reorder the full assetIds with optional sequence mode. Up to eight static images. Pending photos are not ready; last detach closes access before cleanup.",
+        "Hosted ChatGPT: fitness_exercise_media_import is visible only for a configured approved host. It receives one real file reference with download_url and file_id; MIME and filename can be absent. Do not invent URLs or assume visible chat images reached the tool. If unavailable, direct the user to the app or local upload.",
+        "Each explicit request uses the normal allowance; no bulk traversal or implicit retries. Personal media never edits a student or the qualified catalogue."
+      ],
+      "title": "Personal exercises and optional photos"
     }
   }
 }

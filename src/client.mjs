@@ -282,6 +282,13 @@ export class AgentClient {
       return { connected: false, revoked: true };
     }, this.transport.signal);
   }
+  async exerciseMedia(exerciseId) {
+    if (typeof exerciseId !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(exerciseId)) {
+      fail('invalid_arguments', 'Use an exact personal exercise ID.');
+    }
+    const token = await this.accessToken();
+    return this.transport.request(`/api/agents/v1/exercises/${exerciseId}/media`, { token });
+  }
   async doctor() {
     const session = await this.store.read();
     return {

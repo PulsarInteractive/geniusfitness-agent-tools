@@ -1557,7 +1557,8 @@
             "workout-vitals",
             "subscriptions",
             "running",
-            "progress-selection"
+            "progress-selection",
+            "custom-exercises"
           ]
         }
       },
@@ -2679,5 +2680,296 @@
     "write": false,
     "destructive": false,
     "idempotent": true
+  },
+  {
+    "name": "fitness_exercise_media",
+    "title": "Read exercise photos",
+    "description": "Read up to eight ordered private photos for one personal exercise, with current epoch and sequence revision. Pending uploads are not ready photos. No student access or catalogue qualification. Paths and storage keys are not returned.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exerciseId"],
+      "properties": {
+        "exerciseId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_-]{1,128}$"
+        }
+      }
+    },
+    "scopes": ["exercises:read"],
+    "route": "exercise-media-list",
+    "write": false,
+    "destructive": false,
+    "idempotent": true
+  },
+  {
+    "name": "fitness_exercise_media_open",
+    "title": "Reserve one exercise photo",
+    "description": "Reserve one private photo from verified local file metadata. Retain id, issuedAt and exact body for retries. This creates a pending reference, not a completed upload. Use the explicit binary upload operation; do not invent dimensions or hashes. One file per call, existing account storage limits, personal exercises only.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exerciseId", "request"],
+      "properties": {
+        "exerciseId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_-]{1,128}$"
+        },
+        "request": {
+          "additionalProperties": false,
+          "properties": {
+            "contentType": {
+              "oneOf": [
+                {
+                  "enum": ["image/png"],
+                  "type": "string"
+                },
+                {
+                  "enum": ["image/jpeg"],
+                  "type": "string"
+                },
+                {
+                  "enum": ["image/webp"],
+                  "type": "string"
+                }
+              ]
+            },
+            "expectedEpoch": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "fileName": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "height": {
+              "format": "int32",
+              "maximum": 4096,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "id": {
+              "format": "uuid",
+              "maxLength": 36,
+              "type": "string"
+            },
+            "issuedAt": {
+              "format": "int64",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "sha256": {
+              "maxLength": 64,
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            "size": {
+              "format": "int32",
+              "maximum": 15000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "width": {
+              "format": "int32",
+              "maximum": 4096,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "contentType",
+            "expectedEpoch",
+            "fileName",
+            "height",
+            "id",
+            "issuedAt",
+            "sha256",
+            "size",
+            "width"
+          ],
+          "type": "object"
+        }
+      }
+    },
+    "scopes": ["exercises:write"],
+    "route": "exercise-media-open",
+    "write": true,
+    "destructive": false,
+    "idempotent": true
+  },
+  {
+    "name": "fitness_exercise_media_change",
+    "title": "Update exercise photo sequence",
+    "description": "Attach an existing owned ready asset, remove an exact image reference, or reorder the complete image list after user approval. Use current epoch and sequence revision, preserve operationId and full request on retry. Eight photos maximum. Detaching the last reference closes access and schedules physical deletion. No public image URLs, student edits or changes to the qualified catalogue.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exerciseId", "request"],
+      "properties": {
+        "exerciseId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_-]{1,128}$"
+        },
+        "request": {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "oneOf": [
+                {
+                  "enum": ["attach"],
+                  "type": "string"
+                },
+                {
+                  "enum": ["detach"],
+                  "type": "string"
+                },
+                {
+                  "enum": ["reorder"],
+                  "type": "string"
+                }
+              ]
+            },
+            "assetId": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "maxLength": 36,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "assetIds": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 8,
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "expectedEpoch": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "expectedRevision": {
+              "maxLength": 128,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            "issuedAt": {
+              "format": "int64",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "operationId": {
+              "format": "uuid",
+              "maxLength": 36,
+              "type": "string"
+            },
+            "sequence": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": ["action", "expectedEpoch", "expectedRevision", "issuedAt", "operationId"],
+          "type": "object"
+        }
+      }
+    },
+    "scopes": ["exercises:write"],
+    "route": "exercise-media-change",
+    "write": true,
+    "destructive": true,
+    "idempotent": true
+  },
+  {
+    "name": "fitness_exercise_media_import",
+    "title": "Import one photo shared with ChatGPT",
+    "description": "Import one explicitly shared host file into the connected user’s exact exercise. Enabled only for approved HTTPS file origins. Keep id, issuedAt and expectedEpoch on retry; a renewed file URL must describe the identical bytes. Optional MIME and name are hints, bytes determine format. No arbitrary URL fetch, redirects, cross-owner use or verified anatomical claims. One photo and one normal tool charge per call.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exerciseId", "expectedEpoch", "file", "id", "issuedAt"],
+      "properties": {
+        "exerciseId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_-]{1,128}$"
+        },
+        "expectedEpoch": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "file": {
+          "additionalProperties": false,
+          "properties": {
+            "download_url": {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            "file_id": {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            "file_name": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "mime_type": {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": ["download_url", "file_id"],
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "maxLength": 36,
+          "type": "string"
+        },
+        "issuedAt": {
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
+        }
+      }
+    },
+    "scopes": ["exercises:write"],
+    "route": "exercise-media-import",
+    "write": true,
+    "destructive": false,
+    "idempotent": true,
+    "fileParams": ["file"]
   }
 ]

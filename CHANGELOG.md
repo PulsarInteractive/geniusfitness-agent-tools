@@ -1,5 +1,14 @@
 ## Unreleased
 
+- Add separate personal exercise descriptions, movement intention cues and
+  declared muscle contributions with canonical targets and bounded relative
+  estimates. Keep reviewed catalogue provenance read-only.
+- Add private exercise photo lists, durable single-image reservations, explicit
+  CLI/local MCP uploads and sequence edits. Hosted file import is implemented
+  behind an exact HTTPS host allowlist and is not advertised when unconfigured.
+  Actual ChatGPT attachment transfer still requires host acceptance; no npm
+  publication or service deployment is implied.
+
 - Add `metrics selected` / `fitness_progress_selection` for the connected
   programme owner's 7 or 28 local dates, or latest retained training session.
   One bounded read returns facts and coverage, without a generated coach

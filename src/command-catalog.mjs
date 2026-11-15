@@ -20,6 +20,298 @@ export default {
       "priority": "optional"
     }
   },
+  "customExercise": {
+    "taxonomyVersion": "fitness-muscle-evidence-v1",
+    "targets": [
+      {
+        "id": "pectorals",
+        "parentId": null,
+        "labelFr": "Pectoraux",
+        "labelEn": "Pectorals",
+        "kind": "group"
+      },
+      {
+        "id": "pectoralis_major",
+        "parentId": "pectorals",
+        "labelFr": "Grand pectoral",
+        "labelEn": "Pectoralis major",
+        "kind": "muscle"
+      },
+      {
+        "id": "pectoral_clavicular",
+        "parentId": "pectoralis_major",
+        "labelFr": "Grand pectoral · portion claviculaire",
+        "labelEn": "Pectoralis major · clavicular portion",
+        "kind": "region"
+      },
+      {
+        "id": "pectoral_sternocostal",
+        "parentId": "pectoralis_major",
+        "labelFr": "Grand pectoral · portion sternocostale",
+        "labelEn": "Pectoralis major · sternocostal portion",
+        "kind": "region"
+      },
+      {
+        "id": "serratus",
+        "parentId": null,
+        "labelFr": "Dentelé antérieur",
+        "labelEn": "Serratus anterior",
+        "kind": "muscle"
+      },
+      {
+        "id": "lats",
+        "parentId": null,
+        "labelFr": "Grand dorsal",
+        "labelEn": "Latissimus dorsi",
+        "kind": "muscle"
+      },
+      {
+        "id": "upper_back",
+        "parentId": null,
+        "labelFr": "Haut du dos",
+        "labelEn": "Upper back",
+        "kind": "group"
+      },
+      {
+        "id": "rhomboids",
+        "parentId": "upper_back",
+        "labelFr": "Rhomboïdes",
+        "labelEn": "Rhomboids",
+        "kind": "group"
+      },
+      {
+        "id": "traps",
+        "parentId": "upper_back",
+        "labelFr": "Trapèzes",
+        "labelEn": "Trapezius",
+        "kind": "muscle"
+      },
+      {
+        "id": "lower_back",
+        "parentId": null,
+        "labelFr": "Bas du dos · groupe non précisé",
+        "labelEn": "Lower back · unspecified group",
+        "kind": "group"
+      },
+      {
+        "id": "erector_spinae",
+        "parentId": "lower_back",
+        "labelFr": "Érecteurs du rachis",
+        "labelEn": "Erector spinae",
+        "kind": "group"
+      },
+      {
+        "id": "delts",
+        "parentId": null,
+        "labelFr": "Deltoïde",
+        "labelEn": "Deltoid",
+        "kind": "muscle"
+      },
+      {
+        "id": "anterior_deltoid",
+        "parentId": "delts",
+        "labelFr": "Deltoïde antérieur",
+        "labelEn": "Anterior deltoid",
+        "kind": "region"
+      },
+      {
+        "id": "lateral_deltoid",
+        "parentId": "delts",
+        "labelFr": "Deltoïde latéral",
+        "labelEn": "Lateral deltoid",
+        "kind": "region"
+      },
+      {
+        "id": "posterior_deltoid",
+        "parentId": "delts",
+        "labelFr": "Deltoïde postérieur",
+        "labelEn": "Posterior deltoid",
+        "kind": "region"
+      },
+      {
+        "id": "rotator_cuff",
+        "parentId": null,
+        "labelFr": "Coiffe des rotateurs",
+        "labelEn": "Rotator cuff",
+        "kind": "group"
+      },
+      {
+        "id": "biceps",
+        "parentId": null,
+        "labelFr": "Biceps brachial",
+        "labelEn": "Biceps brachii",
+        "kind": "muscle"
+      },
+      {
+        "id": "brachialis",
+        "parentId": null,
+        "labelFr": "Brachial",
+        "labelEn": "Brachialis",
+        "kind": "muscle"
+      },
+      {
+        "id": "triceps",
+        "parentId": null,
+        "labelFr": "Triceps brachial",
+        "labelEn": "Triceps brachii",
+        "kind": "muscle"
+      },
+      {
+        "id": "forearms",
+        "parentId": null,
+        "labelFr": "Avant-bras",
+        "labelEn": "Forearms",
+        "kind": "group"
+      },
+      {
+        "id": "core",
+        "parentId": null,
+        "labelFr": "Tronc · groupe non précisé",
+        "labelEn": "Core · unspecified group",
+        "kind": "group"
+      },
+      {
+        "id": "abdominal_wall",
+        "parentId": "core",
+        "labelFr": "Abdominaux · groupe non précisé",
+        "labelEn": "Abdominals · unspecified group",
+        "kind": "group"
+      },
+      {
+        "id": "rectus_abdominis",
+        "parentId": "abdominal_wall",
+        "labelFr": "Grand droit de l’abdomen",
+        "labelEn": "Rectus abdominis",
+        "kind": "muscle"
+      },
+      {
+        "id": "rectus_upper",
+        "parentId": "rectus_abdominis",
+        "labelFr": "Grand droit · région supérieure",
+        "labelEn": "Rectus abdominis · upper region",
+        "kind": "region"
+      },
+      {
+        "id": "rectus_lower",
+        "parentId": "rectus_abdominis",
+        "labelFr": "Grand droit · région inférieure",
+        "labelEn": "Rectus abdominis · lower region",
+        "kind": "region"
+      },
+      {
+        "id": "obliques",
+        "parentId": "abdominal_wall",
+        "labelFr": "Obliques",
+        "labelEn": "Obliques",
+        "kind": "group"
+      },
+      {
+        "id": "internal_oblique",
+        "parentId": "obliques",
+        "labelFr": "Oblique interne",
+        "labelEn": "Internal oblique",
+        "kind": "muscle"
+      },
+      {
+        "id": "external_oblique",
+        "parentId": "obliques",
+        "labelFr": "Oblique externe",
+        "labelEn": "External oblique",
+        "kind": "muscle"
+      },
+      {
+        "id": "transversus_abdominis",
+        "parentId": "abdominal_wall",
+        "labelFr": "Transverse de l’abdomen",
+        "labelEn": "Transversus abdominis",
+        "kind": "muscle"
+      },
+      {
+        "id": "hip_flexors",
+        "parentId": null,
+        "labelFr": "Fléchisseurs de hanche",
+        "labelEn": "Hip flexors",
+        "kind": "group"
+      },
+      {
+        "id": "quads",
+        "parentId": null,
+        "labelFr": "Quadriceps",
+        "labelEn": "Quadriceps",
+        "kind": "group"
+      },
+      {
+        "id": "hamstrings",
+        "parentId": null,
+        "labelFr": "Ischio-jambiers",
+        "labelEn": "Hamstrings",
+        "kind": "group"
+      },
+      {
+        "id": "glutes",
+        "parentId": null,
+        "labelFr": "Fessiers",
+        "labelEn": "Gluteal muscles",
+        "kind": "group"
+      },
+      {
+        "id": "gluteus_maximus",
+        "parentId": "glutes",
+        "labelFr": "Grand fessier",
+        "labelEn": "Gluteus maximus",
+        "kind": "muscle"
+      },
+      {
+        "id": "gluteus_medius",
+        "parentId": "glutes",
+        "labelFr": "Moyen fessier",
+        "labelEn": "Gluteus medius",
+        "kind": "muscle"
+      },
+      {
+        "id": "calves",
+        "parentId": null,
+        "labelFr": "Mollets",
+        "labelEn": "Calf muscles",
+        "kind": "group"
+      },
+      {
+        "id": "gastrocnemius",
+        "parentId": "calves",
+        "labelFr": "Gastrocnémien",
+        "labelEn": "Gastrocnemius",
+        "kind": "muscle"
+      },
+      {
+        "id": "soleus",
+        "parentId": "calves",
+        "labelFr": "Soléaire",
+        "labelEn": "Soleus",
+        "kind": "muscle"
+      },
+      {
+        "id": "tibialis_anterior",
+        "parentId": null,
+        "labelFr": "Tibial antérieur",
+        "labelEn": "Tibialis anterior",
+        "kind": "muscle"
+      },
+      {
+        "id": "adductors",
+        "parentId": null,
+        "labelFr": "Adducteurs de hanche",
+        "labelEn": "Hip adductors",
+        "kind": "group"
+      },
+      {
+        "id": "abductors",
+        "parentId": null,
+        "labelFr": "Abducteurs de hanche",
+        "labelEn": "Hip abductors",
+        "kind": "group"
+      }
+    ]
+  },
   "commands": {
     "coach.intent.apply": {
       "fields": [
@@ -158,7 +450,10 @@ export default {
         "icon",
         "muscleGroup",
         "notes",
-        "section"
+        "section",
+        "description",
+        "movementIntent",
+        "declaredMuscleContributions"
       ],
       "module": "LocalUser/LocalUserElement",
       "permission": "exercises:write"
@@ -217,7 +512,10 @@ export default {
         "icon",
         "muscleGroup",
         "notes",
-        "section"
+        "section",
+        "description",
+        "movementIntent",
+        "declaredMuscleContributions"
       ],
       "module": "LocalUser/LocalUserElement",
       "permission": "exercises:write"
@@ -639,6 +937,10 @@ export default {
         "name",
         "notes",
         "section",
+        "description",
+        "movementIntent",
+        "declaredMuscleContributions",
+        "catalogueOrigin",
         "created",
         "updated"
       ],
@@ -1628,6 +1930,108 @@ export default {
           }
         ],
         "default": ""
+      },
+      "description": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 4000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "movementIntent": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 280
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "declaredMuscleContributions": {
+        "anyOf": [
+          {
+            "additionalProperties": false,
+            "required": [
+              "qualification",
+              "targets"
+            ],
+            "type": "object",
+            "properties": {
+              "qualification": {
+                "enum": [
+                  "declared_estimate"
+                ],
+                "type": "string"
+              },
+              "targets": {
+                "maxItems": 17,
+                "type": "array",
+                "items": {
+                  "additionalProperties": false,
+                  "required": [
+                    "role",
+                    "targetId"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "relativeShare": {
+                      "anyOf": [
+                        {
+                          "format": "int32",
+                          "maximum": 100,
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "role": {
+                      "oneOf": [
+                        {
+                          "enum": [
+                            "primary"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "enum": [
+                            "secondary"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "enum": [
+                            "unspecified"
+                          ],
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "targetId": {
+                      "maxLength": 80,
+                      "minLength": 1,
+                      "pattern": "^[a-z][a-z0-9_]*$",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "null"
+          }
+        ]
       }
     },
     "Project/SportExerciseDocument": {

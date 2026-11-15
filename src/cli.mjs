@@ -9,6 +9,8 @@ import { workflow } from './workflows.mjs';
 import { readPushResults } from './push-results.mjs';
 import { readPushAdjustments } from './push-adjustments.mjs';
 import { readProgressSelection } from './progress-selection.mjs';
+import { readExerciseMedia } from './exercise-media.mjs';
+import { prepareExerciseImage, uploadExerciseImage } from './exercise-media-transfer.mjs';
 import {
   commandHelp,
   readWorkoutCopyPreview,
@@ -31,6 +33,26 @@ import { readChanges, watchChanges } from './changes.mjs';
 import { fail, safeError, exitCode } from './errors.mjs';
 
 export const commands = {
+  'exercise-media list': {
+    summary: 'Read the ordered photos of one personal exercise.',
+    options: ['exerciseId'],
+  },
+  'exercise-media prepare': {
+    summary: 'Inspect one local image and prepare immutable upload metadata; no network.',
+    options: ['exerciseId', 'expectedEpoch', 'file'],
+  },
+  'exercise-media open': {
+    summary: 'Journal and reserve one photo from prepared JSON; no binary upload yet.',
+    options: ['file'],
+  },
+  'exercise-media upload': {
+    summary: 'Upload the exact image bytes for a confirmed saved reservation; one request.',
+    options: ['operation', 'file'],
+  },
+  'exercise-media change': {
+    summary: 'Journal a confirmed attach, detach or full reorder from JSON.',
+    options: ['file'],
+  },
   'workflow show': { summary: 'Read a reviewed workflow guide; no network.', options: ['topic'] },
   'auth login': {
     summary: 'Open browser sign-in and choose access. No tutorial or token to copy.',
@@ -338,7 +360,28 @@ export async function main(
     const store = new CredentialStore({ context: options.context, directory });
     const client = new AgentClient(new Transport(origin, { fetchImpl, signal }), store);
     let data;
-    if (command === 'auth login') {
+    if (command === 'exercise-media list') {
+      data = await readExerciseMedia(client, { exerciseId: options.exerciseId });
+    } else if (command === 'exercise-media prepare') {
+      data = await prepareExerciseImage({
+        exerciseId: options.exerciseId,
+        expectedEpoch: options.expectedEpoch,
+        file: options.file,
+      });
+    } else if (command === 'exercise-media open') {
+      data = await new CommandJournal(client).openExerciseMedia(
+        await readCommandFile(options.file),
+      );
+    } else if (command === 'exercise-media upload') {
+      data = await uploadExerciseImage(client, {
+        operationId: options.operation,
+        file: options.file,
+      });
+    } else if (command === 'exercise-media change') {
+      data = await new CommandJournal(client).changeExerciseMedia(
+        await readCommandFile(options.file),
+      );
+    } else if (command === 'auth login') {
       if (!isTTY && !options.interactive) {
         fail('invalid_arguments', 'Login needs an interactive human.', {
           remediation:

@@ -785,6 +785,9 @@ export function commandHelp(kind) {
   return {
     kind,
     ...definition,
+    ...(['exercise.create', 'exercise.update'].includes(kind)
+      ? { customExercise: customExerciseGuidance }
+      : {}),
     requiredPermissions: [definition.permission, ...(definition.additionalPermissions ?? [])],
     requiredTier: definition.requiredTier ?? null,
     revisionScope: definition.revisionScope ?? 'resource',
@@ -814,3 +817,4 @@ export function commandHelp(kind) {
       'Other athletes’ programs need current Coach subscription, coaching:write and ordinary program access.',
   };
 }
+import { customExerciseGuidance } from './custom-exercise.mjs';

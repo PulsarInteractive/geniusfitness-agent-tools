@@ -12,6 +12,7 @@ src/recurring-session-skip-contract.mjs
 src/temporary-actions-v3-contract.mjs
 src/temporary-actions-v3-contract.d.mts
 src/progress-selection-contract.mjs
+src/exercise-media-contract.mjs
 src/progress-selection.d.mts
 
 # Preserve the exact canonical HTTP evidence bytes.

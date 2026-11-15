@@ -29,6 +29,13 @@ Reuse the existing personal exercise ID when it already uses the same key.
 Create `exercise.create` only when the intended movement is not in the catalogue.
 Never copy an arbitrary image URL into the exercise library.
 
+For custom movements, read workflow `custom-exercises` and command help before
+writing `description`, `movementIntent` or `declaredMuscleContributions`.
+Use canonical target IDs. Roles and optional shares are unverified personal
+estimates, never measured activation or reviewed catalogue evidence. Omission
+preserves a field; null clears it. Photos are optional, ordered, private and
+uploaded one at a time. Never treat a chat attachment as already imported.
+
 `fitness_command_help` describes the actual editable field types, enums and
 required values. Tracking types include `WeightReps`, `BodyweightReps`,
 `Duration` and other declared types; do not invent enum values.

@@ -4,6 +4,10 @@
 versioned result on stdout; progress and errors use stderr. MCP reserves stdout
 for protocol messages.
 
+For personal exercise photos, see [Personal exercises and photos](CUSTOM_EXERCISES.md).
+The explicit commands are `exercise-media list`, `prepare`, `open`, `upload`
+and `change`. Preparation is local; each network step is separate and resumable.
+
 | Command                                | Purpose                                                                                  |
 | -------------------------------------- | ---------------------------------------------------------------------------------------- |
 | `auth login`                           | Browser consent with PKCE; `--flow device` for a remote terminal                         |
