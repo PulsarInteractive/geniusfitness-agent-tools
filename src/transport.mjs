@@ -1,5 +1,10 @@
 import { AgentError, fail } from './errors.mjs';
 import catalog from './command-catalog.mjs';
+import {
+  maxExerciseUploadBytes,
+  maxExerciseReadBytes,
+  oversizedExerciseUploadMessage,
+} from './exercise-media-limits.mjs';
 import { edgeRefusal, retryAfterSeconds } from './recovery.mjs';
 
 export const ORIGINS = Object.freeze({
@@ -80,10 +85,14 @@ export class Transport {
         }
       }
     }
+    if (Buffer.isBuffer(bytes) && bytes.length > maxExerciseUploadBytes) {
+      fail('exercise_media_too_large', oversizedExerciseUploadMessage, { status: 413 });
+    }
     if (
       (bytes !== undefined || binary) &&
       (!/^\/api\/agents\/v1\/exercise-media\/[a-fA-F0-9-]{36}\/content$/.test(url.pathname) ||
-        (bytes !== undefined && (!Buffer.isBuffer(bytes) || bytes.length > 15000000)) ||
+        (bytes !== undefined &&
+          (!Buffer.isBuffer(bytes) || bytes.length > maxExerciseUploadBytes)) ||
         (bytes !== undefined && (json !== undefined || form)))
     ) {
       fail('invalid_arguments', 'Binary transfer requires the bounded delegated media endpoint.');
@@ -144,7 +153,7 @@ export class Transport {
       if (response.body) {
         for await (const chunk of response.body) {
           size += chunk.length;
-          if (size > (binary && response.ok ? 15000000 : 262144)) {
+          if (size > (binary && response.ok ? maxExerciseReadBytes : 262144)) {
             fail('invalid_response', 'The API response exceeded the size limit.');
           }
           chunks.push(chunk);

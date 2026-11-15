@@ -8,7 +8,11 @@ import { validTemporaryCommandV3 } from './temporary-actions-v3.mjs';
 import { invalidRunPayload } from './run-payloads.mjs';
 import { coachPushProposalSchema, coachPushWithdrawalSchema } from './coach-push.mjs';
 import { retryAt, requireRetryReady } from './recovery.mjs';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash } from 'node:crypto';
+import {
+  maxExerciseUploadBytes,
+  oversizedExerciseUploadMessage,
+} from './exercise-media-limits.mjs';
 import { constants } from 'node:fs';
 import { open } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -20,6 +24,7 @@ import { invalidSetPayload } from './set-payloads.mjs';
 import { validateCustomExerciseMetadata } from './custom-exercise.mjs';
 import {
   validateExerciseMediaOpen,
+  validateHistoricalExerciseMediaOpen,
   validateExerciseMediaChange,
   validExerciseMediaSession,
   validExerciseMediaChange,
@@ -325,35 +330,79 @@ export class CommandJournal {
   async changeExerciseMedia(value) {
     return this.#execute(value, 'exercise_media_change');
   }
+  async #exerciseMediaUploadRow(store) {
+    const identity = binding(await this.client.session());
+    const row = await store.read();
+    if (
+      !row ||
+      row.formatVersion !== 1 ||
+      row.input?.request?.id !== store.context ||
+      row.protocol !== 'exercise_media_open' ||
+      row.state !== 'confirmed' ||
+      !validExerciseMediaSession(row.receipt, row.input)
+    ) {
+      fail(
+        'operation_not_found',
+        'Confirm the saved upload reservation first. Recover an uncertain reservation with commands retry.',
+      );
+    }
+    if (canonical(row.binding) !== canonical(identity)) {
+      fail(
+        'operation_identity_mismatch',
+        'The upload belongs to another connection, profile, session or environment.',
+      );
+    }
+    return { identity, row };
+  }
+  #confirmedMediaReceipt(row) {
+    if (row.uploadState !== 'confirmed') {
+      return null;
+    }
+    if (
+      !validExerciseMediaSession(row.uploadReceipt, row.input) ||
+      row.uploadReceipt.state !== 'ready'
+    ) {
+      fail(
+        'invalid_response',
+        'The saved photo receipt is invalid. Inspect the operation before acting.',
+      );
+    }
+    return row.uploadReceipt;
+  }
+  #requireCurrentMediaSize(row) {
+    if (row.input.request.size > maxExerciseUploadBytes) {
+      fail('exercise_media_too_large', oversizedExerciseUploadMessage, { status: 413 });
+    }
+  }
+  /** A confirmed upload can be replayed without reopening the source file.
+   * The same identity and receipt checks still apply; no HTTP request is made. */
+  async confirmedExerciseMediaUpload(id) {
+    const store = this.store(id);
+    return store.locked(async () => {
+      const { row } = await this.#exerciseMediaUploadRow(store);
+      const receipt = this.#confirmedMediaReceipt(row);
+      if (!receipt) {
+        this.#requireCurrentMediaSize(row);
+      }
+      return receipt;
+    }, this.client.transport.signal);
+  }
   /** Binary transfer uses the already-confirmed immutable reservation. It
    * never renews an uncertain reservation or retries another request silently. */
   async uploadExerciseMediaBytes(id, bytes, sha256) {
     const store = this.store(id);
     return store.locked(async () => {
-      const local = await this.client.session(),
-        identity = binding(local),
-        row = await store.read();
-      if (
-        !row ||
-        row.protocol !== 'exercise_media_open' ||
-        row.state !== 'confirmed' ||
-        !validExerciseMediaSession(row.receipt, row.input)
-      ) {
-        fail(
-          'operation_not_found',
-          'Confirm the saved upload reservation first. Recover an uncertain reservation with commands retry.',
-        );
+      const { identity, row } = await this.#exerciseMediaUploadRow(store);
+      const confirmed = this.#confirmedMediaReceipt(row);
+      if (confirmed) {
+        return confirmed;
       }
-      if (canonical(row.binding) !== canonical(identity)) {
-        fail(
-          'operation_identity_mismatch',
-          'The upload belongs to another connection, profile, session or environment.',
-        );
-      }
+      this.#requireCurrentMediaSize(row);
       if (
         !Buffer.isBuffer(bytes) ||
         bytes.length !== row.input.request.size ||
-        sha256 !== row.input.request.sha256
+        sha256 !== row.input.request.sha256 ||
+        createHash('sha256').update(bytes).digest('hex') !== row.input.request.sha256
       ) {
         fail(
           'idempotency_mismatch',
@@ -402,9 +451,14 @@ export class CommandJournal {
       }
     }, this.client.transport.signal);
   }
-  async #execute(value, protocol) {
+  async #execute(value, protocol, historicalReceipt = false) {
     const typed = protocol ? confirmationProtocols[protocol] : null,
-      input = typed ? typed.validate(value) : validateCommand(value),
+      input =
+        historicalReceipt && protocol === 'exercise_media_open'
+          ? validateHistoricalExerciseMediaOpen(value)
+          : typed
+            ? typed.validate(value)
+            : validateCommand(value),
       operationId = typed
         ? (typed.operationId?.(input) ?? input.request.operationId)
         : input.operationId,
@@ -440,6 +494,10 @@ export class CommandJournal {
           );
         }
         return { source: 'local_receipt', receipt: row.receipt };
+      }
+      if (protocol === 'exercise_media_open') {
+        this.#requireCurrentMediaSize({ input });
+        validateExerciseMediaOpen(input);
       }
       requireRetryReady(row?.retryAt);
       const session = await this.client.authorizedSession();
@@ -509,6 +567,6 @@ export class CommandJournal {
   }
   async retry(id) {
     const saved = await this.inspect(id);
-    return this.#execute(saved.request, saved.protocol);
+    return this.#execute(saved.request, saved.protocol, true);
   }
 }

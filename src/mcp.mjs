@@ -163,7 +163,7 @@ export function createMcpServer(client) {
   }
   register(
     'fitness_exercise_media_prepare',
-    'Inspect one user-authorized local image path and prepare metadata without network access. Local stdio only; never pass a ChatGPT attachment ID as a filesystem path.',
+    'Inspect one user-authorized local image up to 4,000,000 bytes and prepare immutable source metadata without network access. Local stdio only; never pass a ChatGPT attachment ID as a filesystem path.',
     z
       .object({
         exerciseId: z.string(),
@@ -177,7 +177,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_exercise_media_upload',
-    'Upload one exact local image for a previously confirmed saved media reservation. Preserve the operation ID after a timeout; changed bytes require a new preparation. Local stdio only; no arbitrary URL fetch.',
+    'Upload one exact source image up to 4,000,000 bytes for server compression, using its saved reservation. An already-confirmed upload returns its receipt without reading the source. Preserve the operation ID and original bytes after a timeout; changed bytes require a new preparation. Local stdio only; no arbitrary URL fetch.',
     z.object({ operationId: operationIdSchema, file: z.string().min(1).max(4096) }).strict(),
     (input) => uploadExerciseImage(client, input),
     true,

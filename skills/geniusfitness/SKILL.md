@@ -44,7 +44,10 @@ For a custom movement or photo sequence, read `fitness_workflow` with
 `topic: custom-exercises`. Keep the movement intention separate from its full
 description. Muscle contributions are personal estimates, including AI
 suggestions, and never verified catalogue evidence. Upload one authorized
-photo at a time; a visible chat attachment is not proof of an imported file.
+photo at a time, at most 4,000,000 source bytes. The server compresses new
+images; preserve the original source hash and bytes for retries and read stored
+metadata from the ready receipt. A confirmed local upload receipt needs no new
+transfer. A visible chat attachment is not proof of an imported file.
 
 Respond in the user’s language. Preserve existing titles and notes unless asked
 to translate them; keep IDs, API fields and enum values unchanged. Confirm

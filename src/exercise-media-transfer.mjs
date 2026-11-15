@@ -5,6 +5,10 @@ import { createHash, randomUUID } from 'node:crypto';
 import { AgentError, fail } from './errors.mjs';
 import { validateExerciseMediaOpen } from './exercise-media.mjs';
 import { CommandJournal } from './commands.mjs';
+import {
+  maxExerciseUploadBytes,
+  oversizedExerciseUploadMessage,
+} from './exercise-media-limits.mjs';
 
 /** Header inspection prepares exact metadata; the server independently checks
  * the complete static container and rejects malformed or animated images. */
@@ -87,8 +91,11 @@ export async function readExerciseImageFile(path) {
   try {
     handle = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
     const stat = await handle.stat();
-    if (!stat.isFile() || stat.size < 1 || stat.size > 15000000) {
-      fail('invalid_arguments', 'Use a regular image file of at most 15,000,000 bytes.');
+    if (!stat.isFile() || stat.size < 1) {
+      fail('invalid_arguments', 'Use one non-empty regular image file.');
+    }
+    if (stat.size > maxExerciseUploadBytes) {
+      fail('exercise_media_too_large', oversizedExerciseUploadMessage, { status: 413 });
     }
     const buffer = Buffer.alloc(stat.size + 1);
     let length = 0;
@@ -133,10 +140,11 @@ export async function prepareExerciseImage({ exerciseId, expectedEpoch, file }) 
   });
 }
 export async function uploadExerciseImage(client, { operationId, file }) {
+  const journal = new CommandJournal(client);
+  const receipt = await journal.confirmedExerciseMediaUpload(operationId);
+  if (receipt) {
+    return receipt;
+  }
   const image = await readExerciseImageFile(file);
-  return new CommandJournal(client).uploadExerciseMediaBytes(
-    operationId,
-    image.bytes,
-    image.sha256,
-  );
+  return journal.uploadExerciseMediaBytes(operationId, image.bytes, image.sha256);
 }

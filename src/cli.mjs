@@ -38,7 +38,8 @@ export const commands = {
     options: ['exerciseId'],
   },
   'exercise-media prepare': {
-    summary: 'Inspect one local image and prepare immutable upload metadata; no network.',
+    summary:
+      'Inspect one local image up to 4 MB and prepare immutable upload metadata; no network.',
     options: ['exerciseId', 'expectedEpoch', 'file'],
   },
   'exercise-media open': {
@@ -46,7 +47,8 @@ export const commands = {
     options: ['file'],
   },
   'exercise-media upload': {
-    summary: 'Upload the exact image bytes for a confirmed saved reservation; one request.',
+    summary:
+      'Upload the original bytes for server compression, or replay an already-confirmed receipt.',
     options: ['operation', 'file'],
   },
   'exercise-media change': {

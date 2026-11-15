@@ -1,6 +1,7 @@
 import * as z from 'zod/v4';
 import contract from './exercise-media-contract.mjs';
 import { fail } from './errors.mjs';
+import { maxExerciseReadBytes } from './exercise-media-limits.mjs';
 const schema = (name) =>
   z.fromJSONSchema({
     $ref: '#/$defs/GeniusFitness.ExerciseMedia.' + name,
@@ -12,6 +13,22 @@ export const exerciseMediaReadSchema = z
 export const exerciseMediaOpenSchema = exerciseMediaReadSchema
   .extend({ request: schema('Upload') })
   .strict();
+// Compatibility is limited to reading an already-confirmed local receipt.
+// CommandJournal revalidates the current Upload schema before any network call.
+const historicalDefinitions = structuredClone(contract.definitions);
+historicalDefinitions['GeniusFitness.ExerciseMedia.Upload'].properties.size.maximum =
+  maxExerciseReadBytes;
+const historicalOpenSchema = exerciseMediaReadSchema
+  .extend({
+    request: z.fromJSONSchema({
+      $ref: '#/$defs/GeniusFitness.ExerciseMedia.Upload',
+      $defs: historicalDefinitions,
+    }),
+  })
+  .strict();
+export function validateHistoricalExerciseMediaOpen(input) {
+  return check(historicalOpenSchema, input);
+}
 export const exerciseMediaChangeSchema = exerciseMediaReadSchema
   .extend({ request: schema('Change') })
   .strict();

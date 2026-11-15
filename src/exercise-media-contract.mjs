@@ -59,7 +59,7 @@ export default {
         },
         "size": {
           "format": "int32",
-          "maximum": 15000000,
+          "maximum": 4000000,
           "minimum": 1,
           "type": "integer"
         },
