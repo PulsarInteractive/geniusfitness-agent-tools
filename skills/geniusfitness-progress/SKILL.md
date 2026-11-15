@@ -203,3 +203,9 @@ parent and a child contributes once to that aggregate; never add overlapping
 anatomical views into total workload. `unmappedLabels`, null or absent evidence
 remain unknown. Do not infer activation percentages, muscle growth, recovery or
 localized fat loss. This optional precision requires the matching server rollout.
+
+For `ResistanceReps`, keep repetitions, completed counts and timing while
+preserving unknown mass. `externalResistanceVolumeKg` is `null`, never a measured
+zero. Do not calculate tonnage/e1RM, invent kg from equipment labels or recommend
+mass-based Push from these observations. See
+[unmeasured resistance](../../docs/EXERCISE_TRACKING.md).

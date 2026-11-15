@@ -4,6 +4,8 @@ import { fail } from './errors.mjs';
 export const customExerciseGuidance = {
   ...catalog.customExercise,
   qualification: 'declared_estimate',
+  tracking:
+    'ResistanceReps records repetitions against unmeasured external resistance with defaultUnit none. Keep actual repetitions and timing; do not invent kilograms, massFormat, sourceMass, tonnage, e1RM or mass-based Push. Bands are equipment, not bodyweight or no-equipment. Manufacturer labels and band colors do not establish a measured load. External resistance volume remains null, not zero.',
   meaning:
     'Personal muscle declarations are estimates, including AI-assisted suggestions. They are not measured activation, growth, recovery or reviewed catalogue evidence.',
   allocation:
@@ -41,6 +43,13 @@ export function validateExerciseCountingMetadata(data) {
 /** Cross-field rules complement generated public field schemas. No inference,
  * percentage normalization, catalogue lookup or write happens here. */
 export function validateCustomExerciseMetadata(data) {
+  if (
+    data.exerciseType === 'ResistanceReps' &&
+    data.defaultUnit !== undefined &&
+    data.defaultUnit !== 'none'
+  ) {
+    fail('invalid_arguments', 'ResistanceReps uses unit none for unmeasured external resistance.');
+  }
   validateExerciseCountingMetadata(data);
   validateLocalization(data);
   const invalid = () =>

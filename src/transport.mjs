@@ -117,6 +117,7 @@ export class Transport {
         signal,
         headers: {
           Accept: binary ? 'application/octet-stream' : 'application/json',
+          'X-Fitness-Exercise-Codec': '2',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
           ...(bytes !== undefined
             ? { 'Content-Type': 'application/octet-stream', 'Content-Length': String(bytes.length) }
@@ -202,6 +203,18 @@ export class Transport {
     if (!response.ok) {
       const e = data?.error;
       const code = identifier(typeof e === 'string' ? e : e?.code) ?? 'api_error';
+      if (code === 'fitness_reader_update_required') {
+        const required = e?.requiredExerciseCodec ?? data?.requiredExerciseCodec;
+        throw new AgentError(code, 'This response requires a newer GeniusFitness reader.', {
+          status: response.status,
+          retryable: false,
+          remediation:
+            'Run geniusfitness update check, then geniusfitness update install when a compatible release is available. Restart the MCP server or update its pinned package. Preserve saved operations and retry only after updating; do not downgrade exercise types or clear the journal.',
+          ...(Number.isSafeInteger(required) && required >= 2 && required <= 100
+            ? { requiredExerciseCodec: required }
+            : {}),
+        });
+      }
       const retry =
         retryAfterSeconds(response, e) ?? ([429, 503].includes(response.status) ? 60 : undefined);
       throw new AgentError(code, boundedText(e?.message) ?? 'The API refused the request.', {

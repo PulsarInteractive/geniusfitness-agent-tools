@@ -52,3 +52,9 @@ shared by other workouts. Use the dedicated
 for the former, with exact personal IDs and an explicitly approved prescription
 reset. Importing a selected catalogue variant and replacing a slot are separate
 operations; neither failure authorizes deleting the other operation's result.
+
+For `ResistanceReps`, use unit `none` for unmeasured external resistance, not
+bodyweight. Preserve required equipment: a band is not a no-equipment exercise.
+Do not derive kilograms from its color, label or nominal tension. See
+[tracking rules and reader updates](../../docs/EXERCISE_TRACKING.md); repetition
+counting is supported, while mass, tonnage, e1RM and mass-based Push are not.

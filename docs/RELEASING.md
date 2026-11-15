@@ -21,3 +21,8 @@ user guides. Server and application implementations are not part of this package
 Keep experimental client changes unpublished until their server capabilities are
 available. A public source commit, an npm release and a service rollout are
 separate events and should be reported separately.
+
+Before publishing an unpublished version that changed after an earlier archive
+was tested, create a new archive and dated acceptance receipt tied to its source
+commit and archive hash. Keep the earlier archive and receipt unchanged. Sharing
+a version label does not make an older artifact's validation apply to new code.

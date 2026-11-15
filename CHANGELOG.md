@@ -2,6 +2,17 @@
 
 ## 0.1.0-beta.13 — 2026-11-15
 
+This version is unpublished. The current reader-compatibility iteration follows
+an earlier replacement-only archive; its acceptance does not certify these
+additional changes. A fresh archive and dated release receipt are required.
+
+- Preserve `ResistanceReps` with unmeasured resistance, unit `none`, explicit
+  equipment and null mass volume. Reject fictitious mass in reviewed imports
+  and load analytics; retain repetitions and timing.
+- Announce exercise reader codec 2 on CLI/stdio MCP API requests. An incompatible
+  reader receives actionable update guidance without automatic retries or
+  rewriting its saved operation.
+
 - Preview and explicitly confirm an exact personal exercise replacement through
   the CLI and MCP. Inspect the before/after review and retain its immutable UUID.
 - Clear the old set prescription instead of transferring its load or repetitions

@@ -32,6 +32,7 @@ export default {
       "repetitionTypes": [
         "WeightReps",
         "BodyweightReps",
+        "ResistanceReps",
         "WeightedBodyweight",
         "AssistedBodyweight"
       ],
@@ -1905,6 +1906,7 @@ export default {
             "enum": [
               "WeightReps",
               "BodyweightReps",
+              "ResistanceReps",
               "WeightedBodyweight",
               "AssistedBodyweight",
               "Duration",

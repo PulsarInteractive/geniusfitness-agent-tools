@@ -78,3 +78,8 @@ unchanged with `nextCursor`; after changing it, start a new page without a curso
 Only explicitly requested roles are echoed as `matching.requestedRole`, so older
 requests retain their strict response shape. Inspect the exact variant's sources
 and limitations before recommending a focus change. No automatic page traversal.
+
+A reviewed `ResistanceReps` variant uses unit `none` and origin load convention
+`nonMass`. Its equipment remains required. Do not change it to bodyweight,
+pretend band tension is measured kg, or promise mass-based Push. Retain its exact
+counting rule and qualification; see [tracking rules](../../docs/EXERCISE_TRACKING.md).

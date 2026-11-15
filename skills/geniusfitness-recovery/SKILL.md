@@ -37,3 +37,10 @@ journal dispatches `exercise_replacement`; hosted MCP must resend the unchanged
 body to `fitness_exercise_replacement_confirm`. An old receipt remains historical
 and still reports `requires_configuration`; it is not permission to reset again
 or transfer/recreate the old sets. Never fall back to generic slot CRUD.
+
+On `fitness_reader_update_required`, stop without automatic retries or discarding
+unsupported records. Run `geniusfitness update check` and install a compatible
+published version when available; restart MCP or update its pinned package.
+Preserve the original journal and request. Do not downgrade an exercise type,
+clear saved operations or claim that an update enables server capabilities. See
+[reader compatibility](../../docs/EXERCISE_TRACKING.md#reader-compatibility-and-recovery).

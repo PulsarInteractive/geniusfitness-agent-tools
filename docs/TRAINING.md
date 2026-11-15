@@ -335,3 +335,11 @@ preview or source automatically, including after expiry. The server distinguishe
 an expired first attempt from a committed receipt replay. A definitive conflict
 requires fresh reads and a newly reviewed operation; a historical receipt is not
 current permission or evidence of what another device displays.
+
+## Unmeasured external resistance
+
+`ResistanceReps` uses `defaultUnit: "none"` and preserves repetitions and timing.
+It does not mean bodyweight or no equipment: read the exact band, support or
+accessory requirements. Do not add mass markers, infer kg from a manufacturer
+label, transfer another movement's dose, or use mass-based Push. See
+[tracking and reader compatibility](EXERCISE_TRACKING.md).

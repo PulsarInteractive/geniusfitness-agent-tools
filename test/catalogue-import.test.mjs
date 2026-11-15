@@ -70,6 +70,33 @@ const receipt = (input) => ({
   readyToStart: false,
 });
 
+test('ResistanceReps preview keeps nonMass and rejects a fictitious mass or bodyweight convention', async (t) => {
+  const value = preview();
+  value.definition.exerciseType = 'ResistanceReps';
+  value.origin.loadConvention = 'nonMass';
+  let response = value;
+  const f = await fixture(t, async () => Response.json(response));
+  assert.deepEqual(await previewCatalogueImport(f.client, query), value);
+  for (const [field, invalid] of [
+    ['defaultUnit', 'kg'],
+    ['defaultUnit', 'lb'],
+    ['loadConvention', 'bodyweight'],
+    ['loadConvention', 'total'],
+  ]) {
+    response = structuredClone(value);
+    if (field === 'defaultUnit') {
+      response.definition[field] = invalid;
+    } else {
+      response.origin[field] = invalid;
+    }
+    await assert.rejects(previewCatalogueImport(f.client, query), { code: 'invalid_response' });
+  }
+  const saved = request(),
+    nonMassReceipt = receipt(saved);
+  nonMassReceipt.origin.loadConvention = 'nonMass';
+  assert.equal(validCatalogueImportReceipt(nonMassReceipt, saved), true);
+});
+
 test('import preview is one read-only POST and preserves exact source text and counting', async (t) => {
   const sent = [];
   let value = preview();

@@ -73,6 +73,7 @@ export default {
                 "enum": [
                   "WeightReps",
                   "BodyweightReps",
+                  "ResistanceReps",
                   "WeightedBodyweight",
                   "AssistedBodyweight",
                   "Duration",
@@ -157,6 +158,7 @@ export default {
                   "perImplement",
                   "perSide",
                   "bodyweight",
+                  "nonMass",
                   "unknown"
                 ],
                 "type": "string"
@@ -398,6 +400,7 @@ export default {
               "perImplement",
               "perSide",
               "bodyweight",
+              "nonMass",
               "unknown"
             ],
             "type": "string"

@@ -1214,6 +1214,12 @@ export default {
             },
             {
               "enum": [
+                "nonMass"
+              ],
+              "type": "string"
+            },
+            {
+              "enum": [
                 "unknown"
               ],
               "type": "string"

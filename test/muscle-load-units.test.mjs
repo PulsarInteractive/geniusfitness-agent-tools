@@ -55,6 +55,38 @@ const fixture = () => ({
     },
   ],
 });
+
+test('unmeasured ResistanceReps retains repetitions while rejecting invented zero or measured mass', async () => {
+  const data = fixture(),
+    row = data.exercises[0];
+  row.exerciseType = 'ResistanceReps';
+  for (const observation of [row, ...row.weeks]) {
+    observation.loadMeasuredSets = 0;
+    observation.volumeMeasuredSets = 0;
+  }
+  assert.deepEqual(await readMuscleInsights({ get: async () => data }, query), data);
+  for (const target of ['row', 'week']) {
+    for (const [field, value] of [
+      ['recordedVolumeKg', 0],
+      ['externalResistanceVolumeKg', 0],
+      ['recordedVolumeKg', 20],
+      ['loadMeasuredSets', 1],
+      ['volumeMeasuredSets', 1],
+    ]) {
+      const changed = structuredClone(data),
+        observation = target === 'row' ? changed.exercises[0] : changed.exercises[0].weeks[0];
+      observation[field] = value;
+      await assert.rejects(readMuscleInsights({ get: async () => changed }, query), {
+        code: 'invalid_response',
+      });
+    }
+  }
+  const changed = structuredClone(data);
+  changed.exercises[0].maxRecordedWeightKg = 0;
+  await assert.rejects(readMuscleInsights({ get: async () => changed }, query), {
+    code: 'invalid_response',
+  });
+});
 test('new muscle responses preserve incomplete coverage, complete normalized values and explicit zero', async () => {
   const partial = fixture();
   assert.deepEqual(await readMuscleInsights({ get: async () => partial }, query), partial);

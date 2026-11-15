@@ -48,7 +48,7 @@ the total to each side. Preserve the returned rule and source instructions;
 never replace one with the other to satisfy an older client or service.
 
 Repetition conventions require a repetition tracking type: `WeightReps`,
-`BodyweightReps`, `WeightedBodyweight` or `AssistedBodyweight`. Per-side duration
+`BodyweightReps`, `WeightedBodyweight`, `AssistedBodyweight` or `ResistanceReps`. Per-side duration
 requires `Duration` or `DurationWeight`. The service checks the resulting saved
 exercise, including a partial edit against its existing tracking type.
 
@@ -60,6 +60,11 @@ not mean the repetition count should be multiplied. Counting never changes a
 recorded load or its unit. For a reviewed import, keep the returned `defaultUnit`
 (`kg` or `none`); preserve existing quantities and units when reading or replaying
 records. Omission preserves the convention on update; `null` clears it.
+
+For unmeasured external resistance, `ResistanceReps` uses `defaultUnit: "none"`.
+Keep the required equipment and counting rule explicit. No mass, tonnage or
+mass-based Push can be inferred from a band label; see
+[tracking and reader compatibility](EXERCISE_TRACKING.md).
 
 ## Source language and saved translations
 

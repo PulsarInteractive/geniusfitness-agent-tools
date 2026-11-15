@@ -216,3 +216,9 @@ has the normal authorization and request cost. No polling, new receipt route or
 local cache can substitute for that read. Stop on missing support or revoked
 access. Full request examples and versioned fields are in
 [`TEMPORARY_ACTIONS.md`](../../docs/TEMPORARY_ACTIONS.md).
+
+`ResistanceReps` identifies unmeasured external resistance, not a measured mass
+or bodyweight. Review repetitions and timing with their limits; do not infer
+kilograms, tonnage, e1RM or mass-based Push from a band label. Retain required
+equipment and explicit user approval for any change. See
+[tracking rules](../../docs/EXERCISE_TRACKING.md).

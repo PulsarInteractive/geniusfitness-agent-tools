@@ -82,6 +82,8 @@ export async function previewCatalogueImport(client, value) {
       origin.catalogueKey !== query.catalogueKey ||
       !pins.every((key) => origin[key] === result[key]) ||
       origin.loadConvention === 'unknown' ||
+      (definition.exerciseType === 'ResistanceReps' &&
+        (definition.defaultUnit !== 'none' || origin.loadConvention !== 'nonMass')) ||
       definition.countingConvention !== origin.countingConvention
     ) {
       fail(

@@ -429,6 +429,15 @@ const musclePage = z.object({
 function validLoadCoverage(row, exerciseType) {
   const loads = row.loadMeasuredSets,
     volumes = row.volumeMeasuredSets;
+  if (exerciseType === 'ResistanceReps') {
+    return (
+      loads === 0 &&
+      volumes === 0 &&
+      row.recordedVolumeKg === null &&
+      row.externalResistanceVolumeKg === null &&
+      (!Object.hasOwn(row, 'maxRecordedWeightKg') || row.maxRecordedWeightKg === null)
+    );
+  }
   const nonLoad = [
     'BodyweightReps',
     'AssistedBodyweight',

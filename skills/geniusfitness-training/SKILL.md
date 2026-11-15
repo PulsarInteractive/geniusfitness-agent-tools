@@ -54,3 +54,9 @@ IDs. Disclose that every target set is cleared and needs configuration; obtain
 explicit authorization for that reset. Never carry an old dose, bypass a blocked
 preview through generic CRUD, or prescribe new sets automatically. The existing
 immutable journal keys recovery by `request.requestId`.
+
+For `ResistanceReps`, keep repetitions, counting and available timing without
+inventing a mass prescription. Unit `none` does not remove the equipment
+requirement. No kg/lb conversion, mass marker, tonnage, e1RM or mass-based Push
+can be inferred from a resistance band label. See
+[tracking rules](../../docs/EXERCISE_TRACKING.md).

@@ -63,3 +63,10 @@ access and normal per-call limits remain enforced by the server.
 
 These commands require the matching deployed service. Client installation alone
 does not enable a backend route or expand the reviewed catalogue.
+
+A reviewed `ResistanceReps` preview must retain `defaultUnit: "none"` and an
+origin `loadConvention: "nonMass"`. Repetitions remain usable; kilograms and
+external resistance volume are unmeasured. Preserve equipment requirements:
+"none" is a tracking unit, not a no-equipment filter. Never reinterpret a band
+as bodyweight or turn its manufacturer label into a measured mass. See
+[tracking and reader compatibility](EXERCISE_TRACKING.md).
