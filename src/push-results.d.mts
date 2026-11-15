@@ -6,10 +6,21 @@ export interface PushResultsQuery {
   athleteId?: string;
   includeRewardDetails?: boolean;
 }
-export interface PushValues {
+/** Legacy quantities are exact thousandths of the enclosing kg/lb unit. */
+export interface LegacyPushValues {
   repetitions: number;
   loadMilliunits: number | null;
+  massFormat?: never;
+  loadKilograms?: never;
 }
+/** Canonical quantities retain float64 kg. Omit load only for unit none. */
+export interface CanonicalPushValues {
+  repetitions: number;
+  loadMilliunits: null;
+  massFormat: 'kg-v1';
+  loadKilograms?: number;
+}
+export type PushValues = LegacyPushValues | CanonicalPushValues;
 export interface PushTarget {
   projectId: string;
   trainingId: string;
@@ -80,6 +91,11 @@ export interface PushResults {
 }
 export const pushResultsSchema: ZodType<PushResultsQuery>;
 export function readPushResults(
-  client: { get(resource: 'push-results', query: PushResultsQuery): unknown | Promise<unknown> },
+  client: {
+    get(
+      resource: 'push-results',
+      query: PushResultsQuery & { valuesVersion: 2 },
+    ): unknown | Promise<unknown>;
+  },
   input: unknown,
 ): Promise<PushResults>;

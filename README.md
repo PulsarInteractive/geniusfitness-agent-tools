@@ -94,6 +94,16 @@ This read requires `metrics:read` and current program access. It cannot execute 
 bonus, award XP or update a prescription. It is available only on servers that
 implement the Push result endpoint; an unavailable route is not an empty result.
 
+Push loads preserve their recorded representation. Unmarked values use
+`loadMilliunits / 1000` in the stated kg/lb unit. Values marked
+`massFormat: "kg-v1"` use exact `loadKilograms` in kg and a null `loadMilliunits`;
+unweighted work (`unit: "none"`) omits kilograms. Keep the full recorded precision.
+Readers request `valuesVersion=2` in the same call. This enables decoding both
+representations and does not enable new kilogram writes. A server response
+`push_values_upgrade_required` requires a compatible client update; no automatic
+fallback, conversion or retry is performed. Server support and package publication
+remain separate.
+
 ### Later workout adjustments
 
 Use `fitness_push_adjustments` or

@@ -50,7 +50,10 @@ export interface PushAdjustmentsPage {
 export const pushAdjustmentsSchema: ZodType<PushAdjustmentsQuery>;
 export function readPushAdjustments(
   client: {
-    get(resource: 'push-adjustments', query: PushAdjustmentsQuery): unknown | Promise<unknown>;
+    get(
+      resource: 'push-adjustments',
+      query: PushAdjustmentsQuery & { valuesVersion: 2 },
+    ): unknown | Promise<unknown>;
   },
   input: unknown,
 ): Promise<PushAdjustmentsPage>;

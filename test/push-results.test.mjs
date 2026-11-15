@@ -71,7 +71,7 @@ test('one explicit read retains corrected actual values, units and missing evide
     get: async (name, query) => {
       calls++;
       assert.equal(name, 'push-results');
-      assert.deepEqual(query, input);
+      assert.deepEqual(query, { ...input, valuesVersion: 2 });
       return result();
     },
   };
@@ -106,7 +106,7 @@ test('settled bonus amounts are explicit, optional and never inferred from a leg
       {
         get: async (name, q) => {
           calls++;
-          assert.deepEqual(q, query);
+          assert.deepEqual(q, { ...query, valuesVersion: 2 });
           return value;
         },
       },
@@ -161,7 +161,7 @@ test('MCP advertises a read-only tool and carries one bounded request', async ()
     get: async (name, query) => {
       calls++;
       assert.equal(name, 'push-results');
-      assert.deepEqual(query, input);
+      assert.deepEqual(query, { ...input, valuesVersion: 2 });
       return result();
     },
   });
@@ -289,4 +289,176 @@ test('CLI and MCP preserve the explicit reward-details opt-in without extra read
     await client.close();
     await server.close();
   }
+});
+
+const canonicalResult = (load = 12.473790175) => {
+  const value = result();
+  const canonical = (repetitions) => ({
+    repetitions,
+    loadMilliunits: null,
+    massFormat: 'kg-v1',
+    loadKilograms: load,
+  });
+  value.proposals[0].base = canonical(8);
+  value.proposals[0].offeredTarget = canonical(9);
+  value.outcomes[0].actual = canonical(7);
+  return value;
+};
+
+test('canonical kg retains float64 load and zero exactly through one CLI and MCP read', async (t) => {
+  for (const load of [12.473790175, 0, 2000, 1e-12]) {
+    const value = canonicalResult(load);
+    let calls = 0;
+    const f = await fixture(t, async (url) => {
+      calls++;
+      assert.equal(new URL(url).searchParams.get('valuesVersion'), '2');
+      return Response.json(value);
+    });
+    let stdout = '',
+      stderr = '';
+    const code = await main(
+      [
+        'sessions',
+        'push-results',
+        ...Object.entries(input).flatMap(([k, v]) => ['--' + k, v]),
+        '--origin',
+        origin,
+        '--allow-local',
+        '--json',
+      ],
+      {
+        directory: f.directory,
+        fetchImpl: f.transport.fetch,
+        stdout: { write: (s) => (stdout += s) },
+        stderr: { write: (s) => (stderr += s) },
+      },
+    );
+    assert.equal(code, 0, stderr);
+    assert.deepEqual(JSON.parse(stdout).data, value);
+    const server = createMcpServer(f.client);
+    const client = new Client({ name: 'canonical-push-test', version: '1' });
+    const [a, b] = InMemoryTransport.createLinkedPair();
+    await server.connect(a);
+    await client.connect(b);
+    try {
+      const response = await client.callTool({ name: 'fitness_push_results', arguments: input });
+      assert.notEqual(response.isError, true);
+      assert.deepEqual(response.structuredContent.data, value);
+    } finally {
+      await client.close();
+      await server.close();
+    }
+    assert.equal(calls, 2, 'One request per explicit invocation, no negotiation or retry request');
+  }
+});
+
+test('canonical unweighted values omit kg and mixed histories retain each record representation', async () => {
+  const value = canonicalResult();
+  for (const item of [
+    value.proposals[0].base,
+    value.proposals[0].offeredTarget,
+    value.outcomes[0].actual,
+  ]) {
+    delete item.loadKilograms;
+  }
+  value.proposals[0].unit = value.outcomes[0].unit = 'none';
+  value.proposals[0].convention = value.outcomes[0].convention = 'none';
+  const legacy = result();
+  legacy.proposals[0].id = 'legacy';
+  legacy.proposals[0].unit = 'lb';
+  legacy.outcomes[0].id = 'legacy-result';
+  legacy.outcomes[0].proposalId = 'legacy';
+  legacy.outcomes[0].unit = 'lb';
+  value.proposals.push(legacy.proposals[0]);
+  value.outcomes.push(legacy.outcomes[0]);
+  assert.deepEqual(await readPushResults({ get: async () => value }, input), value);
+});
+
+test('canonical/legacy mixtures, malformed markers and contradictory load contexts are refused', async (t) => {
+  const mutations = {
+    fractionalLegacy: (p) => {
+      p.proposals[0].base = { repetitions: 8, loadMilliunits: 123.5 };
+    },
+    nullMarker: (p) => {
+      p.proposals[0].base.massFormat = null;
+    },
+    unknownMarker: (p) => {
+      p.proposals[0].base.massFormat = 'kg-v2';
+    },
+    absentMarker: (p) => {
+      delete p.proposals[0].base.massFormat;
+    },
+    explicitUndefinedMarker: (p) => {
+      p.proposals[0].base.massFormat = undefined;
+    },
+    mixedRepresentations: (p) => {
+      p.proposals[0].base.loadMilliunits = 12474;
+    },
+    missingWeightedKg: (p) => {
+      delete p.proposals[0].base.loadKilograms;
+    },
+    explicitUndefinedKg: (p) => {
+      p.proposals[0].base.loadKilograms = undefined;
+    },
+    nullKg: (p) => {
+      p.proposals[0].base.loadKilograms = null;
+    },
+    negativeKg: (p) => {
+      p.proposals[0].base.loadKilograms = -1;
+    },
+    largeKg: (p) => {
+      p.proposals[0].base.loadKilograms = 2000.01;
+    },
+    infiniteKg: (p) => {
+      p.proposals[0].base.loadKilograms = Infinity;
+    },
+    nanKg: (p) => {
+      p.proposals[0].base.loadKilograms = NaN;
+    },
+    poundsCanonical: (p) => {
+      p.proposals[0].unit = p.outcomes[0].unit = 'lb';
+    },
+    unknownCanonical: (p) => {
+      p.proposals[0].unit = p.outcomes[0].unit = 'unknown';
+    },
+    unweightedWithKg: (p) => {
+      p.proposals[0].unit = p.outcomes[0].unit = 'none';
+    },
+    differentProposalVersion: (p) => {
+      p.proposals[0].offeredTarget = { repetitions: 9, loadMilliunits: 12474 };
+    },
+    differentOutcomeVersion: (p) => {
+      p.outcomes[0].actual = { repetitions: 7, loadMilliunits: 12474 };
+    },
+  };
+  for (const [name, mutate] of Object.entries(mutations)) {
+    await t.test(name, async () => {
+      const value = canonicalResult();
+      mutate(value);
+      await assert.rejects(readPushResults({ get: async () => value }, input), {
+        code: 'invalid_response',
+      });
+    });
+  }
+});
+
+test('a server upgrade refusal is preserved without retry, cached fallback or a new command', async () => {
+  let calls = 0;
+  const failure = Object.assign(new Error('Update the client'), {
+    code: 'push_values_upgrade_required',
+    status: 409,
+  });
+  await assert.rejects(
+    readPushResults(
+      {
+        get: async () => {
+          calls++;
+          throw failure;
+        },
+      },
+      input,
+    ),
+    (error) => error === failure,
+  );
+  assert.equal(calls, 1);
 });

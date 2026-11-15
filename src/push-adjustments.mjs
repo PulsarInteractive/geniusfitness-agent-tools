@@ -1,5 +1,10 @@
 import * as z from 'zod/v4';
 import { fail } from './errors.mjs';
+import {
+  pushValuesSchema as values,
+  pushValuesMatchUnit,
+  samePushValuesVersion,
+} from './push-values.mjs';
 
 const id = z.string().min(1).max(128);
 const athlete = z.string().regex(/^[A-Za-z0-9_-]{1,128}$/);
@@ -13,12 +18,6 @@ export const pushAdjustmentsSchema = z
     sessionId: session,
     outcomeId: id,
     cursor: cursor.optional(),
-  })
-  .strict();
-const values = z
-  .object({
-    repetitions: z.number().int().min(0).max(10000),
-    loadMilliunits: z.number().int().min(0).max(2000000).nullable(),
   })
   .strict();
 const occurrence = z
@@ -102,7 +101,9 @@ export async function readPushAdjustments(client, input) {
     fail('invalid_arguments', 'Select the program, athlete and exact recorded outcome/session.');
   }
   const q = parsed.data;
-  const decoded = response.safeParse(await client.get('push-adjustments', q));
+  const decoded = response.safeParse(
+    await client.get('push-adjustments', { ...q, valuesVersion: 2 }),
+  );
   if (!decoded.success) {
     fail('invalid_response', 'Adjustment history is incomplete or invalid.');
   }
@@ -130,8 +131,9 @@ export async function readPushAdjustments(client, input) {
         (e.goalProfileKey !== undefined && e.goalProfileKey !== null && e.goal === null) ||
         (e.state === 'saved') !== (e.withdrawnAt === null) ||
         (e.withdrawnAt !== null && Date.parse(e.withdrawnAt) < Date.parse(e.savedAt)) ||
-        (e.unit === 'none' &&
-          (e.before.loadMilliunits !== null || e.after.loadMilliunits !== null)) ||
+        !pushValuesMatchUnit(e.before, e.unit) ||
+        !pushValuesMatchUnit(e.after, e.unit) ||
+        !samePushValuesVersion(e.before, e.after) ||
         new Set(e.sourceResults.map((r) => `${r.sessionId}:${r.id}`)).size !==
           e.sourceResults.length ||
         !e.sourceResults.some((r) => r.id === q.outcomeId && r.sessionId === q.sessionId),

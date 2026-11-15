@@ -48,8 +48,15 @@ or null remains unknown even when `rewardState` is `awarded`; never multiply
 successful sets by a nominal award. These points do not measure physical progress
 or authorize a future increase. Omit the option when using older servers; do not
 retry an unsupported request in a loop.
-Compare `actual` against `base` and `offeredTarget`; `loadMilliunits / 1000` uses
-the explicit kg/lb unit, while unweighted work has a null load. Keep unknown or
+Compare `actual` against `base` and `offeredTarget` in their recorded representation.
+Without a marker, `loadMilliunits / 1000` uses the explicit kg/lb unit.
+With `massFormat: "kg-v1"`, use exact `loadKilograms` in kg; `loadMilliunits`
+stays null. Unweighted `none` omits kilograms. Keep zero and all recorded precision.
+A comparison must use one representation; separate history entries may retain
+older representations. Never convert stored results into integer thousandths.
+Supporting readers negotiate `valuesVersion=2` in the same request. This grants
+no activation or write permission. On `push_values_upgrade_required`, update the
+client first; do not retry automatically or reinterpret an unsupported response. Keep unknown or
 incomplete results explicit. A proposed or accepted bonus is not completed work,
 a current execution grant, an XP award or approval to change a future plan.
 Use the latest corrected outcome; never add its superseded version to totals.
@@ -63,8 +70,8 @@ current `outcomeId` returned above. CLI:
 Each call checks one occurrence and at most 16 decisions. An empty `entries`
 page with `nextCursor` means more occurrences remain; it does not prove absence.
 Continue explicitly with the same query and `cursor` only as needed for the
-user's question. Do not scan until a match, poll or crawl the account. On 409,
-reread the source result and restart explicitly; corrections may replace its ID.
+user's question. Do not scan until a match, poll or crawl the account. Treat
+`push_values_upgrade_required` as above. For other 409 responses, reread the source result and restart explicitly; corrections may replace its ID.
 On 429 honor Retry-After; on 401/403 stop rather than reusing cached data.
 
 Describe `before`, `after`, the goal, saved/withdrawn dates and whether the athlete

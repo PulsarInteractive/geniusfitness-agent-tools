@@ -1,5 +1,10 @@
 import * as z from 'zod/v4';
 import { fail } from './errors.mjs';
+import {
+  pushValuesSchema as values,
+  pushValuesMatchUnit,
+  samePushValuesVersion,
+} from './push-values.mjs';
 
 const id = z.string().min(1).max(128);
 const scope = z.string().regex(/^project:[A-Za-z0-9_-]{1,128}$/);
@@ -16,12 +21,6 @@ export const pushResultsSchema = z
   })
   .strict();
 const time = z.string().max(40).datetime();
-const values = z
-  .object({
-    repetitions: z.number().int().min(0).max(10000),
-    loadMilliunits: z.number().int().min(0).max(2000000).nullable(),
-  })
-  .strict();
 const target = z
   .object({
     projectId: id,
@@ -112,7 +111,7 @@ export async function readPushResults(client, input) {
   if (!parsed.success) {
     fail('invalid_arguments', 'Select one program and the exact live session UUID.');
   }
-  const raw = await client.get('push-results', parsed.data);
+  const raw = await client.get('push-results', { ...parsed.data, valuesVersion: 2 });
   const decoded = response.safeParse(raw);
   if (!decoded.success) {
     fail('invalid_response', 'Push results are incomplete or invalid.');
@@ -127,7 +126,13 @@ export async function readPushResults(client, input) {
     new Set(result.proposals.map((p) => p.id)).size !== result.proposals.length ||
     new Set(result.outcomes.map((o) => o.id)).size !== result.outcomes.length ||
     new Set(result.outcomes.map((o) => o.proposalId)).size !== result.outcomes.length ||
-    result.proposals.some((p) => !bound(p.target)) ||
+    result.proposals.some(
+      (p) =>
+        !bound(p.target) ||
+        !pushValuesMatchUnit(p.base, p.unit) ||
+        !pushValuesMatchUnit(p.offeredTarget, p.unit) ||
+        !samePushValuesVersion(p.base, p.offeredTarget),
+    ) ||
     (result.outcomesState === 'incomplete' && result.outcomes.length) ||
     result.outcomes.some((o) => {
       const p = result.proposals.find((p) => p.id === o.proposalId);
@@ -145,7 +150,11 @@ export async function readPushResults(client, input) {
           (o.actual === null || o.completedAt === null)) ||
         (['not_attempted', 'unconfirmed'].includes(o.resolution) && o.actual !== null) ||
         (o.actual !== null &&
-          (o.unit === 'none' ? o.actual.loadMilliunits !== null : o.actual.loadMilliunits === null))
+          (!pushValuesMatchUnit(o.actual, o.unit) ||
+            !samePushValuesVersion(o.actual, p.base) ||
+            (o.actual.massFormat === undefined &&
+              o.unit !== 'none' &&
+              o.actual.loadMilliunits === null)))
       );
     })
   ) {

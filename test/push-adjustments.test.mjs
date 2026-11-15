@@ -68,7 +68,7 @@ test('one page per call, empty continuation and unknown legacy context remain ex
     get: async (route, q) => {
       calls++;
       assert.equal(route, 'push-adjustments');
-      assert.deepEqual(q, input);
+      assert.deepEqual(q, { ...input, valuesVersion: 2 });
       return page;
     },
   };
@@ -252,7 +252,7 @@ test('stdio MCP and remote catalogue expose the bounded read and guidance', asyn
     get: async (route, q) => {
       calls++;
       assert.equal(route, 'push-adjustments');
-      assert.deepEqual(q, input);
+      assert.deepEqual(q, { ...input, valuesVersion: 2 });
       return result();
     },
   });
@@ -279,4 +279,164 @@ test('stdio MCP and remote catalogue expose the bounded read and guidance', asyn
     await client.close();
     await server.close();
   }
+});
+
+const canonicalPage = () => {
+  const value = result();
+  value.entries[0].before = {
+    repetitions: 8,
+    loadMilliunits: null,
+    massFormat: 'kg-v1',
+    loadKilograms: 12.473790175,
+  };
+  value.entries[0].after = {
+    repetitions: 9,
+    loadMilliunits: null,
+    massFormat: 'kg-v1',
+    loadKilograms: 12.473790175,
+  };
+  return value;
+};
+test('adjustments preserve exact canonical kg, mixed historical entries and unweighted absence', async () => {
+  const value = canonicalPage();
+  const legacy = result().entries[0];
+  legacy.id = 'legacy';
+  legacy.unit = 'lb';
+  value.entries.push(legacy);
+  const bodyweight = structuredClone(value.entries[0]);
+  bodyweight.id = 'bodyweight';
+  bodyweight.unit = 'none';
+  delete bodyweight.before.loadKilograms;
+  delete bodyweight.after.loadKilograms;
+  value.entries.push(bodyweight);
+  let calls = 0;
+  assert.deepEqual(
+    await readPushAdjustments(
+      {
+        get: async (route, query) => {
+          calls++;
+          assert.equal(route, 'push-adjustments');
+          assert.deepEqual(query, { ...input, valuesVersion: 2 });
+          return value;
+        },
+      },
+      input,
+    ),
+    value,
+  );
+  assert.equal(calls, 1);
+});
+test('adjustment pairs reject incompatible representations and malformed canonical loads', async (t) => {
+  const mutations = {
+    pound: (p) => (p.entries[0].unit = 'lb'),
+    unknown: (p) => (p.entries[0].unit = 'unknown'),
+    unweighted: (p) => (p.entries[0].unit = 'none'),
+    mixedPair: (p) => (p.entries[0].after = { repetitions: 9, loadMilliunits: 12474 }),
+    mixedValue: (p) => (p.entries[0].after.loadMilliunits = 12474),
+    absentMarker: (p) => delete p.entries[0].after.massFormat,
+    undefinedMarker: (p) => (p.entries[0].after.massFormat = undefined),
+    nullMarker: (p) => (p.entries[0].after.massFormat = null),
+    unknownMarker: (p) => (p.entries[0].after.massFormat = 'kg-v2'),
+    noKg: (p) => delete p.entries[0].after.loadKilograms,
+    undefinedKg: (p) => (p.entries[0].after.loadKilograms = undefined),
+    nullKg: (p) => (p.entries[0].after.loadKilograms = null),
+    large: (p) => (p.entries[0].after.loadKilograms = 2001),
+    negative: (p) => (p.entries[0].after.loadKilograms = -1),
+    infinite: (p) => (p.entries[0].after.loadKilograms = Infinity),
+  };
+  for (const [name, mutate] of Object.entries(mutations)) {
+    await t.test(name, async () => {
+      const value = canonicalPage();
+      mutate(value);
+      await assert.rejects(readPushAdjustments({ get: async () => value }, input), {
+        code: 'invalid_response',
+      });
+    });
+  }
+});
+
+test('CLI and MCP deliver canonical adjustment values with one negotiated request each', async (t) => {
+  const value = canonicalPage();
+  let calls = 0;
+  const f = await fixture(t, async (url) => {
+    calls++;
+    assert.equal(new URL(url).searchParams.get('valuesVersion'), '2');
+    return Response.json(value);
+  });
+  let stdout = '',
+    stderr = '';
+  const code = await main(
+    [
+      'sessions',
+      'push-adjustments',
+      ...Object.entries(input).flatMap(([k, v]) => ['--' + k, v]),
+      '--origin',
+      origin,
+      '--allow-local',
+      '--json',
+    ],
+    {
+      directory: f.directory,
+      fetchImpl: f.transport.fetch,
+      stdout: { write: (s) => (stdout += s) },
+      stderr: { write: (s) => (stderr += s) },
+    },
+  );
+  assert.equal(code, 0, stderr);
+  assert.deepEqual(JSON.parse(stdout).data, value);
+  const server = createMcpServer(f.client);
+  const client = new Client({ name: 'canonical-adjustment-test', version: '1' });
+  const [a, b] = InMemoryTransport.createLinkedPair();
+  await server.connect(a);
+  await client.connect(b);
+  try {
+    const response = await client.callTool({ name: 'fitness_push_adjustments', arguments: input });
+    assert.notEqual(response.isError, true);
+    assert.deepEqual(response.structuredContent.data, value);
+  } finally {
+    await client.close();
+    await server.close();
+  }
+  assert.equal(calls, 2);
+});
+
+test('CLI exposes server upgrade refusal and does not retry a historical read', async (t) => {
+  let calls = 0;
+  const f = await fixture(t, async () => {
+    calls++;
+    return Response.json(
+      {
+        error: {
+          code: 'push_values_upgrade_required',
+          retryable: false,
+          remediation: 'Update the client.',
+        },
+      },
+      { status: 409 },
+    );
+  });
+  let stdout = '',
+    stderr = '';
+  const code = await main(
+    [
+      'sessions',
+      'push-adjustments',
+      ...Object.entries(input).flatMap(([k, v]) => ['--' + k, v]),
+      '--origin',
+      origin,
+      '--allow-local',
+      '--json',
+    ],
+    {
+      directory: f.directory,
+      fetchImpl: f.transport.fetch,
+      stdout: { write: (s) => (stdout += s) },
+      stderr: { write: (s) => (stderr += s) },
+    },
+  );
+  assert.equal(code, 5, stderr);
+  assert.equal(stdout, '');
+  assert.equal(JSON.parse(stderr).error.code, 'push_values_upgrade_required');
+  assert.equal(JSON.parse(stderr).error.retryable, false);
+  assert.equal(calls, 1);
 });
