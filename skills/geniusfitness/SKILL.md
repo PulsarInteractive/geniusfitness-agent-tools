@@ -12,9 +12,10 @@ before relying on account state. If disconnected, ask the user to run
 1. Select only the programs relevant to the request. Follow bounded continuations;
    an empty page with `nextAfter` is not complete.
 2. Read the target workout and its exercise slots. Use exact IDs when known.
-3. Search `fitness_catalog` before creating a custom exercise. Reuse a personal
-   exercise already associated with the same `catalogKey`; import only missing
-   entries into the owning account’s personal scope.
+3. Read the catalogue workflow before creating a custom exercise. Search the
+   reviewed or legacy catalogue appropriate to the request and reuse a suitable
+   personal definition. A reviewed import uses its typed preview/confirmation;
+   the legacy `exercise.import` cannot establish a reviewed origin.
 4. Use `fitness_command_help` for the chosen command’s fields, types and enums.
 5. Prepare an immutable operation with current epoch/revision, then execute or
    retry that saved operation. After uncertainty retain the ID; after a conflict
@@ -49,8 +50,10 @@ images; preserve the original source hash and bytes for retries and read stored
 metadata from the ready receipt. A confirmed local upload receipt needs no new
 transfer. A visible chat attachment is not proof of an imported file.
 
-Respond in the user’s language. Preserve existing titles and notes unless asked
-to translate them; keep IDs, API fields and enum values unchanged. Confirm
+Respond in the user’s language. Use an existing current exercise translation
+for presentation when available; the [localization guide](../geniusfitness-localization/SKILL.md)
+explains freshness and fallback. Preserve saved source titles and notes unless
+asked to change them; keep IDs, API fields and enum values unchanged. Confirm
 ambiguous dates and timezones before changing a schedule. Do not volunteer
 technical quota tables. Honor actual service refusals and retry guidance.
 

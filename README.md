@@ -115,7 +115,8 @@ corpus. For structured muscle and equipment filters, use `--file query.json`.
 variant with its cited evidence and limits. The MCP equivalents are
 `fitness_catalog_reviewed` and `fitness_catalog_variant`.
 
-The client starts with 12 variants per page. Request more only when needed;
+The CLI/stdio client starts with 12 variants per page. In hosted MCP, send
+`limit: 12` explicitly; omitting it uses the server default of 48. Request more only when needed;
 each continuation is a separate call with the same filters and page size.
 Each call is an ordinary authorized read. A page examines at most 48 candidates
 before matching and can be empty while returning `nextCursor`. Continue only

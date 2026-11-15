@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+- Clarify current exercise translations, per-field language fallback and unchanged
+  source text in agent guidance. Reading never generates a translation.
+- Distinguish legacy and reviewed catalogue pagination, precise-location consent,
+  and conditional ChatGPT file imports. Document shared media capacity and both
+  source-image limits and server compression.
+
+These instruction updates do not enable hosted file import, change a server
+contract or publish a new package. Existing beta.11 acceptance remains attached
+to its previously inspected archive.
+
 ## 0.1.0-beta.11 — 2026-11-15
 
 - Support the explicit `alternating_side_repetitions` convention in exercise

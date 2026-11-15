@@ -53,23 +53,51 @@ refused. Business-plan values can change before launch.
 
 ## Permission groups
 
-| Permission                           | Data or action                                               |
-| ------------------------------------ | ------------------------------------------------------------ |
-| `programs:read` / `programs:write`   | Programs, workout templates, exercise slots and instructions |
-| `exercises:read` / `exercises:write` | Catalogue metadata and the account’s exercise library        |
-| `planning:read` / `planning:write`   | Planning entries, recurring schedules and goals              |
-| `metrics:read` / `metrics:write`     | Completed workouts, runs and progress summaries              |
-| `health:read` / `health:write`       | The account’s private health measurements                    |
-| `coaching:write`                     | Additional approval for writes concerning another athlete    |
+| Permission                           | Data or action                                                    |
+| ------------------------------------ | ----------------------------------------------------------------- |
+| `programs:read` / `programs:write`   | Programs, workout templates, exercise slots and instructions      |
+| `exercises:read` / `exercises:write` | Catalogue metadata and the account’s exercise library             |
+| `planning:read` / `planning:write`   | Planning entries, recurring schedules and goals                   |
+| `metrics:read` / `metrics:write`     | Completed workouts, runs and progress summaries                   |
+| `health:read` / `health:write`       | The account’s private health measurements                         |
+| `location:read` / `location:write`   | Precise running routes, separately from health and program access |
+| `coaching:write`                     | Additional approval for writes concerning another athlete         |
 
-For the official CLI, all requested permissions and accessible resources are
-preselected, including requested health and write permissions. You can narrow
-them before approving. Nothing is granted until you confirm the consent page.
+For the official CLI, ordinary requested permissions and accessible resources
+are preselected, including requested health and write permissions. Precise
+location scopes must be explicitly requested and start unchecked. You can narrow
+the proposed access before approving. Nothing is granted until you confirm the
+consent page.
 Coach permission requires an active Coach subscription when used and never
 replaces program membership or grants another person’s private health data.
 
 ## Bounded reads
 
-Resource and catalogue pages contain at most 25 items. Read one selected program
-at a time. Metrics summaries cover at most 366 inclusive UTC days. A filtered
-empty page with a continuation is not the end of the list.
+Resource pages and the legacy v1 catalogue contain at most 25 items. Catalogue
+v2 text search and reviewed search evaluate at most 48 variants per call; their
+matched rows can be fewer, especially when grouped into families. Reviewed
+search starts with 12 candidates by default in the CLI/stdio client. In hosted
+MCP, send `limit: 12` explicitly to start small; omitting it uses the server
+default of 48. Request only the pages relevant to the task and keep the same
+filters, limit and cursor protocol for continuation.
+A filtered empty page with a continuation is not the end of the list. Read one
+selected program at a time. Metrics summaries use UTC dates within the history
+window allowed by the current subscription, also bounded by each included
+athlete’s own history access. A Coach account cannot extend a student’s permitted
+history. Follow the service’s current range refusal rather than treating a
+transport or SQL bound as an account entitlement. These boundaries do not permit
+a hidden full-catalogue crawl.
+
+## Personal exercise photos
+
+New photo sources must be static PNG, JPEG or WebP, at most 4,000,000 bytes and
+4,096 px per dimension. The server normalizes accepted uploads to WebP, at most
+1,080 px on the longest side without enlargement and 1,000,000 stored bytes.
+These limits apply to app, CLI, MCP and enabled hosted-file imports alike.
+
+The account media allowance still applies. Admission reserves headroom before
+transfer; successful storage charges the final compressed size and releases the
+unused reservation. Compression does not grant extra quota or bypass a refusal.
+An exercise holds at most eight ordered images. Removing the last reference
+closes access and schedules physical deletion; it is not a promise of immediate
+storage reclamation. See [source limits, retries and older uploads](CUSTOM_EXERCISES.md#local-files-cli-and-stdio-mcp).

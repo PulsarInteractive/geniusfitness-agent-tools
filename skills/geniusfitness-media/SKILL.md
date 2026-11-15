@@ -12,7 +12,8 @@ optional. A photo does not certify muscle targeting or exercise suitability.
 
 Local CLI/stdio MCP prepares the source file without a request, reserves one
 upload, then transfers the same original bytes. New static PNG/JPEG/WebP files
-are limited to 4,000,000 bytes. The server decodes and compresses every new upload
+are limited to 4,000,000 bytes and 4,096 px per source dimension. A small file
+can still exceed the dimension limit. The server decodes and compresses every new upload
 to WebP, at most 1,080 px on the longest side without enlargement and at most
 1,000,000 stored bytes. The ready response describes the stored representation;
 its dimensions, type, hash and size can differ from the source. Existing account

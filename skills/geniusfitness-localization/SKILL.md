@@ -33,8 +33,13 @@ A source change retains old translations as stale. New or changed translations
 using an old fingerprint fail with `exercise_translation_source_changed`.
 Reread and review the changed source before a new operation. Never calculate a
 fingerprint, update an uncertain request's hash or present stale text as current.
-Reads do not invoke translation. The application resolves supported text with
-source fallback; a translated name does not establish an exercise's identity.
+Reads do not invoke translation. Use existing current translations for
+presentation without editing the source. When provided, `textResolution` names
+the locale actually served for each field and the stale locales. Do not label an
+English or source fallback as French. For raw personal records, a saved entry
+is current only when its `sourceFingerprint` matches the server
+`contentSourceFingerprint`; unknown freshness or a missing field falls back to
+available source text. A translated name does not establish exercise identity.
 
 For display, accurately convert known kg/lb values and show at most two decimals.
 Preserve recorded values and units for the active contract. Never relabel unknown

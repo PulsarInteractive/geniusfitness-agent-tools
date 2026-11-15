@@ -104,6 +104,14 @@ force acceptance. The same permissions, revisions and receipts apply. Reading
 never invokes a translation provider, and stale text is never presented as
 current. Package installation alone does not activate the matching service.
 
+For presentation, reuse a saved current translation without editing the source.
+When a response includes `textResolution`, it reports the locale served for each
+field and the stale locales. Keep that distinction when a partial translation
+falls back to English or original text. For a raw exercise record, compare each
+entry’s `sourceFingerprint` with the server’s `contentSourceFingerprint`; an old
+or unknown fingerprint cannot establish a current translation. A read does not
+authorize generating or saving missing text.
+
 ## Local files: CLI and stdio MCP
 
 Photos are optional; text-only exercises work independently. An exercise can have up to eight ordered images, optionally displayed as a sequence. New uploads accept static PNG, JPEG or WebP source files up to **4,000,000 bytes** and 4,096 pixels per dimension. The CLI rejects an oversized file before reading its contents or reserving storage. It never changes the original file or compresses it locally.

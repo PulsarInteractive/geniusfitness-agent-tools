@@ -44,10 +44,28 @@ Editing another athlete’s program requires the Coach subscription, explicit co
 - If access is denied, check the account's admission, selected permissions, resource membership and subscription. The connector cannot bypass these checks.
 - If a quota is reached, respect the returned retry time. Do not loop or create extra connections to evade limits.
 - If a record changed, read the new revision instead of overwriting it blindly.
-- Local file comparison, uploads from your computer and repository documentation mirroring remain CLI workflows.
+- Local filesystem access remains a CLI/local-MCP capability. A ChatGPT attachment can be imported only through an advertised, configured hosted-file tool; a visible attachment alone does not grant file access.
 - The public tool catalogue is in [`remote/tool-catalog.json`](../remote/tool-catalog.json). Tools are described separately from private backend implementation.
 
 A custom connection is separate from an OpenAI directory listing. See [official publication](OPENAI_PUBLICATION.md). The CLI and local MCP remain supported independently.
+
+## Personal exercise photos
+
+Use `fitness_exercise_media_import` only when the connector advertises it and
+ChatGPT supplies an actual file parameter. It attaches one authorized image to
+an existing personal exercise; access to a shared program does not grant editing
+of another person’s private library. If the tool is missing or no usable file
+reference is supplied, use the app or an authorized local file with the CLI.
+Never invent a download link or report an attachment as imported without a
+successful receipt.
+
+The same server rules apply to every client: static PNG/JPEG/WebP, at most
+4,000,000 source bytes and 4,096 px per source dimension, then compression to
+WebP at most 1,080 px on the longest side and 1,000,000 stored bytes. The
+account’s shared media allowance applies. Preserve the exact operation and
+source identity on an uncertain response. The full
+[photo workflow](CUSTOM_EXERCISES.md#photos-shared-with-chatgpt) describes allowed
+hosts, file parameters, pending versus ready images and recovery.
 
 ## If the connection only allows reading
 

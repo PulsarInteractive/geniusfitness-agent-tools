@@ -45,8 +45,9 @@ current evaluated page. Legacy labels are unreviewed declarations, not muscle
 activation, physical equipment availability or documented exercise suitability.
 `facets` lists source-wide filter values, not filtered totals.
 
-Start reviewed reads with the default 12 variants; request a larger page only
-when the task needs it. Read at most the pages needed. A non-null `nextCursor`
+Start reviewed reads with `limit: 12` in hosted MCP; CLI/stdio supplies this
+default automatically, while an omitted hosted limit uses 48. Request a larger
+page only when the task needs it. Read at most the pages needed. A non-null `nextCursor`
 can accompany an empty page; continue explicitly with identical filters and page
 size. Each call consumes a normal request. Do not crawl or silently fall back after a refusal. The v1
 `fitness_catalog` / `catalog search` retains its original strict envelope and
