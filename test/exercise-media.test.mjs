@@ -248,8 +248,8 @@ test('server-optimized metadata is authoritative while retries retain the immuta
   assert.equal(requests.length, 2);
   // Response validation also accepts genuinely changed stored dimensions.
   const resized = structuredClone(optimized);
-  resized.media.images[0].width = 1600;
-  resized.media.images[0].height = 800;
+  resized.media.images[0].width = 1080;
+  resized.media.images[0].height = 540;
   const { validExerciseMediaSession } = await import('../src/exercise-media.mjs');
   assert.equal(
     validExerciseMediaSession(resized, {
