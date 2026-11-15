@@ -192,12 +192,17 @@ an unknown or partial total as zero, declining progress or a personal record.
 
 ## Precise muscle labels
 
-On supporting servers, each exercise can include `muscleEvidence`. Its
-`basis: current_catalogue_not_historical` is crucial: these are current catalogue
-labels, not a measurement of which fibres a past set recruited. Preserve the
-taxonomy and catalogue versions. `targets` distinguishes `group`, `muscle` and
-`region`, with primary/secondary roles copied from source labels. An unspecified
-abdominal group must not be divided into rectus, obliques or transverse. Upper
+On supporting servers, each exercise can include `muscleEvidence`.
+`current_catalogue_not_historical` identifies legacy catalogue labels;
+`reviewed_catalogue_not_historical` identifies the reviewed catalogue. Neither
+measures which fibres a past set recruited. Preserve taxonomy/catalogue versions
+and optional `sourceContentVersion`/`subsetVersion`; do not invent missing pins.
+`targets` distinguishes `group`, `muscle` and `region`. Preserve documented
+primary/secondary roles; reviewed evidence can have several primary targets.
+`unspecified` means the role is unknown, not secondary or zero involvement.
+`primaryMuscle: null` may reflect that no single primary target is established,
+even when precise evidence exists. Do not choose one or split workload equally.
+An unspecified abdominal group must not be divided into child muscles. Upper
 and lower rectus are regions of one muscle. A performed set matching both a
 parent and a child contributes once to that aggregate; never add overlapping
 anatomical views into total workload. `unmappedLabels`, null or absent evidence

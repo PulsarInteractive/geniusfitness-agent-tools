@@ -362,7 +362,7 @@ const muscleEvidenceTarget = z
       .string()
       .regex(/^[a-z][a-z0-9_]{0,79}$/)
       .nullable(),
-    role: z.enum(['primary', 'secondary']),
+    role: z.enum(['primary', 'secondary', 'unspecified']),
     rawLabels: z.array(z.string().min(1).max(120)).min(1).max(16),
   })
   .strict()
@@ -371,7 +371,15 @@ const muscleEvidence = z
   .object({
     taxonomyVersion: z.string().min(1).max(80),
     catalogueVersion: z.string().regex(/^[a-f0-9]{64}$/),
-    basis: z.literal('current_catalogue_not_historical'),
+    basis: z.enum(['current_catalogue_not_historical', 'reviewed_catalogue_not_historical']),
+    sourceContentVersion: z
+      .string()
+      .regex(/^[a-f0-9]{64}$/)
+      .optional(),
+    subsetVersion: z
+      .string()
+      .regex(/^[a-f0-9]{64}$/)
+      .optional(),
     targets: z.array(muscleEvidenceTarget).max(17),
     unmappedLabels: z.array(z.string().min(1).max(120)).max(17),
   })
@@ -379,7 +387,10 @@ const muscleEvidence = z
   .refine(
     (value) =>
       new Set(value.targets.map((row) => row.id)).size === value.targets.length &&
-      value.targets.filter((row) => row.role === 'primary').length <= 1,
+      // Reviewed movements can document multiple main targets. Preserve those
+      // roles without choosing one or turning them into workload percentages.
+      (value.basis === 'reviewed_catalogue_not_historical' ||
+        value.targets.filter((row) => row.role === 'primary').length <= 1),
   );
 const musclePage = z.object({
   scope,

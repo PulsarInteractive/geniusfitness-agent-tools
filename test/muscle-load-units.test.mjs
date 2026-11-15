@@ -249,6 +249,9 @@ test('precise muscle evidence survives MCP and rejects impossible or invented st
     (e) => {
       e.catalogueVersion = 'unknown';
     },
+    (e) => {
+      e.targets.push({ ...e.targets[0], id: 'rectus_upper' });
+    },
   ]) {
     const invalid = structuredClone(page);
     edit(invalid.exercises[0].muscleEvidence);
@@ -264,6 +267,144 @@ test('precise muscle evidence survives MCP and rejects impossible or invented st
         query,
       ),
       { code: 'invalid_response' },
+    );
+    assert.equal(calls, 1);
+  }
+});
+
+const reviewedEvidence = () => ({
+  taxonomyVersion: 'fitness-muscle-evidence-v1',
+  catalogueVersion: 'a'.repeat(64),
+  basis: 'reviewed_catalogue_not_historical',
+  sourceContentVersion: 'b'.repeat(64),
+  subsetVersion: 'c'.repeat(64),
+  targets: [
+    {
+      id: 'pectoralis_major',
+      labelFr: 'Grand pectoral',
+      labelEn: 'Pectoralis major',
+      kind: 'muscle',
+      parentId: 'pectorals',
+      role: 'primary',
+      rawLabels: ['pectoralis_major'],
+    },
+    {
+      id: 'triceps',
+      labelFr: 'Triceps brachial',
+      labelEn: 'Triceps brachii',
+      kind: 'muscle',
+      parentId: null,
+      role: 'primary',
+      rawLabels: ['triceps'],
+    },
+    {
+      id: 'core',
+      labelFr: 'Tronc · groupe non précisé',
+      labelEn: 'Core · unspecified group',
+      kind: 'group',
+      parentId: null,
+      role: 'unspecified',
+      rawLabels: ['core'],
+    },
+  ],
+  unmappedLabels: [],
+});
+
+test('reviewed muscle evidence preserves multiple or unknown roles, optional pins and non-mass through MCP', async () => {
+  for (const withPins of [true, false]) {
+    const page = fixture();
+    const row = page.exercises[0];
+    row.exerciseType = 'ResistanceReps';
+    row.attribution = 'catalogue';
+    row.muscleEvidence = reviewedEvidence();
+    if (!withPins) {
+      delete row.muscleEvidence.sourceContentVersion;
+      delete row.muscleEvidence.subsetVersion;
+      row.muscleEvidence.targets = [row.muscleEvidence.targets[2]];
+    }
+    for (const observation of [row, ...row.weeks]) {
+      observation.loadMeasuredSets = 0;
+      observation.volumeMeasuredSets = 0;
+    }
+    const original = structuredClone(page);
+    let calls = 0;
+    const server = createMcpServer({
+      get: async (name, input) => {
+        calls++;
+        assert.equal(name, 'muscle-insights');
+        assert.deepEqual(input, query);
+        return page;
+      },
+    });
+    const client = new Client({ name: 'reviewed-muscle-test', version: '1' });
+    const [a, b] = InMemoryTransport.createLinkedPair();
+    await server.connect(a);
+    await client.connect(b);
+    try {
+      const reply = await client.callTool({ name: 'fitness_muscle_insights', arguments: query });
+      assert.notEqual(reply.isError, true);
+      const result = JSON.parse(reply.content.find((item) => item.type === 'text').text);
+      assert.deepEqual(result, original);
+      assert.equal(result.exercises[0].primaryMuscle, null);
+      assert.equal(result.exercises[0].externalResistanceVolumeKg, null);
+      assert.equal(result.exercises[0].weeks[0].recordedVolumeKg, null);
+      assert.equal(result.exercises[0].repetitions, 10);
+      assert.equal(calls, 1);
+      assert.deepEqual(page, original);
+    } finally {
+      await client.close();
+      await server.close();
+    }
+  }
+});
+
+test('reviewed evidence rejects invented fields, roles, source pins and duplicate targets without retries', async () => {
+  for (const edit of [
+    (e) => {
+      e.targets[0].role = 'stabilizer';
+    },
+    (e) => {
+      e.targets[0].activationPercent = 75;
+    },
+    (e) => {
+      e.targets[0].relativeShare = 50;
+    },
+    (e) => {
+      e.targets.push({ ...e.targets[0] });
+    },
+    (e) => {
+      e.sourceContentVersion = 'unknown';
+    },
+    (e) => {
+      e.subsetVersion = 'D'.repeat(64);
+    },
+    (e) => {
+      e.sourceContentVersion = null;
+    },
+    (e) => {
+      e.historicalActivation = true;
+    },
+    (e) => {
+      e.basis = 'reviewed_historical_activation';
+    },
+  ]) {
+    const page = fixture();
+    page.exercises[0].muscleEvidence = reviewedEvidence();
+    edit(page.exercises[0].muscleEvidence);
+    let calls = 0;
+    await assert.rejects(
+      readMuscleInsights(
+        {
+          get: async () => {
+            calls++;
+            return page;
+          },
+        },
+        query,
+      ),
+      {
+        code: 'invalid_response',
+      },
     );
     assert.equal(calls, 1);
   }

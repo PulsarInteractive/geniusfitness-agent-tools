@@ -6,6 +6,9 @@ This version is unpublished. The current reader-compatibility iteration follows
 an earlier replacement-only archive; its acceptance does not certify these
 additional changes. A fresh archive and dated release receipt are required.
 
+- Preserve reviewed muscle evidence, source/subset versions and documented
+  multiple primary or unspecified roles. Do not invent a single main muscle,
+  workload allocation or measured activation from current catalogue labels.
 - Preserve `ResistanceReps` with unmeasured resistance, unit `none`, explicit
   equipment and null mass volume. Reject fictitious mass in reviewed imports
   and load analytics; retain repetitions and timing.
