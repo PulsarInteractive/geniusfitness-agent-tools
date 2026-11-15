@@ -1,3 +1,4 @@
+import { checkUpdate, installUpdate, maybeNotifyUpdate } from './update.mjs';
 import { previewRecurringSessionSkip } from './recurring-session-skip.mjs';
 import { previewSessionSkip } from './session-skip.mjs';
 import { readTemporaryActions } from './temporary-actions.mjs';
@@ -33,6 +34,14 @@ import { readChanges, watchChanges } from './changes.mjs';
 import { fail, safeError, exitCode } from './errors.mjs';
 
 export const commands = {
+  'update check': {
+    summary: 'Check the official npm release without changing your installation.',
+    options: ['channel'],
+  },
+  'update install': {
+    summary: 'Update this global npm installation; keeps connections and saved operations.',
+    options: ['channel'],
+  },
   'exercise-media list': {
     summary: 'Read the ordered photos of one personal exercise.',
     options: ['exerciseId'],
@@ -337,6 +346,11 @@ export async function main(
     fetchImpl,
     signal,
     openBrowserImpl = openConsent,
+    updateFetchImpl,
+    updateCacheDirectory,
+    updateEnvironment,
+    updateNpmImpl,
+    updateInstalledDirectory,
   } = {},
 ) {
   try {
@@ -347,6 +361,18 @@ export async function main(
       );
     if (command === 'help' || options.help) {
       emit(help(command));
+      return 0;
+    }
+    if (command === 'update check' || command === 'update install') {
+      emit(
+        await (command === 'update check' ? checkUpdate : installUpdate)({
+          channel: options.channel,
+          fetchImpl: updateFetchImpl,
+          signal,
+          npmImpl: updateNpmImpl,
+          installedDirectory: updateInstalledDirectory,
+        }),
+      );
       return 0;
     }
     if (options.environment && !Object.hasOwn(ORIGINS, options.environment)) {
@@ -639,6 +665,17 @@ export async function main(
       return 0; // stdout belongs exclusively to JSON-RPC.
     }
     emit(data);
+    await maybeNotifyUpdate({
+      command,
+      options,
+      isTTY,
+      stdout,
+      stderr,
+      signal,
+      fetchImpl: updateFetchImpl,
+      cacheDirectory: updateCacheDirectory,
+      env: updateEnvironment,
+    });
     return 0;
   } catch (error) {
     const safe = safeError(error);

@@ -1,5 +1,14 @@
 ## Unreleased
 
+- Add explicit CLI update checks and verified global npm updates. Optional daily
+  notices run only in interactive terminals; MCP, JSON and local-only workflows
+  stay silent and make no automatic registry requests. Credentials and saved
+  operations are preserved.
+- Add focused skills and hosted workflow guides for workout contents, running,
+  personal exercises, private media, language/units and operation recovery.
+  Reviewed catalogue guidance now distinguishes exact variant evidence from
+  legacy labels and handles missing home equipment explicitly.
+
 - Add separate personal exercise descriptions, movement intention cues and
   declared muscle contributions with canonical targets and bounded relative
   estimates. Keep reviewed catalogue provenance read-only.

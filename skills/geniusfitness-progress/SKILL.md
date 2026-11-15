@@ -1,6 +1,6 @@
 ---
 name: geniusfitness-progress
-description: Analyze recorded GeniusFitness workouts, exercise progression, set timing and rest, for the connected athlete or an authorized shared coaching program. Use for a training review; do not invent missing wearable or health data.
+description: 'Analyze recorded GeniusFitness workouts, exercise progression, set timing and rest, for the connected athlete or an authorized shared coaching program. Use for a training review; do not invent missing wearable or health data.'
 ---
 
 # Review training progress

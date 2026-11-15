@@ -8,8 +8,14 @@
 | Review recent performances             | `progress`   | Daily totals and targeted session analysis with per-set timing, rest and measurement coverage                                   |
 | Read or record measurements            | `progress`   | Your stored personal health records, with separate consent                                                                      |
 | Work with a student                    | `coaching`   | Shared program workouts, planning and results, with Coach, coaching permission and current membership                           |
-| Recover an interrupted edit            | `mutations`  | Preserve the exact request; read back; reconcile a revision conflict                                                            |
+| Recover an interrupted edit            | `recovery`   | Preserve the exact request; read back; reconcile a revision conflict                                                            |
 | Connect or fix missing permissions     | `connection` | Correct account, consent and reconnect                                                                                          |
+
+Additional focused topics are `training` for workout contents, `custom-exercises`
+for personal guidance and declared muscles, `media` for private images,
+`localization` for language and units, and `progress-selection` for the personal
+7/28-day or latest-session facts. The `mutations` topic retains the general
+prepare/execute protocol; `recovery` handles interrupted operations.
 
 Use `fitness_workflow` in MCP or `geniusfitness workflow show --topic TOPIC`.
 Use command help for current field types rather than copying guessed payloads.

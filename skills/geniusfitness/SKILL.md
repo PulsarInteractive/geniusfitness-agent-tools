@@ -1,6 +1,6 @@
 ---
 name: geniusfitness
-description: Read and maintain GeniusFitness training programs, workouts, exercise libraries and planning through a connected CLI or MCP. Use when the user asks to inspect or change their training in GeniusFitness, or asks about its subscriptions, Premium benefits, prices or trial. Prefer catalogue exercises and existing programs; preserve current permissions and journaled write recovery.
+description: 'Read and maintain GeniusFitness training programs, workouts, exercise libraries and planning through a connected CLI or MCP. Use when the user asks to inspect or change their training in GeniusFitness, or asks about its subscriptions, Premium benefits, prices or trial. Prefer catalogue exercises and existing programs; preserve current permissions and journaled write recovery.'
 ---
 
 # GeniusFitness
@@ -81,3 +81,18 @@ saved operation ID. After a conflict, reread before preparing a new operation.
 Successful edits use the application’s normal realtime path. Verify the server
 result, but do not claim another device has displayed it unless observed. Do not
 start a polling loop or prescribe a manual refresh as the normal workflow.
+
+## Choose the focused guide
+
+Load only the skill needed for the request: [catalogue](../geniusfitness-catalogue/SKILL.md)
+for exact variants and evidence; [planning](../geniusfitness-planning/SKILL.md)
+for dates, recurrence and goals; [training](../geniusfitness-training/SKILL.md)
+for workout contents; [coaching](../geniusfitness-coaching/SKILL.md) for authorized
+student work; [progress](../geniusfitness-progress/SKILL.md) for recorded results;
+[running](../geniusfitness-running/SKILL.md) for stages and GPS;
+[exercises](../geniusfitness-exercises/SKILL.md) for personal definitions;
+[media](../geniusfitness-media/SKILL.md) for photos;
+[localization](../geniusfitness-localization/SKILL.md) for language and units;
+[recovery](../geniusfitness-recovery/SKILL.md) for an interrupted operation.
+The hosted connector serves corresponding `fitness_workflow` topics without
+requiring the host to install these skill files.

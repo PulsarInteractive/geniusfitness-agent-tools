@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "version": "2026-11-10.2",
+  "version": "2026-11-15",
   "topics": {
     "connection": {
       "title": "Connection, permissions and language",
@@ -29,6 +29,10 @@
     "catalogue": {
       "title": "Catalogue, custom exercises and workout sets",
       "steps": [
+        "For documented equipment requirements, muscle regions or variant comparison, use fitness_catalog_reviewed (CLI catalog reviewed) then fitness_catalog_variant (catalog reviewed-detail) for the selected exact key. The version-pinned corpus is partial: no match is not evidence that a movement does not exist. Legacy metadata remains a separate contract, never a substitute source of reviewed biomechanical claims.",
+        "Supply the available equipment explicitly or leave inventory unknown. No-equipment excludes a bench, pull-up bar, bands and machines unless confirmed available. Review requirements for each exact variant and any supports; home does not mean no equipment. Match the movement intention and documented target to the user goal; do not infer suitability from a name alone.",
+        "Reviewed filters evaluate each variant before grouping. Use muscleRole primary/secondary/any with muscleTargets and muscleMode; an unknown role cannot establish a requested match and a parent target cannot prove a finer region. expandVariants lists matching variants separately. Reasons, evidence quality and structural relevance are distinct from measured activation or training results. Do not invent percentages or call close scores a physiological advantage.",
+        "One reviewed page examines at most 48 candidates and may return no matches with nextCursor. Continue explicitly with the same filters and version only if relevant. Keep families complete and use the exact selected variant ID for recommendations. Before changing a slot, show equipment and prescription differences; never carry an incomparable load to a new movement or rewrite a shared exercise globally.",
         "Use fitness_catalog_search (CLI catalog explore) for a v2 page with French/English text and synonyms, exact equipment tags, broad muscle groups and grouped variants. Scores are text relevance within this page only, not muscle activation, exercise suitability or equipment compatibility. source legacy_metadata and not_reviewed remain explicit. facets lists source-wide available filter values, not counts after filtering. expandVariants separates results. Continue only when useful by passing nextCursor and identical filters, even for an empty page. Each continuation is a separate normally metered request; never crawl automatically. Existing fitness_catalog/catalog search remains the strict v1 interface. A grouped family label is not proof that all prescriptions are interchangeable.",
         "Search fitness_catalog by query, equipment or muscle. Follow nextAfter with the returned version. Use the actual stable ex.NNNN key; do not invent keys or download the whole catalogue for one workout.",
         "Read the connected account personal exercises and reuse an existing exercise with that catalogKey. Use exercise.import only for a missing entry, in personal:<ownerId>. The server copies catalogue metadata. Use exercise.create for a genuinely custom movement absent from the catalogue.",
@@ -151,9 +155,55 @@
         "Optional photos: fitness_exercise_media reads the exact personal sequence. Local CLI/stdio prepares one authorized image file, fitness_exercise_media_open reserves a pending reference, then explicit upload sends identical bytes. Keep operation IDs and full bodies on uncertainty; never recreate the exercise or image reservation as recovery.",
         "fitness_exercise_media_change uses the current sequence epoch/revision to attach one owned ready asset, detach one reference, or reorder the full assetIds with optional sequence mode. Up to eight static images. Pending photos are not ready; last detach closes access before cleanup.",
         "Hosted ChatGPT: fitness_exercise_media_import is visible only for a configured approved host. It receives one real file reference with download_url and file_id; MIME and filename can be absent. Do not invent URLs or assume visible chat images reached the tool. If unavailable, direct the user to the app or local upload.",
-        "Each explicit request uses the normal allowance; no bulk traversal or implicit retries. Personal media never edits a student or the qualified catalogue."
+        "Each explicit request uses the normal allowance; no bulk traversal or implicit retries. Personal media never edits a student or the qualified catalogue.",
+        "For requested translated exercise text, read the localization workflow. contentLocale describes the known source language. localizations is a complete bounded list tied to the current server contentSourceFingerprint; preserve unrelated languages and never invent a hash or translate on every read."
       ],
       "title": "Personal exercises and optional photos"
+    },
+    "training": {
+      "title": "Workout contents, sets and exercise choices",
+      "steps": [
+        "Select the intended program and workout and read its current exercise slots. A workout template, planned occurrence and completed session are different records. Use planning for dates and progress for recorded facts; a requested plan never authorizes fabricated activity.",
+        "Read the catalogue workflow to choose exact compatible variants. Reuse personal exercise IDs or import missing definitions; slots never reference a family label or catalogue key directly. For no-equipment training, explicitly exclude any candidate needing an unavailable support or accessory.",
+        "Read command_help before editing targetSets or runPlan. Encoded fields replace the whole value: preserve untouched entries, units, rest and ordering. Updating a name should send only that name. Weight displayed in lb is not the same numeric value in kg; preserve the active contract and never relabel unknown units.",
+        "Review requested changes to the selected slot, including any prescription reset when replacing a movement. Use a typed preview/confirmation if the server provides it. Do not bypass unavailable guarded operations with generic edits or infer permission to replace a whole program.",
+        "For a coach workout copy or later synchronization, read the coaching workflow and use fitness_workout_copy_preview. Its current comparison explains retained adaptations and changes. Confirm the returned fingerprints and current target revision; recorded history and health remain separate.",
+        "Read back the canonical result. If a reply is uncertain, use the recovery workflow with the same operation rather than sending a new write."
+      ]
+    },
+    "media": {
+      "title": "Private exercise photos and image sequences",
+      "steps": [
+        "Read custom-exercises and the exact exercise photo list first. Photos attach only to an existing personal exercise owned by the connected account. Up to eight ordered images may be displayed as an optional sequence; photos do not validate anatomical claims.",
+        "For a local file, fitness_exercise_media_prepare or exercise-media prepare inspects the original bytes without a request. Then open the immutable reservation and upload that same file. New static PNG/JPEG/WebP files allow at most 4,000,000 source bytes; the server compresses each accepted image to WebP, at most 1,080 px on its longest side without enlargement and 1,000,000 stored bytes.",
+        "The reservation identifies the source; the ready result describes the stored image. Preserve source bytes/hash and operation identity when retrying. A confirmed local receipt replays without a new source read or transfer. Account quota charges the final stored size after temporary reservation headroom; do not claim quota is free because compression reduces size.",
+        "ChatGPT file import is available only if fitness_exercise_media_import is advertised and the host supplies a real file parameter. Seeing an attachment is insufficient. Never invent download links, forward external credentials or fetch unapproved origins. If unavailable, explain the app or authorized local-file workflow.",
+        "Before attaching, detaching or reordering, read the current epoch and sequence revision. Reorder includes every retained asset ID. Report pending versus ready honestly; after uncertain edits use the original operation. A photo failure does not erase a successfully created exercise.",
+        "Removing the last reference closes access and schedules physical deletion. The server owns reclamation and accounting; a client must not retain private access after deletion or account change."
+      ]
+    },
+    "localization": {
+      "title": "Language, exercise wording and weight units",
+      "steps": [
+        "Respond in the user language while preserving saved source text unless translation or editing is requested. Never translate IDs, enum values, source references, numeric measurements or unit codes. Do not infer a stored profile preference solely from conversation language.",
+        "Read current command_help for exercise.create/update. Source fields name, description and movementIntent have an explicit contentLocale (canonical language tag, for example en or fr-FR); null means unknown. Newly AI-authored source text defaults to English unless the user chose another source language. Preserve existing text and its declared language; never label unknown historical text as English.",
+        "For a requested translation, first save any source edits, then read the exercise again with its current revision and server-owned contentSourceFingerprint. Do not calculate or fabricate the fingerprint. Update localizations through exercise.update: a complete list of at most 16 unique locales, each {locale,sourceFingerprint,text}, with sourceFingerprint copied from that read and partial text containing only name, description and movementIntent.",
+        "Preserve other existing locale entries when editing the complete list. Omission preserves localizations; null or [] removes all translations. A partial entry falls back per field. To clear its last translated field, remove the entry. Name has 2–100 characters, description at most 4000, movementIntent at most 280. Keep the intention a natural short cue for the exact variant, separate from the full movement description.",
+        "The server rechecks the source and record revision. A source edit can leave unchanged translations stored but stale; they are not current display text. A new or changed translation with an old fingerprint fails with exercise_translation_source_changed. Reread and review the changed source before preparing a new translation; never rewrite an uncertain saved operation or replace an old hash to force acceptance.",
+        "Reading never generates a translation. The available localized fields are resolved by the application with source fallback; do not claim a missing or stale translation exists. Catalogue search locale is a separate supported filter that must stay unchanged across continuation pages. A translated name is not proof of the same variant.",
+        "Keep qualification and uncertainty when translating muscle evidence. For weight presentation, accurately convert known kg/lb values and show at most two decimals; preserve original recorded values and units for the active write contract. Never relabel unknown history, convert twice or write display rounding back as a training change. The server contract determines canonical storage."
+      ]
+    },
+    "recovery": {
+      "title": "Recover an interrupted or refused operation",
+      "steps": [
+        "Distinguish a request never sent, a definitive refusal and an uncertain outcome after sending. A lost reply can follow a committed mutation. Preserve the exact protocol, operationId, original body and identity; a new UUID or refreshed proposal creates a different operation.",
+        "Local CLI/stdio MCP keeps its existing private journal. Use commands inspect or fitness_inspect_operation, then explicit commands retry or fitness_retry_command for the original operation when appropriate. The journal dispatches generic commands and supported typed confirmations. Binary exercise media retries use the upload operation with the same source file.",
+        "Hosted MCP has no local disk journal. Retain the complete prepared command or canonical typed confirmation and resend it unchanged to the same edit/confirm tool. Never send a typed skip or media confirmation as a generic AgentCommand. A historical receipt is evidence, not current state or permission.",
+        "Honor Retry-After; do not loop or switch transports/profiles to evade a refusal. A definite conflict requires current reads and a deliberate new reviewed operation. A disabled feature is unavailable, not an empty successful result. Revoked or insufficient access requires the appropriate user-managed connection/permission path.",
+        "A rotating refresh with unknown outcome requires reconnecting; replaying the old token is unsafe. CLI auth login and reconnecting ChatGPT affect different connections. Credentials and private journals must not be copied into chat, repository files or another account context.",
+        "Read the canonical target after recovery. Report only what the service proves. The application normal sync performs catch-up; do not repeatedly send a successful write or prescribe polling to force a phone screen update. CLI software updates preserve connection and journal files; restart MCP after an explicitly installed version change."
+      ]
     }
   }
 }

@@ -92,3 +92,28 @@ commands prepare/execute/retry journal for user-authorized set/cancel or live
 exercise-skip apply. Regional apply is unsupported. Never rewrite a saved V1/V2
 operation or downgrade a mixed collection. See the complete V3 schema, examples
 and recovery rules in [Temporary instructions](TEMPORARY_ACTIONS.md).
+
+## Keep the CLI current
+
+`geniusfitness update check --json` reads the official npm release without
+changing the installation or accessing your GeniusFitness account. The default
+channel follows the installed version: beta builds check `beta`, stable builds
+check `stable`. Choose either explicitly with `--channel beta|stable`. A stable
+check does not install a prerelease or downgrade a newer installed version.
+
+`geniusfitness update install` updates the active global npm installation to the
+exact checked version. It verifies the installation location, disables package
+scripts and asks npm to enforce the required Node version. A source checkout,
+project dependency or pinned npx invocation receives manual upgrade guidance
+instead of changing a different installation. Connection credentials and saved
+operations stay in place. Restart a running MCP client after installing an update.
+
+Successful interactive commands can show a brief update notice on stderr, at
+most once per UTC day for the installed version. The anonymous check uses the official npm registry, a small
+separate cache and a fixed deadline; its failure does not change the command's
+result. There is no automatic installation. MCP, `--json`, CI, redirected output
+and local-only help, workflow, preparation and inspection commands make no
+automatic update requests. Set `GENIUSFITNESS_NO_UPDATE_CHECK=1` to disable
+notices; an explicit `update check` remains available. Tiny attempt markers expire
+after the current and preceding UTC days. An interrupted check cannot block the
+next day’s discovery.

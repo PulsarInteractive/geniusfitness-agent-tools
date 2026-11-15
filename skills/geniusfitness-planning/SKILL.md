@@ -1,6 +1,6 @@
 ---
 name: geniusfitness-planning
-description: Use when the user asks to create or edit a GeniusFitness program, move, skip or restore one planned workout, change recurring training days or maintain training goals.
+description: 'Use when the user asks to create or edit a GeniusFitness program, move, skip or restore one planned workout, change recurring training days or maintain training goals.'
 ---
 
 # Manage schedules and training plans

@@ -1558,7 +1558,11 @@
             "subscriptions",
             "running",
             "progress-selection",
-            "custom-exercises"
+            "custom-exercises",
+            "training",
+            "media",
+            "localization",
+            "recovery"
           ]
         }
       },

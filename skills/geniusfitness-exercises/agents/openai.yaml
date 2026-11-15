@@ -1,0 +1,4 @@
+interface:
+  display_name: 'GeniusFitness Personal exercises'
+  short_description: 'Personal exercises in GeniusFitness'
+  default_prompt: 'Use $geniusfitness-exercises to create or edit the requested personal exercise with clear movement intention.'

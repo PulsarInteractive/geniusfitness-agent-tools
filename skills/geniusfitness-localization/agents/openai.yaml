@@ -1,0 +1,4 @@
+interface:
+  display_name: 'GeniusFitness Language and units'
+  short_description: 'Language and units in GeniusFitness'
+  default_prompt: 'Use $geniusfitness-localization to preserve meaning and units in the requested language.'

@@ -1,6 +1,6 @@
 ---
 name: geniusfitness-coaching
-description: Maintain an athlete’s shared GeniusFitness program through an authorized Coach connection. Use for coaching requests to inspect, schedule or edit client workouts and goals. Requires a current Coach subscription, explicit coaching permission and the account’s normal access to that athlete’s program.
+description: 'Maintain an athlete’s shared GeniusFitness program through an authorized Coach connection. Use for coaching requests to inspect, schedule or edit client workouts and goals. Requires a current Coach subscription, explicit coaching permission and the account’s normal access to that athlete’s program.'
 ---
 
 # GeniusFitness coaching

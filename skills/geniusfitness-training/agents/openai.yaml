@@ -1,0 +1,4 @@
+interface:
+  display_name: 'GeniusFitness Training'
+  short_description: 'Training in GeniusFitness'
+  default_prompt: 'Prepare the requested workout with $geniusfitness-training, preserving existing sets and current permissions.'

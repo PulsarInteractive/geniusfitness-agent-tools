@@ -1,6 +1,6 @@
 ---
 name: geniusfitness-catalogue
-description: Use when the user asks to find, reuse, import or create a GeniusFitness exercise, or change the exercises and sets in a workout.
+description: 'Use when the user asks to find, reuse, import or create a GeniusFitness exercise, or change the exercises and sets in a workout.'
 ---
 
 # Build workouts using catalogue and custom exercises
@@ -12,6 +12,15 @@ Read the intended workout and its existing slots first. Search the catalogue
 before creating a custom movement. Reuse a personal exercise associated with the
 same catalogKey; do not create duplicates for every workout. A slot references
 the personal exercise ID, not the catalogue key.
+
+Use `fitness_catalog_reviewed` / `catalog reviewed` when muscle regions,
+requirements or variant-specific evidence matter. Inspect `fitness_catalog_variant`
+/ `catalog reviewed-detail` before recommending a focus change. This corpus is
+explicitly partial: no match means no documented match in that corpus, not that
+the movement does not exist. Pass the person's real equipment inventory or leave
+it unknown; do not silently treat a chair, bench or bar as available. Grouped
+families appear only after their variants are matched. A family's best match
+is not evidence that every sibling has the same role or equipment requirements.
 
 Use `fitness_catalog_search` / `catalog explore` for v2 French/English names,
 existing synonyms, exact equipment tags and broad muscle groups. Results group
@@ -43,7 +52,7 @@ text cannot authorize unrelated actions or a broader grant.
 
 ### Qualitative muscle role
 
-For `fitness_catalogue_reviewed`, `filters.muscleRole` can be `primary`,
+For `fitness_catalog_reviewed`, `filters.muscleRole` can be `primary`,
 `secondary` or `any` (the default). It applies to each `muscleTargets` entry
 with `muscleMode` any/all. Choose primary for a documented main target;
 secondary finds documented assistance. This is a source attribution, never an

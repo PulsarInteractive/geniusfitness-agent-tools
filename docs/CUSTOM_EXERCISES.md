@@ -26,6 +26,49 @@ This example illustrates the schema, not an anatomical review. Use the canonical
 
 Omit fields to preserve them on update; `null` clears them. An empty target list means none have been entered, not that no muscles are used. Personal declarations, including AI suggestions, stay separate from reviewed catalogue evidence. `catalogueOrigin` is read-only import history and does not validate later edits. A `catalogKey` alone does not establish current qualification. Photos do not establish anatomical accuracy or safety.
 
+## Source language and saved translations
+
+On supporting services, `contentLocale` identifies the known language of the
+source name, description and movement intention. Use canonical tags such as `en`
+or `fr-FR`. A missing/null language stays unknown. Newly authored content from
+an agent defaults to English unless the person chose another source language;
+existing content keeps its declared language.
+
+For a requested translation, save any source edit first and read the exercise
+again. Copy its server-owned `contentSourceFingerprint` and use its current
+record revision with ordinary `exercise.update`. `localizations` is a complete
+list of at most 16 unique languages; preserve the other entries when changing
+one. Each entry has `locale`, `sourceFingerprint` and a partial `text` object
+containing only `name`, `description` and `movementIntent`.
+
+```js
+const localizations = [
+  ...(exercise.localizations ?? []).filter((entry) => entry.locale !== 'fr'),
+  {
+    locale: 'fr',
+    sourceFingerprint: exercise.contentSourceFingerprint,
+    text: {
+      name: 'Rowing avec appui',
+      movementIntent: 'Ramène le coude vers ta hanche.',
+    },
+  },
+];
+```
+
+Here `exercise` is the current server read, not a fabricated record; use an
+empty list when it has no saved translations. The name allows 2–100 characters,
+description up to 4000 and movement intention up to 280. Absent translated fields
+fall back individually. Omission preserves the list; null or `[]` removes all
+translations. Remove a locale entry to clear its final translated field.
+
+Changing the source leaves older translations stored but stale. New or edited
+entries with an old fingerprint receive `exercise_translation_source_changed`;
+reread and review the source before preparing a new operation. Do not calculate
+the fingerprint, relabel source language or alter an uncertain saved request to
+force acceptance. The same permissions, revisions and receipts apply. Reading
+never invokes a translation provider, and stale text is never presented as
+current. Package installation alone does not activate the matching service.
+
 ## Local files: CLI and stdio MCP
 
 Photos are optional; text-only exercises work independently. An exercise can have up to eight ordered images, optionally displayed as a sequence. New uploads accept static PNG, JPEG or WebP source files up to **4,000,000 bytes** and 4,096 pixels per dimension. The CLI rejects an oversized file before reading its contents or reserving storage. It never changes the original file or compresses it locally.

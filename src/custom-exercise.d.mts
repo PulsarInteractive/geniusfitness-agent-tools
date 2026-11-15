@@ -11,5 +11,6 @@ export const customExerciseGuidance: {
   meaning: string;
   allocation: string;
   editing: string;
+  localization: string;
 };
 export function validateCustomExerciseMetadata(data: Record<string, unknown>): void;

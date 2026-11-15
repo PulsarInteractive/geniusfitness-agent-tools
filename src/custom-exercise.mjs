@@ -8,6 +8,8 @@ export const customExerciseGuidance = {
     'Personal muscle declarations are estimates, including AI-assisted suggestions. They are not measured activation, growth, recovery or reviewed catalogue evidence.',
   allocation:
     'Use canonical target IDs and primary, secondary or unspecified roles. Optional integer relativeShare is 1–100; known shares total at most 100, with any remainder unknown. Never combine a parent and its descendant, duplicate an ID, or distribute unknown shares automatically.',
+  localization:
+    'contentLocale identifies the known source language; null stays unknown. localizations is the complete list of at most 16 language entries with locale, current server contentSourceFingerprint copied into sourceFingerprint, and partial text (name, description, movementIntent). Read the current exercise before translating. Omission preserves the list; null or [] removes it. Source edits leave older translations stale; never calculate a replacement fingerprint or present stale text as current. New AI-authored source text defaults to English; preserve an existing source language or the user’s explicit choice.',
   editing:
     'description is the full movement explanation; movementIntent is its short mental cue. Omit fields to preserve them; null clears them. catalogueOrigin is read-only historical import provenance and does not review personal edits. Photos use the separate exercise-media workflow, never image URLs in text fields.',
 };
@@ -17,6 +19,7 @@ const object = (value) => value !== null && typeof value === 'object' && !Array.
 /** Cross-field rules complement generated public field schemas. No inference,
  * percentage normalization, catalogue lookup or write happens here. */
 export function validateCustomExerciseMetadata(data) {
+  validateLocalization(data);
   const invalid = () =>
     fail(
       'invalid_arguments',
@@ -84,6 +87,90 @@ export function validateCustomExerciseMetadata(data) {
         invalid();
       }
       parent = nodes.get(parent).parentId;
+    }
+  }
+}
+
+function validateLocalization(data) {
+  const invalid = () =>
+    fail(
+      'invalid_arguments',
+      'Use the current exercise source fingerprint and supported language/text fields from command help.',
+    );
+  const locale = (value) => {
+    if (
+      typeof value !== 'string' ||
+      value.length > 64 ||
+      !/^[a-z]{2,8}(?:-[a-z0-9]{2,8})*$/i.test(value)
+    ) {
+      invalid();
+    }
+    try {
+      return Intl.getCanonicalLocales(value)[0];
+    } catch {
+      return invalid();
+    }
+  };
+  if (data.contentLocale !== undefined && data.contentLocale !== null) {
+    locale(data.contentLocale);
+  }
+  if (data.localizations === undefined || data.localizations === null) {
+    return;
+  }
+  if (!Array.isArray(data.localizations) || data.localizations.length > 16) {
+    invalid();
+  }
+  const seen = new Set();
+  for (const entry of data.localizations) {
+    if (
+      !object(entry) ||
+      Object.keys(entry).some((key) => !['locale', 'sourceFingerprint', 'text'].includes(key))
+    ) {
+      invalid();
+    }
+    const key = locale(entry.locale);
+    if (
+      seen.has(key) ||
+      typeof entry.sourceFingerprint !== 'string' ||
+      !/^[a-f0-9]{64}$/.test(entry.sourceFingerprint) ||
+      !object(entry.text) ||
+      Object.keys(entry.text).some(
+        (field) => !['name', 'description', 'movementIntent'].includes(field),
+      )
+    ) {
+      invalid();
+    }
+    seen.add(key);
+    let populated = false;
+    for (const [field, minimum, maximum] of [
+      ['name', 2, 100],
+      ['description', 1, 4000],
+      ['movementIntent', 1, 280],
+    ]) {
+      const value = entry.text[field];
+      if (value === undefined || (field !== 'name' && value === null)) {
+        continue;
+      }
+      if (
+        typeof value !== 'string' ||
+        [...value].some((char) => {
+          const code = char.charCodeAt(0);
+          return code === 127 || (code < 32 && ![9, 10, 13].includes(code));
+        })
+      ) {
+        invalid();
+      }
+      const text = value.trim();
+      if (!text && field !== 'name') {
+        continue;
+      }
+      if (text.length < minimum || text.length > maximum) {
+        invalid();
+      }
+      populated = true;
+    }
+    if (!populated) {
+      invalid();
     }
   }
 }

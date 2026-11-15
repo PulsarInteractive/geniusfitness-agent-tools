@@ -453,7 +453,9 @@ export default {
         "section",
         "description",
         "movementIntent",
-        "declaredMuscleContributions"
+        "declaredMuscleContributions",
+        "contentLocale",
+        "localizations"
       ],
       "module": "LocalUser/LocalUserElement",
       "permission": "exercises:write"
@@ -515,7 +517,9 @@ export default {
         "section",
         "description",
         "movementIntent",
-        "declaredMuscleContributions"
+        "declaredMuscleContributions",
+        "contentLocale",
+        "localizations"
       ],
       "module": "LocalUser/LocalUserElement",
       "permission": "exercises:write"
@@ -940,6 +944,9 @@ export default {
         "description",
         "movementIntent",
         "declaredMuscleContributions",
+        "contentLocale",
+        "localizations",
+        "contentSourceFingerprint",
         "catalogueOrigin",
         "created",
         "updated"
@@ -2021,6 +2028,84 @@ export default {
                       "maxLength": 80,
                       "minLength": 1,
                       "pattern": "^[a-z][a-z0-9_]*$",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "contentLocale": {
+        "anyOf": [
+          {
+            "maxLength": 64,
+            "minLength": 2,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "localizations": {
+        "anyOf": [
+          {
+            "maxItems": 16,
+            "type": "array",
+            "items": {
+              "additionalProperties": false,
+              "required": [
+                "locale",
+                "sourceFingerprint",
+                "text"
+              ],
+              "type": "object",
+              "properties": {
+                "locale": {
+                  "maxLength": 64,
+                  "minLength": 2,
+                  "type": "string"
+                },
+                "sourceFingerprint": {
+                  "maxLength": 64,
+                  "minLength": 64,
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "text": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "properties": {
+                    "description": {
+                      "anyOf": [
+                        {
+                          "maxLength": 4000,
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "movementIntent": {
+                      "anyOf": [
+                        {
+                          "maxLength": 280,
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "name": {
+                      "maxLength": 100,
+                      "minLength": 2,
                       "type": "string"
                     }
                   }

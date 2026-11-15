@@ -1,0 +1,4 @@
+interface:
+  display_name: 'GeniusFitness Operation recovery'
+  short_description: 'Operation recovery in GeniusFitness'
+  default_prompt: 'Use $geniusfitness-recovery to inspect the exact operation and recover without duplicating a change.'

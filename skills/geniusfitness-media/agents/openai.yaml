@@ -1,0 +1,4 @@
+interface:
+  display_name: 'GeniusFitness Exercise photos'
+  short_description: 'Exercise photos in GeniusFitness'
+  default_prompt: 'Use $geniusfitness-media to manage the authorized exercise photos with their storage and retry rules.'

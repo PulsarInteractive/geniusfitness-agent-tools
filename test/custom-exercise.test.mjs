@@ -83,3 +83,65 @@ test('forged provenance and invalid allocation cannot reach the network', () => 
     assert.throws(() => validateCommand(command(fields)), { code: 'invalid_arguments' });
   }
 });
+
+test('localized edits expose generated fields and preserve exact partial overrides without translating source', () => {
+  const sourceFingerprint = 'a'.repeat(64);
+  const fields = {
+    contentLocale: 'en',
+    localizations: [
+      {
+        locale: 'fr-FR',
+        sourceFingerprint,
+        text: { name: 'Rowing avec appui', movementIntent: 'Ramène le coude vers ta hanche.' },
+      },
+      { locale: 'nl', sourceFingerprint, text: { description: 'Steun met je vrije hand.' } },
+    ],
+  };
+  const input = { ...command(fields), kind: 'exercise.update', expectedRevision: '5' };
+  const original = JSON.stringify(input);
+  assert.deepEqual(validateCommand(input).data, fields);
+  assert.equal(JSON.stringify(input), original);
+  assert.equal(input.data.localizations[1].text.name, undefined);
+  const help = commandHelp('exercise.update');
+  assert.equal(help.dataSchema.properties.localizations.anyOf[0].maxItems, 16);
+  assert.match(help.customExercise.localization, /sourceFingerprint/);
+  assert.equal(help.dataSchema.properties.contentSourceFingerprint, undefined);
+  for (const localizations of [null, []]) {
+    const value = { ...input, data: { contentLocale: null, localizations } };
+    assert.deepEqual(validateCommand(value).data, value.data);
+  }
+});
+
+test('malformed locale collections are rejected before journaling without inventing fingerprints', () => {
+  const entry = {
+    locale: 'fr',
+    sourceFingerprint: 'a'.repeat(64),
+    text: { name: 'Rowing avec appui' },
+  };
+  const bad = [
+    { contentLocale: 'fr_FR' },
+    { contentLocale: 'fr-u-nu-latn' },
+    { contentLocale: 5 },
+    { contentSourceFingerprint: 'a'.repeat(64) },
+    { localizations: {} },
+    { localizations: Array(17).fill(entry) },
+    { localizations: [entry, { ...entry, locale: 'FR' }] },
+    { localizations: [{ ...entry, sourceFingerprint: 'A'.repeat(64) }] },
+    { localizations: [{ ...entry, sourceFingerprint: 'short' }] },
+    { localizations: [{ ...entry, text: {} }] },
+    { localizations: [{ ...entry, text: { name: null } }] },
+    { localizations: [{ ...entry, text: { name: 'x' } }] },
+    { localizations: [{ ...entry, text: { description: 'x'.repeat(4001) } }] },
+    { localizations: [{ ...entry, text: { movementIntent: 'x'.repeat(281) } }] },
+    { localizations: [{ ...entry, text: { description: null, movementIntent: '  ' } }] },
+    { localizations: [{ ...entry, text: { name: 'Row\u0000ing' } }] },
+    { localizations: [{ ...entry, text: { weight: 40 } }] },
+    { localizations: [{ ...entry, role: 'reviewed' }] },
+  ];
+  for (const fields of bad) {
+    assert.throws(
+      () => validateCommand({ ...command(fields), kind: 'exercise.update', expectedRevision: '5' }),
+      { code: 'invalid_arguments' },
+    );
+  }
+});

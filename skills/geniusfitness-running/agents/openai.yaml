@@ -1,0 +1,4 @@
+interface:
+  display_name: 'GeniusFitness Running'
+  short_description: 'Running in GeniusFitness'
+  default_prompt: 'Use $geniusfitness-running to review the relevant running plan and recorded evidence.'
