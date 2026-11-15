@@ -76,7 +76,7 @@ import { changesSchema, watchSchema, readChanges, watchChanges } from './changes
  */
 export function createMcpServer(client) {
   const server = new McpServer(
-    { name: 'geniusfitness', version: '0.1.0-beta.8' },
+    { name: 'geniusfitness', version: '0.1.0-beta.9' },
     {
       instructions:
         subscriptionGuidance.instructions +
@@ -244,7 +244,7 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_catalog_reviewed',
-    'Inspect one explicitly partial reviewed catalogue page. At most 48 variants before matching, complete families unless expandVariants is true. Only known reviewed qualitative targets contribute software relevance; unknown is not a match. Optional muscleRole primary/secondary restricts the documented role of requested muscle targets; omitted or any preserves legacy matching. No role implies an activation percentage. Inventory is supplied explicitly or remains unknown. Use nextCursor with identical filters and limit; each call is charged normally. No global catalogue coverage, physiological score, safety clearance or exercise change.',
+    'Inspect one explicitly partial reviewed catalogue page. Start with the default 12 variants and request more only when needed. At most 48 variants before matching, complete families unless expandVariants is true. Only known reviewed qualitative targets contribute software relevance; unknown is not a match. Optional muscleRole primary/secondary restricts the documented role of requested muscle targets; omitted or any preserves legacy matching. No role implies an activation percentage. Inventory is supplied explicitly or remains unknown. Use nextCursor with identical filters and limit; each call is charged normally. No global catalogue coverage, physiological score, safety clearance or exercise change.',
     reviewedCatalogueSchema,
     (input) => readReviewedCatalogue(client, input),
   );

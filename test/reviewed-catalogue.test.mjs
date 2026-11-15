@@ -61,6 +61,20 @@ test('reviewed reads perform exactly one authenticated POST without automatic tr
   assert.equal(calls, 2, 'A repeated call still crosses current authorization and quota');
 });
 
+test('an omitted reviewed page size means twelve variants with no implicit continuation', async () => {
+  const requests = [];
+  const client = {
+    reviewedCatalogue: async (query) => {
+      requests.push(query);
+      return page();
+    },
+  };
+  await readReviewedCatalogue(client, {});
+  assert.deepEqual(requests, [{ limit: 12 }]);
+  await readReviewedCatalogue(client, { limit: 48 });
+  assert.deepEqual(requests, [{ limit: 12 }, { limit: 48 }]);
+});
+
 test('new input remains strict, bounded and distinct from old search options', async () => {
   for (const input of [
     { limit: 49 },
@@ -218,7 +232,7 @@ test('precise role filters survive one client request and reject mismatched resp
   };
   const f = await fixture(t, async (_url, options) => {
     calls++;
-    assert.deepEqual(JSON.parse(options.body), query);
+    assert.deepEqual(JSON.parse(options.body), { ...query, limit: 12 });
     const response = page();
     response.matching.requestedRole = 'secondary';
     return Response.json(response);

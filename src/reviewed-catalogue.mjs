@@ -24,7 +24,8 @@ const check = (s, value, code) => {
 /** One normal read per invocation, including continuation and exact detail.
  * Caller inventory is a declaration, never an implicit personal-profile read. */
 export async function readReviewedCatalogue(client, input) {
-  const query = check(reviewedCatalogueSchema, input, 'invalid_arguments');
+  const parsed = check(reviewedCatalogueSchema, input, 'invalid_arguments');
+  const query = { ...parsed, limit: parsed.limit ?? 12 };
   const result = check(pageSchema, await client.reviewedCatalogue(query), 'invalid_response');
   const candidates = result.catalogue.page.candidates,
     keys = candidates.map((v) => v.catalogueKey);

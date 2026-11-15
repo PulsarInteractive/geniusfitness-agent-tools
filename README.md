@@ -72,10 +72,11 @@ coach-owned source program/workout and the student's destination program.
 Prepare `workout.copy` with the returned source fingerprint and target epoch.
 The student owns an independent copy, including exercise definitions.
 
-For a later update, preview the saved `copyOrigin` with `targetTraining`, then
-confirm `workout.sync` using both fingerprints and the target revision. The
-student's prescription customizations are replaced; schedules, completed
-results, progress and health measurements are preserved. No automatic sync.
+For a later update, preview the saved `copyOrigin` with `targetTraining` and
+review the proposed changes and retained adaptations. Confirm `workout.sync`
+using both fingerprints and the target revision. Fields marked as retained
+keep the student's choices; schedules, completed results, progress and health
+measurements are preserved. No automatic sync.
 Current Coach entitlement, the student's planning grant, source reads and
 destination writes are rechecked by the server.
 
@@ -106,7 +107,7 @@ private health access. Server rollout and package publication are separate.
 
 The optional `goalProfileKey` on adjustment-history entries is an opaque, athlete-bound reference to the profile version used for that decision. It is not the current goal, a progress score, or permission to read private profile answers. A missing key or unavailable version must stay unknown; never join by goal label or date.
 
-### Reviewed partial catalogue (unreleased source)
+### Reviewed partial catalogue
 
 `geniusfitness catalog reviewed` reads one explicitly partial, version-pinned
 corpus. For structured muscle and equipment filters, use `--file query.json`.
@@ -114,6 +115,8 @@ corpus. For structured muscle and equipment filters, use `--file query.json`.
 variant with its cited evidence and limits. The MCP equivalents are
 `fitness_catalog_reviewed` and `fitness_catalog_variant`.
 
+The client starts with 12 variants per page. Request more only when needed;
+each continuation is a separate call with the same filters and page size.
 Each call is an ordinary authorized read. A page examines at most 48 candidates
 before matching and can be empty while returning `nextCursor`. Continue only
 explicitly, with the same query and limit. Families stay complete; request
@@ -125,10 +128,10 @@ a private profile. Unknown muscles or equipment do not establish a match.
 Relevance points describe the supplied page, not physiological percentages or
 safety. Read the exact variant's source limitations and unavailable-media state.
 The existing `catalog search`, `catalog explore`, and their MCP tools keep their
-legacy metadata contracts. This source feature is not an npm release or a claim
-that the complete catalogue is reviewed.
+legacy metadata contracts. These commands require the matching server. The
+reviewed subset does not establish complete catalogue coverage.
 
-### Skip or restore a planned session (unreleased source)
+### Skip or restore a planned session
 
 Use `sessions skip-preview` / `fitness_session_skip_preview`, then confirm the
 reviewed request with `sessions skip-confirm` / `fitness_session_skip_confirm`.
@@ -137,8 +140,8 @@ activity, XP or exercise prescription. Own manual planning is Free with current
 `planning:write` access; another athlete also requires Coach and coaching rights.
 The local client retains an immutable confirmation in its existing journal.
 An old receipt is historical, not current state. See [the workflow and recovery
-rules](docs/SESSION_SKIP.md). Supporting server activation and npm publication
-remain separate.
+rules](docs/SESSION_SKIP.md). The connected server must support and enable
+this feature.
 
 For a next cycle that has no task yet, the additive
 `sessions recurring-skip-preview` / `fitness_recurring_session_skip_preview`
@@ -147,4 +150,4 @@ returns the server's exact occurrence. Explicit confirmation uses
 and the same durable journal. A `materialized` result requires review through
 the existing exact-task path; no task ID or confirmation is invented.
 See [the bounded recurring workflow](docs/SESSION_SKIP.md#one-next-recurring-session).
-Source availability does not activate the backend or publish an npm release.
+The connected server must also enable recurring-session skipping.

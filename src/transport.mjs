@@ -149,11 +149,20 @@ export class Transport {
     }
     const chunks = [];
     let size = 0;
+    // Reviewed pages include per-variant evidence and can exceed ordinary JSON
+    // reads at the explicit 48-variant limit. Keep errors and all other routes
+    // on the smaller budget; this never changes pagination or schema checks.
+    const responseLimit =
+      binary && response.ok
+        ? maxExerciseReadBytes
+        : response.ok && method === 'POST' && url.pathname === '/api/agents/catalogue/reviewed'
+          ? 2 * 1024 * 1024
+          : 262144;
     try {
       if (response.body) {
         for await (const chunk of response.body) {
           size += chunk.length;
-          if (size > (binary && response.ok ? maxExerciseReadBytes : 262144)) {
+          if (size > responseLimit) {
             fail('invalid_response', 'The API response exceeded the size limit.');
           }
           chunks.push(chunk);

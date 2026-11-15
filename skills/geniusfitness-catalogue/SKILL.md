@@ -31,9 +31,10 @@ current evaluated page. Legacy labels are unreviewed declarations, not muscle
 activation, physical equipment availability or documented exercise suitability.
 `facets` lists source-wide filter values, not filtered totals.
 
-Read at most the pages needed. A non-null `nextCursor` can accompany an empty
-page; continue explicitly with identical filters. Each call consumes a normal
-request. Do not crawl or silently fall back after a refusal. The v1
+Start reviewed reads with the default 12 variants; request a larger page only
+when the task needs it. Read at most the pages needed. A non-null `nextCursor`
+can accompany an empty page; continue explicitly with identical filters and page
+size. Each call consumes a normal request. Do not crawl or silently fall back after a refusal. The v1
 `fitness_catalog` / `catalog search` retains its original strict envelope and
 version/nextAfter convention; never mix the two cursor formats. New tooling
 requires the corresponding backend rollout; installing a client does not enable

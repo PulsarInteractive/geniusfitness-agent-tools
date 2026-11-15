@@ -1,129 +1,61 @@
-## Unreleased
-
-- Add explicit CLI update checks and verified global npm updates. Optional daily
-  notices run only in interactive terminals; MCP, JSON and local-only workflows
-  stay silent and make no automatic registry requests. Credentials and saved
-  operations are preserved.
-- Add focused skills and hosted workflow guides for workout contents, running,
-  personal exercises, private media, language/units and operation recovery.
-  Reviewed catalogue guidance now distinguishes exact variant evidence from
-  legacy labels and handles missing home equipment explicitly.
-
-- Add separate personal exercise descriptions, movement intention cues and
-  declared muscle contributions with canonical targets and bounded relative
-  estimates. Keep reviewed catalogue provenance read-only.
-- Add private exercise photo lists, durable single-image reservations, explicit
-  CLI/local MCP uploads and sequence edits. Hosted file import is implemented
-  behind an exact HTTPS host allowlist and is not advertised when unconfigured.
-  Actual ChatGPT attachment transfer still requires host acceptance; no npm
-  publication or service deployment is implied.
-
-- Add `metrics selected` / `fitness_progress_selection` for the connected
-  programme owner's 7 or 28 local dates, or latest retained training session.
-  One bounded read returns facts and coverage, without a generated coach
-  message, AI-credit charge or plan changes. Requires Premium or Coach and the
-  matching service; no npm publication or deployment is implied.
-
-- Reviewed catalogue: optional primary/secondary muscle-role filters, exact role validation and guidance; older requests retain their response shape. No automatic traversal or exercise changes.
-
-- Add explicit V3 mixed exercise/regional temporary reads to CLI and MCP,
-  generated closed schemas, exact-target validation and qualitative upper/lower
-  workout preferences. Keep the existing command kinds and immutable journal;
-  legacy V1/V2 operations and receipts remain unchanged. Regional apply and
-  delegated CoachMessage confirmation are not supported. Source only: requires
-  the matching service, app support and activation; no npm release or deployment.
-
-- Add typed next-recurring-session skip preview/confirmation to CLI and MCP,
-  using generated TypeSpec schemas and the existing immutable command journal.
-  Materialized tasks require a separate explicit exact-session review; no
-  automatic confirmation, schedule expansion or following-cycle change.
-  Source only; server activation and npm publication remain separate.
-
-- Add whole-session skip/restore preview and confirmation to CLI/local MCP.
-  Preserve complete canonical targets and opaque revisions in the existing
-  immutable journal using a distinct protocol; generic commands stay unchanged.
-  Unknown outcomes replay the same confirmation, and old receipts remain
-  explicitly historical. Requires the supporting server and its activation;
-  no npm publication or deployment is implied.
-
-- Add explicit partial reviewed catalogue page and exact-variant reads in CLI/MCP, with generated public schemas, bounded matching and normal per-call authorization. Preserve legacy catalogue contracts.
-
-- Add `catalog explore` / `fitness_catalog_search` with a distinct v2 endpoint, French/English text and synonyms, per-variant text relevance before grouping, complete bounded family pages and explicit legacy evidence coverage. Every continuation remains a separate normal request; v1 stays strict and unchanged. Requires the matching backend; no npm publication, reviewed-content publication or production activation is implied.
-
-- Add explicit representation 2 for temporary focus reads and commands, preserving the complete selected interests and nullable priority. Legacy v1 stays strict; mismatched versions never trigger silent downgrade. Includes command-help policy, immutable retry and safe unavailable-feature guidance. Requires the matching backend and supported app readers; no producer activation or npm release is implied.
-
-- Validate optional precise muscle evidence and explain current catalogue attribution, unknown labels and parent/region overlap. Legacy responses remain supported; matching backend rollout is required.
-
-- Keep unknown session identities and incomplete daily measurements explicit.
-  Preserve raw observations and explicit zero, mark duplicate corrections, and
-  withhold ambiguous totals/XP. Pagination supports legacy unindexed rows.
-  Matching backend rollout supplies identity/coverage; older responses retain
-  observations and activity counts without certifying totals.
-  Wire change: aggregate counts/measurements can now be null. Update clients
-  requiring numeric totals before rolling out the matching backend; this is
-  unreleased and does not imply an npm publication or a service deployment.
-
-- Explain exact recorded exercise references in generated CLI/MCP command help
-  and training guidance. Identity metadata remains service-owned; unresolved
-  references preserve results without inventing measured totals. Requires the
-  matching backend rollout.
-
-- Add targeted `commands describe --kind KIND` help and exact encoded running-plan/result schemas to CLI and MCP. Validate supplied stage targets and observations before preparation while preserving partial edits and immutable retries. Server validation remains authoritative.
-
-- Publish command permission, subscription and revision requirements consistently in CLI and MCP help. Explain current capabilities separately from per-athlete authorization; older servers never imply Coach access. Requires the matching server capability fields for dynamic filtering.
-
-- Request a bounded, field-level workout sync comparison. Explain retained student adaptations and conservative legacy-copy handling; refuse unavailable or inconsistent reviews. Requires comparison version 1 on the service before client rollout.
-
-## Unreleased goal provenance
-
-- Preserve the optional opaque profile-version reference in adjustment history; keep private answers and current-goal claims separate.
-
-- Add `sessions push-adjustments` / `fitness_push_adjustments` for explicit,
-  bounded reads of retained adjustments linked to a current recorded outcome.
-  Saved decisions are not proof of current prescription application.
-
-- Add optional settled bonus XP details to Push results with
-  `includeRewardDetails: true`. Preserve legacy response compatibility and
-  unknown historical amounts; this does not award or recalculate XP.
-- Add bounded, read-only Push result consultation through `sessions push-results`
-  and `fitness_push_results`, with strict response binding, explicit missing values
-  and corrected-outcome guidance. Requires a server with the Push result endpoint.
-
 # Changelog
 
-## Unreleased
+## 0.1.0-beta.9 — 2026-11-15
 
-- Muscle analysis now validates load coverage and nullable totals. Explicit kg/lb
-  aggregates report kg equivalents while raw session values remain unchanged.
-  Legacy server responses retain counts and timing but no unverified kg claims.
-  · recorded load units
+This package adds the client support below. Server rollout, subscription access
+and feature activation remain separate. A disabled server feature stays
+unavailable; the client does not bypass it.
 
-- Session analysis preserves raw load and explicit kg/lb units; legacy values
-  remain unknown instead of being labelled kilograms. Missing result values are
-  no longer filled with zero.
-- CLI/MCP handle older server responses conservatively and retain source identity.
-- Progress guidance documents mixed/unknown units and historical limitations.
-
-## Unreleased
-
-- Preserve optional run elevation coverage alongside measured gain. Missing altitude remains distinct from zero; imports and summaries retain partial or unknown coverage. Requires the matching application/backend rollout.
-
-- Copy a coach-owned prepared workout into an independent student prescription, then preview and explicitly confirm later synchronization using source and destination fingerprints. Includes CLI, local MCP, hosted MCP tool catalogue and permission-aware coaching guidance. Requires the matching backend and application rollout.
-
-- Keep recorded personal-record flags in session analysis and accept optional canonical session XP from the service; session points are distinct from capped account rewards. Optional exercise observation arrays remain compatible with older servers.
-
-- Preserve exercise heart-rate averages with exact observed intervals and native provenance, independently of calorie collection. Validate bounds and non-overlap; missing values remain absent. Requires the corresponding application and backend rollout.
-
-- Preserve optional measured exercise/set activity intervals in workout calories, including effort/rest, durations and native provenance. Reject overlapping or inconsistent measurements. Requires the corresponding application and backend rollout.
-
-- Accept up to 24 calendar months of basic metric history and preserve more than a year of daily evidence. The server checks current requester and athlete subscriptions; mixed program totals cannot extend a Free student history. Requires the corresponding backend rollout.
-
-- Reject malformed encoded exercise/set lists before recording or sending a command, using the same generated validation rules as the service.
-- Expose encoded-set rules in command help and clarify sparse updates: renaming a workout or moving a schedule preserves every field the caller omits.
-- Add direct subscription guidance with reference prices, the eligible seven-day trial and student-specific coaching entitlements.
-- Scope basic coaching metrics to the requested student, with repeated Wednesday planning and two-week review examples.
-- Preserve default personal muscle queries when the service resolves the authenticated athlete.
-- Validate optional workout active-calorie observations with their exact recorded interval, retain compatibility with older heart-rate-only responses, and explain explicit calorie consent. Backend and application rollout is required before these observations are available.
+- Add explicit CLI update checks and verified global npm updates. Optional daily
+  notices run only in interactive human-readable sessions. JSON and MCP remain
+  silent, with no automatic registry request. Updates preserve credentials and
+  saved operations.
+- Expand the eleven focused skills and workflow guides for training, running,
+  catalogue selection, coaching, progress, personal exercises, media, language,
+  units and recovery.
+- Support personal exercise descriptions, movement intention cues and declared
+  muscle contributions. Source locales and explicit translations preserve the
+  original text and identify translations by the server's source fingerprint. Changed source text
+  makes older translations stale; edits require current optimistic revisions.
+- Add private exercise photos, durable upload reservations and image sequences.
+  Sources are limited to 4 MB. The supporting server normalizes images to WebP,
+  at most 1080 px on the longest side and 1 MB stored, without enlarging them.
+  Hosted attachment imports require an exact HTTPS host allowlist; the tool
+  remains hidden when it is unconfigured.
+- Add bounded reviewed-catalogue pages and exact variant reads with source
+  evidence, equipment, muscle roles and explicit unknowns. Each page examines at
+  most 48 variants. Continuation is explicit and uses normal authorization and
+  quotas. Reviewed coverage stays separate from the legacy catalogue.
+- Start reviewed-catalogue reads with 12 variants. An explicit larger page can
+  use up to 2 MiB of response data; errors and other JSON routes keep their
+  256 KiB limit. No additional page is fetched automatically.
+- Add catalogue v2 text search in French and English, synonyms, variant relevance,
+  grouped families and explicit variant expansion. Preserve strict v1 behavior.
+- Add exact planned-session skip/restore and next-recurring-session previews and
+  confirmations. Preserve immutable retry requests and materialized-session
+  handoff. Receipts describe past results, not current planning state.
+- Add explicit V2/V3 temporary-focus reads and supported commands, including
+  selected interests and qualitative regional preferences. Preserve V1/V2
+  receipts without silent downgrade. Regional apply remains unsupported.
+- Add selected personal progress for 7 or 28 local dates, or the latest retained
+  session, with bounded factual reads and the server's Premium/Coach checks.
+- Extend Push result and adjustment-history reads with optional settled XP and
+  opaque profile provenance. Reading a result does not award XP or prove that a
+  suggested prescription was applied.
+- Preserve raw load units, unknown measurements and nullable aggregates. Explicit
+  kg/lb aggregates can report kg equivalents; old responses keep their counts
+  and timing without inventing kilogram values. Validate muscle evidence,
+  parent/region overlap and measured running elevation coverage.
+- Preserve measured exercise/set heart-rate and energy intervals, timing,
+  consent boundaries and partial coverage. Keep unknown session identities and
+  duplicate corrections explicit. Basic metric history supports the server's
+  bounded 24-month range and current athlete entitlements.
+- Add typed running plans/results, encoded-set validation and targeted command
+  help. Sparse edits retain omitted fields and uncertain writes retain their
+  original operations.
+- Add field-level workout-copy comparisons, preserving student adaptations and
+  conservative legacy-copy behavior. Publish command permission, revision and
+  subscription requirements consistently across CLI and MCP.
 
 ## 0.1.0-beta.8 — 2026-10-26
 
