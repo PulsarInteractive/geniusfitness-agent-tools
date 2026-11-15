@@ -2975,5 +2975,102 @@
     "destructive": false,
     "idempotent": true,
     "fileParams": ["file"]
+  },
+  {
+    "name": "fitness_catalogue_import_preview",
+    "title": "Review a catalogue exercise before importing it",
+    "description": "Read one exact reviewed variant in French or English before importing it into the connected account personal exercise library. Requires exercises:write; this preview changes nothing and is charged as an ordinary request. Inspect definition, counting/load conventions and source pins. A requires_configuration result cannot be confirmed or silently replaced by a legacy import. readyToStart is false: no workout slot, dose, schedule or XP is created. Reuse an existing personal definition when appropriate.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "catalogueKey": {
+          "maxLength": 60,
+          "pattern": "^ex\\.[0-9]+$",
+          "type": "string"
+        },
+        "locale": {
+          "enum": ["fr", "en"],
+          "type": "string"
+        }
+      },
+      "required": ["catalogueKey", "locale"],
+      "type": "object"
+    },
+    "scopes": ["exercises:write"],
+    "route": "catalogue/import/preview",
+    "write": false,
+    "destructive": false,
+    "idempotent": true
+  },
+  {
+    "name": "fitness_catalogue_import_confirm",
+    "title": "Import the reviewed personal exercise",
+    "description": "Import the exact user-requested reviewed exercise using catalogueKey, locale and all three source pins from its projected preview, the personal library epoch and one new elementId and operationId. Retain issuedAt and the complete request for an uncertain retry; do not wrap this in AgentCommand or forge catalogueOrigin. The server copies the reviewed definition, applicable source cue/instructions and counting convention without a dose or workout slot. Hosted MCP has no local journal. A replay is historical and never overwrites an existing exercise or refreshes its source. Source conflicts require a fresh preview and a new reviewed operation; access and quotas remain current.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "catalogueKey": {
+          "maxLength": 60,
+          "pattern": "^ex\\.[0-9]+$",
+          "type": "string"
+        },
+        "elementId": {
+          "maxLength": 40,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "type": "string"
+        },
+        "epoch": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "issuedAt": {
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "locale": {
+          "enum": ["fr", "en"],
+          "type": "string"
+        },
+        "mappingVersion": {
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "operationId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "sourceContentVersion": {
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "subsetVersion": {
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "catalogueKey",
+        "elementId",
+        "epoch",
+        "issuedAt",
+        "locale",
+        "mappingVersion",
+        "operationId",
+        "sourceContentVersion",
+        "subsetVersion"
+      ],
+      "type": "object"
+    },
+    "scopes": ["exercises:write"],
+    "route": "catalogue/import/confirm",
+    "write": true,
+    "destructive": false,
+    "idempotent": true
   }
 ]

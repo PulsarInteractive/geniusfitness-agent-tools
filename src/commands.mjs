@@ -21,7 +21,14 @@ import catalog from './command-catalog.mjs';
 import { CredentialStore } from './store.mjs';
 import { AgentError, fail, safeError } from './errors.mjs';
 import { invalidSetPayload } from './set-payloads.mjs';
-import { validateCustomExerciseMetadata } from './custom-exercise.mjs';
+import {
+  validateCustomExerciseMetadata,
+  validateExerciseCountingMetadata,
+} from './custom-exercise.mjs';
+import {
+  validateCatalogueImportRequest,
+  validCatalogueImportReceipt,
+} from './catalogue-import.mjs';
 import {
   validateExerciseMediaOpen,
   validateHistoricalExerciseMediaOpen,
@@ -85,6 +92,9 @@ export function validateCommand(value) {
     definition = catalog.commands[command.kind];
   if (['exercise.create', 'exercise.update'].includes(command.kind)) {
     validateCustomExerciseMetadata(command.data);
+  }
+  if (command.kind === 'exercise.import') {
+    validateExerciseCountingMetadata(command.data);
   }
   if (
     Buffer.byteLength(JSON.stringify(command)) > catalog.maxCommandBytes ||
@@ -227,6 +237,12 @@ const receiptSchema = z
 // Typed confirmations share the original durable journal and identity lock.
 // The discriminator prevents reusing a UUID through a different endpoint.
 const confirmationProtocols = {
+  catalogue_import: {
+    validate: validateCatalogueImportRequest,
+    validReceipt: validCatalogueImportReceipt,
+    operationId: (input) => input.operationId,
+    path: '/api/agents/v1/catalogue/import/confirm',
+  },
   exercise_media_open: {
     validate: validateExerciseMediaOpen,
     validReceipt: validExerciseMediaSession,
@@ -320,6 +336,9 @@ export class CommandJournal {
    * operation journal own both command kinds. No synthetic AgentCommand. */
   async confirmSessionSkip(value) {
     return this.#execute(value, 'session_skip');
+  }
+  async confirmCatalogueImport(value) {
+    return this.#execute(value, 'catalogue_import');
   }
   async confirmRecurringSessionSkip(value) {
     return this.#execute(value, 'recurring_session_skip');

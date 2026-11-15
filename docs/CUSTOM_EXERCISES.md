@@ -26,6 +26,33 @@ This example illustrates the schema, not an anatomical review. Use the canonical
 
 Omit fields to preserve them on update; `null` clears them. An empty target list means none have been entered, not that no muscles are used. Personal declarations, including AI suggestions, stay separate from reviewed catalogue evidence. `catalogueOrigin` is read-only import history and does not validate later edits. A `catalogKey` alone does not establish current qualification. Photos do not establish anatomical accuracy or safety.
 
+## What one repetition or duration means
+
+On supporting services, `countingConvention` records an explicit counting rule.
+Use the exercise's known convention or the user's requested choice. An absent
+value stays unknown; do not infer it from a name, picture or muscle target.
+
+| Value                                   | Meaning                                                                         |
+| --------------------------------------- | ------------------------------------------------------------------------------- |
+| `alternating_opposite_pair_repetitions` | One extension and return of one opposite arm/leg pair counts as one repetition. |
+| `per_side_repetitions`                  | The repetition count covers one side.                                           |
+| `per_side_duration`                     | The duration covers one side.                                                   |
+| `bilateral_repetitions`                 | One movement performed on both sides together counts as one repetition.         |
+
+Repetition conventions require a repetition tracking type: `WeightReps`,
+`BodyweightReps`, `WeightedBodyweight` or `AssistedBodyweight`. Per-side duration
+requires `Duration` or `DurationWeight`. The service checks the resulting saved
+exercise, including a partial edit against its existing tracking type.
+
+This field sets neither the number of repetitions nor the time target. It does
+not record which physical side was performed. Preserve the actual observations:
+never double repetitions, divide seconds, create a missing side or recalculate
+history from this field. Weight convention is separate: a per-hand load does
+not mean the repetition count should be multiplied. Counting never changes a
+recorded load or its unit. For a reviewed import, keep the returned `defaultUnit`
+(`kg` or `none`); preserve existing quantities and units when reading or replaying
+records. Omission preserves the convention on update; `null` clears it.
+
 ## Source language and saved translations
 
 On supporting services, `contentLocale` identifies the known language of the

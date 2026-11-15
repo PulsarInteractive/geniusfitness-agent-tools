@@ -21,6 +21,25 @@ export default {
     }
   },
   "customExercise": {
+    "counting": {
+      "conventions": [
+        "alternating_opposite_pair_repetitions",
+        "per_side_repetitions",
+        "per_side_duration",
+        "bilateral_repetitions"
+      ],
+      "repetitionTypes": [
+        "WeightReps",
+        "BodyweightReps",
+        "WeightedBodyweight",
+        "AssistedBodyweight"
+      ],
+      "durationTypes": [
+        "Duration",
+        "DurationWeight"
+      ],
+      "guidance": "A repetition count or elapsed duration keeps its explicit meaning across import, copies and snapshots. Alternating opposite-pair repetitions counts one extension-and-return of one arm/leg pair; per-side repetitions and duration cover one side only; bilateral repetitions count one simultaneous movement. Do not double, split or aggregate historical values by assuming left/right. This field prescribes no dose and does not capture which physical side was performed. Absence stays unknown."
+    },
     "taxonomyVersion": "fitness-muscle-evidence-v1",
     "targets": [
       {
@@ -443,6 +462,7 @@ export default {
       "fields": [
         "name",
         "catalogKey",
+        "countingConvention",
         "defaultRestSeconds",
         "defaultUnit",
         "equipment",
@@ -493,6 +513,7 @@ export default {
       "create": true,
       "fields": [
         "catalogKey",
+        "countingConvention",
         "defaultRestSeconds",
         "defaultUnit",
         "notes"
@@ -507,6 +528,7 @@ export default {
       "fields": [
         "name",
         "catalogKey",
+        "countingConvention",
         "defaultRestSeconds",
         "defaultUnit",
         "equipment",
@@ -931,6 +953,7 @@ export default {
     "exercises": {
       "fields": [
         "catalogKey",
+        "countingConvention",
         "defaultRestSeconds",
         "defaultUnit",
         "equipment",
@@ -1818,6 +1841,22 @@ export default {
             "type": "string",
             "minLength": 0,
             "maxLength": 60
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "countingConvention": {
+        "anyOf": [
+          {
+            "enum": [
+              "alternating_opposite_pair_repetitions",
+              "per_side_repetitions",
+              "per_side_duration",
+              "bilateral_repetitions"
+            ],
+            "type": "string"
           },
           {
             "type": "null"

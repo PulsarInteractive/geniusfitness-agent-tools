@@ -23,8 +23,11 @@ Search by name, equipment or muscle group. Catalogue results have stable
 `ex.NNNN` keys and their own version. Carry that version when following
 `nextAfter`; restart after a catalogue update.
 
-Use `exercise.import` in `personal:<account ID>` with `catalogKey`. The server
-copies the canonical exercise name, equipment, muscle group and tracking type.
+For a reviewed variant, use the dedicated preview/confirmation flow in
+[Reviewed catalogue import](CATALOGUE_IMPORT.md). It preserves source pins and applicable
+source guidance. The distinct legacy `exercise.import` command uses
+`personal:<account ID>` with `catalogKey`; it copies legacy name, equipment,
+muscle group and tracking type without establishing reviewed provenance.
 Reuse the existing personal exercise ID when it already uses the same key.
 Create `exercise.create` only when the intended movement is not in the catalogue.
 Never copy an arbitrary image URL into the exercise library.
@@ -38,6 +41,12 @@ reviewed catalogue evidence; omit unknown shares rather than guessing.
 `fitness_command_help` describes the actual editable field types, enums and
 required values. Tracking types include `WeightReps`, `BodyweightReps`,
 `Duration` and other declared types; do not invent enum values.
+
+When supplied, preserve `countingConvention` with the exercise definition.
+A per-side count describes one side; a bilateral count describes one simultaneous
+movement. It never supplies a target dose or a performed side. Do not multiply
+recorded repetitions or weight, or split recorded time, to fill gaps.
+See [the four counting rules](CUSTOM_EXERCISES.md#what-one-repetition-or-duration-means).
 
 ## Change a workout safely
 

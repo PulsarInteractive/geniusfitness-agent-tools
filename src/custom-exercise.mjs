@@ -16,9 +16,32 @@ export const customExerciseGuidance = {
 
 const nodes = new Map((catalog.customExercise?.targets ?? []).map((node) => [node.id, node]));
 const object = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+/** Validate only supplied metadata. Sparse edits keep the saved tracking type
+ * for the server to check; no type, counting rule or performed side is inferred. */
+export function validateExerciseCountingMetadata(data) {
+  const convention = data.countingConvention;
+  if (convention === undefined || convention === null) {
+    return;
+  }
+  const policy = catalog.customExercise.counting;
+  if (!policy.conventions.includes(convention)) {
+    fail('invalid_arguments', 'Use an explicit countingConvention from exercise command help.');
+  }
+  if (Object.hasOwn(data, 'exerciseType')) {
+    const types =
+      convention === 'per_side_duration' ? policy.durationTypes : policy.repetitionTypes;
+    if (!types.includes(data.exerciseType)) {
+      fail(
+        'invalid_arguments',
+        'The supplied counting convention does not match this tracking type.',
+      );
+    }
+  }
+}
 /** Cross-field rules complement generated public field schemas. No inference,
  * percentage normalization, catalogue lookup or write happens here. */
 export function validateCustomExerciseMetadata(data) {
+  validateExerciseCountingMetadata(data);
   validateLocalization(data);
   const invalid = () =>
     fail(

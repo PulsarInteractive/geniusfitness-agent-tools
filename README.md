@@ -131,6 +131,13 @@ The existing `catalog search`, `catalog explore`, and their MCP tools keep their
 legacy metadata contracts. These commands require the matching server. The
 reviewed subset does not establish complete catalogue coverage.
 
+To copy an exact reviewed variant into your personal library, use
+`catalog import-preview` then `catalog import-confirm`, or the MCP tools
+`fitness_catalogue_import_preview` and `fitness_catalogue_import_confirm`.
+The [reviewed import guide](docs/CATALOGUE_IMPORT.md) covers source pins,
+language, counting and safe replay. Importing a definition does not prescribe
+a workout or imply that it is ready to start.
+
 ### Skip or restore a planned session
 
 Use `sessions skip-preview` / `fitness_session_skip_preview`, then confirm the

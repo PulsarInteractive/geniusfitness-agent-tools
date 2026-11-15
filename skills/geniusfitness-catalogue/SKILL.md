@@ -22,6 +22,19 @@ it unknown; do not silently treat a chair, bench or bar as available. Grouped
 families appear only after their variants are matched. A family's best match
 is not evidence that every sibling has the same role or equipment requirements.
 
+For a qualified personal import, read [reviewed import](../../docs/CATALOGUE_IMPORT.md)
+and use `fitness_catalogue_import_preview` then `fitness_catalogue_import_confirm`.
+The connected account is the target; preview does not create anything. Preserve
+all source pins and the saved operation on uncertainty. `exercise.import` is
+the distinct legacy flow and cannot establish a reviewed origin.
+
+The exact variant's `cue` is the movement's mental intention; its `explanation`
+contains the technical steps. Preserve the requested FR/EN source text when a
+supported import copies it, including its limitations. Do not turn a shorter
+personal cue into reviewed source advice or assume every import endpoint copies
+the same fields. A documented counting convention does not authorize doubling
+repetitions or load; see [counting rules](../../docs/CUSTOM_EXERCISES.md#what-one-repetition-or-duration-means).
+
 Use `fitness_catalog_search` / `catalog explore` for v2 French/English names,
 existing synonyms, exact equipment tags and broad muscle groups. Results group
 matching variants by default; `expandVariants` separates them. Select the exact

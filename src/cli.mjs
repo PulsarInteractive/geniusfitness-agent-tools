@@ -1,6 +1,7 @@
 import { checkUpdate, installUpdate, maybeNotifyUpdate } from './update.mjs';
 import { previewRecurringSessionSkip } from './recurring-session-skip.mjs';
 import { previewSessionSkip } from './session-skip.mjs';
+import { previewCatalogueImport } from './catalogue-import.mjs';
 import { readTemporaryActions } from './temporary-actions.mjs';
 import { readTemporaryActionsV3 } from './temporary-actions-v3.mjs';
 import { readCoachPush } from './coach-push.mjs';
@@ -111,6 +112,14 @@ export const commands = {
   'catalog reviewed-detail': {
     summary: 'Read one exact reviewed variant and its cited evidence.',
     options: ['key'],
+  },
+  'catalog import-preview': {
+    summary: 'Review one exact catalogue variant and language before a personal import.',
+    options: ['file'],
+  },
+  'catalog import-confirm': {
+    summary: 'Journal and import the approved definition with its exact source pins.',
+    options: ['file'],
   },
   'catalog explore': {
     summary:
@@ -479,6 +488,12 @@ export async function main(
       );
     } else if (command === 'sessions skip-preview') {
       data = await previewSessionSkip(client, await readCommandFile(options.file));
+    } else if (command === 'catalog import-preview') {
+      data = await previewCatalogueImport(client, await readCommandFile(options.file));
+    } else if (command === 'catalog import-confirm') {
+      data = await new CommandJournal(client).confirmCatalogueImport(
+        await readCommandFile(options.file),
+      );
     } else if (command === 'sessions skip-confirm') {
       data = await new CommandJournal(client).confirmSessionSkip(
         await readCommandFile(options.file),

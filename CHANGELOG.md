@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.0-beta.10 — 2026-11-15
+
+- Add explicit reviewed catalogue import preview and confirmation to CLI and
+  MCP, with generated DTOs and the existing immutable operation journal.
+  Source pins, requested FR/EN cue and instructions, counting and import
+  provenance stay distinct from personal edits, doses and workout slots.
+- Preserve explicit exercise counting conventions across personal exercise
+  reads and edits. Existing records keep an unknown convention; the client
+  never doubles repetitions, splits time or invents the performed side.
+- Keep reviewed catalogue pagination compatible with both the existing
+  corpus and its extension. Each requested page remains a separate read.
+
+This candidate requires matching server validation and hosted acceptance before
+publication. Beta.9 was committed but was not published to npm.
+
 ## 0.1.0-beta.9 — 2026-11-15
 
 This package adds the client support below. Server rollout, subscription access

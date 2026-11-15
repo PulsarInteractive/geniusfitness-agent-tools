@@ -9,6 +9,7 @@ LICENSES/
 src/reviewed-catalogue-schemas.mjs
 src/reviewed-catalogue.d.mts
 src/recurring-session-skip-contract.mjs
+src/catalogue-import-contract.mjs
 src/temporary-actions-v3-contract.mjs
 src/temporary-actions-v3-contract.d.mts
 src/progress-selection-contract.mjs

@@ -1,5 +1,10 @@
 import remoteTools from '../remote/tool-catalog.json' with { type: 'json' };
 import {
+  catalogueImportQuerySchema,
+  catalogueImportRequestSchema,
+  previewCatalogueImport,
+} from './catalogue-import.mjs';
+import {
   recurringSessionSkipRequestSchema,
   recurringSessionSkipConfirmationSchema,
   previewRecurringSessionSkip,
@@ -76,7 +81,7 @@ import { changesSchema, watchSchema, readChanges, watchChanges } from './changes
  */
 export function createMcpServer(client) {
   const server = new McpServer(
-    { name: 'geniusfitness', version: '0.1.0-beta.9' },
+    { name: 'geniusfitness', version: '0.1.0-beta.10' },
     {
       instructions:
         subscriptionGuidance.instructions +
@@ -347,6 +352,25 @@ export function createMcpServer(client) {
     (input) => commandHelp(input.kind),
   );
   const journal = new CommandJournal(client);
+  register(
+    'fitness_catalogue_import_preview',
+    remoteTools.find((tool) => tool.name === 'fitness_catalogue_import_preview').description,
+    catalogueImportQuerySchema,
+    (input) => previewCatalogueImport(client, input),
+  );
+  register(
+    'fitness_catalogue_import_confirm',
+    remoteTools
+      .find((tool) => tool.name === 'fitness_catalogue_import_confirm')
+      .description.replace(
+        'Hosted MCP has no local journal.',
+        'The local journal persists this exact request before transmission; use fitness_retry_command after uncertainty.',
+      ),
+    catalogueImportRequestSchema,
+    (input) => journal.confirmCatalogueImport(input),
+    true,
+    { destructiveHint: false },
+  );
   register(
     'fitness_recurring_session_skip_preview',
     'Preview passing one exact next cycle of a known standalone dated schedule. Supply the complete Request with one stable UUID, project scope, schedule, athlete and training IDs; never invent a task ID or expand a whole calendar. Requires planning:write and current task/planning rights; another athlete also needs coaching:write and Coach control. Preview creates nothing. A materialized result identifies an existing task: review its canonical session preview and obtain explicit approval before ordinary session-skip confirmation; reread that exact target if expired or changed. Blocked/incomplete/unavailable is not success; no automatic fallback, confirmation, pagination or retry.',
