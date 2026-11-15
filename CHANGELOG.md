@@ -1,6 +1,31 @@
 # Changelog
 
-## Unreleased
+## 0.1.0-beta.12 — 2026-11-15
+
+- Read canonical Push loads and adjustment history with their exact kilogram
+  values. Keep legacy integer-thousandth values distinct, preserve zero and
+  reject malformed or mixed representations instead of rounding them.
+- Request Push read representation version 2 explicitly through the CLI and MCP.
+  The supporting server returns an upgrade-required error to an older client
+  when a result needs version 2. Reads add no automatic request or retry and
+  leave saved commands unchanged.
+- Explain canonical and legacy Push units in progress guidance. Client support
+  does not activate canonical prescriptions or change a recorded load.
+
+This release requires the matching server read contract. Feature activation and
+subscription access remain server-controlled.
+
+## 0.1.0-beta.11 — 2026-11-15
+
+The published beta.11 archive includes the following changes, including the
+prescription and guidance updates previously listed as unreleased.
+
+- Support the explicit `alternating_side_repetitions` convention in exercise
+  edits and reviewed imports. Each completed movement of one side counts once,
+  then the other side follows. Opposite arm/leg pairs remain a separate rule.
+- Preserve source counting through CLI and MCP without changing recorded
+  quantities, inferring a performed side or filling unknown historical values.
+  Updated workflow guidance explains all five conventions.
 
 - Expose the saved prescription `massFormat` in workout-exercise reads and explain
   how canonical kg values differ from legacy definition units.
@@ -15,22 +40,9 @@
   and conditional ChatGPT file imports. Document shared media capacity and both
   source-image limits and server compression.
 
-These changes do not enable hosted file import or publish a new package. The
-prescription fields require the matching server contract and admission. Existing beta.11
-acceptance remains attached to its previously inspected archive.
-
-## 0.1.0-beta.11 — 2026-11-15
-
-- Support the explicit `alternating_side_repetitions` convention in exercise
-  edits and reviewed imports. Each completed movement of one side counts once,
-  then the other side follows. Opposite arm/leg pairs remain a separate rule.
-- Preserve source counting through CLI and MCP without changing recorded
-  quantities, inferring a performed side or filling unknown historical values.
-  Updated workflow guidance explains all five conventions.
-
-This candidate needs the matching server contract and hosted acceptance before
-publication. Beta.10 remains validated against its earlier deployed contract;
-neither beta.9 nor beta.10 has been published to npm by this release process.
+The prescription fields require matching server admission and live activation
+capabilities. Reading translations does not generate text, and the client does
+not enable hosted file import.
 
 ## 0.1.0-beta.10 — 2026-11-15
 
