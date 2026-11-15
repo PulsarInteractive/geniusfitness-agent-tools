@@ -21,6 +21,63 @@ const check = (s, value, code) => {
   }
   return parsed.data;
 };
+function discoveryConsistent(page, matching) {
+  const version = page.discoveryGroupingVersion,
+    groups = page.discoveryGroups;
+  if (version === undefined) {
+    return (
+      groups === undefined &&
+      matching.discoveryGroupingVersion === undefined &&
+      matching.variants.every((v) => v.discoveryGroupId === undefined) &&
+      matching.selections.every((s) => s.discoveryGroupId === undefined)
+    );
+  }
+  if (!groups || matching.discoveryGroupingVersion !== version) {
+    return false;
+  }
+  const candidates = new Map(page.candidates.map((v) => [v.catalogueKey, v])),
+    members = new Map(),
+    ids = new Set();
+  for (const group of groups) {
+    if (ids.has(group.id)) {
+      return false;
+    }
+    ids.add(group.id);
+    for (const key of group.catalogueKeys) {
+      if (!candidates.has(key) || members.has(key)) {
+        return false;
+      }
+      members.set(key, group.id);
+    }
+  }
+  if (
+    matching.variants.some(
+      (v) =>
+        v.discoveryGroupId !== members.get(v.catalogueKey) ||
+        v.familyId !== candidates.get(v.catalogueKey)?.familyId,
+    )
+  ) {
+    return false;
+  }
+  const selectedGroups = new Set();
+  for (const selection of matching.selections) {
+    const group = members.get(selection.selectedCatalogueKey);
+    if (
+      selection.discoveryGroupId !== group ||
+      selection.matchedVariantKeys.some((key) => members.get(key) !== group) ||
+      (matching.expanded && selection.matchedVariantKeys.length !== 1)
+    ) {
+      return false;
+    }
+    if (!matching.expanded && group !== undefined) {
+      if (selectedGroups.has(group)) {
+        return false;
+      }
+      selectedGroups.add(group);
+    }
+  }
+  return true;
+}
 /** One normal read per invocation, including continuation and exact detail.
  * Caller inventory is a declaration, never an implicit personal-profile read. */
 export async function readReviewedCatalogue(client, input) {
@@ -36,7 +93,13 @@ export async function readReviewedCatalogue(client, input) {
     result.evaluatedVariants > (query.limit ?? 48) ||
     result.evaluatedUnits > result.evaluatedVariants ||
     (result.nextCursor !== null && result.evaluatedUnits === 0) ||
-    result.continuationUnit !== (query.filters?.expandVariants ? 'variant' : 'family_block') ||
+    result.continuationUnit !==
+      (query.filters?.expandVariants
+        ? 'variant'
+        : result.catalogue.page.discoveryGroupingVersion !== undefined
+          ? 'discovery_block'
+          : 'family_block') ||
+    !discoveryConsistent(result.catalogue.page, result.matching) ||
     result.matching.expanded !== (query.filters?.expandVariants ?? false) ||
     (result.matching.requestedRole ?? 'any') !== (query.filters?.muscleRole ?? 'any') ||
     result.catalogue.page.contentVersion !== result.catalogue.subsetVersion ||

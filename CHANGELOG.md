@@ -6,6 +6,9 @@ This version is unpublished. The current reader-compatibility iteration follows
 an earlier replacement-only archive; its acceptance does not certify these
 additional changes. A fresh archive and dated release receipt are required.
 
+- Read versioned catalogue discovery groups while preserving historical family
+  identities and exact variant scores. Reject inconsistent group membership or
+  mixed grouping versions; keep explicit, bounded pagination.
 - Preserve reviewed muscle evidence, source/subset versions and documented
   multiple primary or unspecified roles. Do not invent a single main muscle,
   workload allocation or measured activation from current catalogue labels.

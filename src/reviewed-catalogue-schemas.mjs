@@ -1422,6 +1422,32 @@ export default {
       ],
       "type": "object"
     },
+    "GeniusFitness.CatalogueMatching.V1.DiscoveryGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "catalogueKeys": {
+          "items": {
+            "maxLength": 100,
+            "type": "string"
+          },
+          "maxItems": 48,
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "id": {
+          "maxLength": 80,
+          "minLength": 1,
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "catalogueKeys",
+        "id"
+      ],
+      "type": "object"
+    },
     "GeniusFitness.CatalogueMatching.V1.EquipmentResult": {
       "additionalProperties": false,
       "properties": {
@@ -1958,6 +1984,18 @@ export default {
           "pattern": "^[a-f0-9]{64}$",
           "type": "string"
         },
+        "discoveryGroupingVersion": {
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "discoveryGroups": {
+          "items": {
+            "$ref": "#/$defs/GeniusFitness.CatalogueMatching.V1.DiscoveryGroup"
+          },
+          "maxItems": 48,
+          "type": "array"
+        },
         "equipment": {
           "items": {
             "$ref": "#/$defs/GeniusFitness.CatalogueFoundation.V1.EquipmentDefinition"
@@ -2088,6 +2126,11 @@ export default {
           "pattern": "^[a-f0-9]{64}$",
           "type": "string"
         },
+        "discoveryGroupingVersion": {
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
         "effectiveTargets": {
           "items": {
             "maxLength": 80,
@@ -2202,6 +2245,11 @@ export default {
     "GeniusFitness.CatalogueMatching.V1.Selection": {
       "additionalProperties": false,
       "properties": {
+        "discoveryGroupId": {
+          "maxLength": 80,
+          "minLength": 1,
+          "type": "string"
+        },
         "familyId": {
           "anyOf": [
             {
@@ -2287,6 +2335,11 @@ export default {
           "maxLength": 100,
           "type": "string"
         },
+        "discoveryGroupId": {
+          "maxLength": 80,
+          "minLength": 1,
+          "type": "string"
+        },
         "equipment": {
           "$ref": "#/$defs/GeniusFitness.CatalogueMatching.V1.EquipmentResult"
         },
@@ -2351,6 +2404,12 @@ export default {
             {
               "enum": [
                 "family_block"
+              ],
+              "type": "string"
+            },
+            {
+              "enum": [
+                "discovery_block"
               ],
               "type": "string"
             },

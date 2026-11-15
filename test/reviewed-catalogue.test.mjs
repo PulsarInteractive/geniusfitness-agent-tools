@@ -46,6 +46,175 @@ const page = () => ({
   nextCursor: null,
 });
 
+// Synthetic shape fixtures: no exercise advice or catalogue corpus is embedded.
+function groupedPage(expanded = false) {
+  const result = page(),
+    evidence = {
+      status: 'synthetic',
+      basis: 'synthetic_fixture',
+      sourceIds: [],
+      method: 'Schema test',
+      preparedBy: 'test',
+      review: null,
+      limitations: ['Synthetic; no exercise advice.'],
+    };
+  const variant = (key, familyId) => ({
+    catalogueKey: key,
+    familyId,
+    label: { en: 'Synthetic', fr: 'Synthétique' },
+    axes: [
+      'gripOrientation',
+      'gripWidth',
+      'bodyPosition',
+      'benchAngle',
+      'laterality',
+      'stanceWidth',
+      'movementOrientation',
+    ].map((axis) => ({ axis, state: 'unknown', value: null, evidence })),
+    alternatives: [],
+    visibility: 'browse',
+    loadConvention: 'unknown',
+    loadEvidence: evidence,
+    equipment: { state: 'unknown', required: [], optional: [], evidence },
+    muscles: { state: 'unknown', targets: [], evidence },
+    cue: { state: 'unknown', text: null, evidence },
+    explanation: {
+      state: 'unknown',
+      setup: [],
+      execution: [],
+      breathing: [],
+      cautions: [],
+      evidence,
+    },
+    media: { state: 'unavailable', assetKey: null, sha256: null, evidence },
+  });
+  result.catalogue.page.candidates = [variant('ex.1', 'old-a'), variant('ex.2', 'old-b')];
+  result.catalogue.page.discoveryGroupingVersion = 'e'.repeat(64);
+  result.catalogue.page.discoveryGroups = [{ id: 'display-pair', catalogueKeys: ['ex.1', 'ex.2'] }];
+  result.matching.discoveryGroupingVersion = 'e'.repeat(64);
+  result.evaluatedVariants =
+    result.matching.evaluatedVariants =
+    result.matching.matchedVariants =
+      2;
+  result.evaluatedUnits = expanded ? 2 : 1;
+  result.continuationUnit = expanded ? 'variant' : 'discovery_block';
+  result.matching.expanded = expanded;
+  result.matching.variants = result.catalogue.page.candidates.map((v) => ({
+    catalogueKey: v.catalogueKey,
+    familyId: v.familyId,
+    discoveryGroupId: 'display-pair',
+    visibilityAllowed: true,
+    status: 'matched',
+    equipment: {
+      status: 'unknown',
+      reason: 'requirements_unknown',
+      clauses: [],
+      optional: [],
+      evidenceStatus: 'synthetic',
+    },
+    muscles: {
+      status: 'matched',
+      declaredTargets: 0,
+      qualifyingTargets: 0,
+      softwareScore: 0,
+      evidenceStatus: 'synthetic',
+      matches: [],
+    },
+  }));
+  result.matching.selections = (expanded ? [['ex.1'], ['ex.2']] : [['ex.1', 'ex.2']]).map(
+    (keys) => ({
+      familyId: null,
+      discoveryGroupId: 'display-pair',
+      selectedCatalogueKey: keys[0],
+      matchedVariantKeys: keys,
+      softwareScore: 0,
+    }),
+  );
+  return result;
+}
+
+test('versioned discovery groups preserve historical family IDs and exact variant selection without extra calls', async () => {
+  for (const expanded of [false, true]) {
+    const value = groupedPage(expanded);
+    let calls = 0;
+    const filters = {
+      inventory: { coverage: 'unknown', items: [] },
+      muscleTargets: [],
+      muscleMode: 'any',
+      expandVariants: expanded,
+    };
+    const result = await readReviewedCatalogue(
+      {
+        reviewedCatalogue: async () => {
+          calls++;
+          return value;
+        },
+      },
+      { filters },
+    );
+    assert.equal(calls, 1);
+    assert.deepEqual(
+      result.catalogue.page.candidates.map((v) => v.familyId),
+      ['old-a', 'old-b'],
+    );
+    assert.equal(result.matching.selections.length, expanded ? 2 : 1);
+    assert.equal(result.catalogue.page.discoveryGroups[0].id, 'display-pair');
+  }
+});
+
+test('an empty versioned discovery page keeps its declared unit and never invents a group', async () => {
+  const value = page();
+  value.continuationUnit = 'discovery_block';
+  value.catalogue.page.discoveryGroupingVersion = value.matching.discoveryGroupingVersion =
+    'e'.repeat(64);
+  value.catalogue.page.discoveryGroups = [];
+  assert.deepEqual(
+    (await readReviewedCatalogue({ reviewedCatalogue: async () => value }, {})).catalogue.page
+      .discoveryGroups,
+    [],
+  );
+});
+
+test('discovery mismatches, out-of-page members, invented families and mixed selections are rejected', async () => {
+  for (const change of [
+    (p) => delete p.catalogue.page.discoveryGroups,
+    (p) => delete p.catalogue.page.discoveryGroupingVersion,
+    (p) => (p.matching.discoveryGroupingVersion = 'f'.repeat(64)),
+    (p) => p.catalogue.page.discoveryGroups[0].catalogueKeys.push('ex.999'),
+    (p) => p.catalogue.page.discoveryGroups[0].catalogueKeys.push('ex.1'),
+    (p) => p.catalogue.page.discoveryGroups.push({ id: 'another', catalogueKeys: ['ex.1'] }),
+    (p) => p.catalogue.page.discoveryGroups.push({ id: 'display-pair', catalogueKeys: ['ex.2'] }),
+    (p) => (p.matching.variants[0].discoveryGroupId = 'invented'),
+    (p) => (p.matching.variants[0].familyId = 'display-pair'),
+    (p) => (p.matching.selections[0].discoveryGroupId = 'invented'),
+    (p) => p.matching.selections.push(structuredClone(p.matching.selections[0])),
+    (p) => (p.continuationUnit = 'family_block'),
+    (p) => (p.catalogue.page.discoveryGroups[0].catalogueKeys = ['ex.1']),
+  ]) {
+    const value = groupedPage();
+    change(value);
+    await assert.rejects(readReviewedCatalogue({ reviewedCatalogue: async () => value }, {}), {
+      code: 'invalid_response',
+    });
+  }
+  const value = groupedPage(true);
+  value.matching.selections[0].matchedVariantKeys.push('ex.2');
+  await assert.rejects(
+    readReviewedCatalogue(
+      { reviewedCatalogue: async () => value },
+      {
+        filters: {
+          inventory: { coverage: 'unknown', items: [] },
+          muscleTargets: [],
+          muscleMode: 'any',
+          expandVariants: true,
+        },
+      },
+    ),
+    { code: 'invalid_response' },
+  );
+});
+
 test('reviewed reads perform exactly one authenticated POST without automatic traversal or private profile lookup', async (t) => {
   let calls = 0;
   const f = await fixture(t, async (url, options) => {

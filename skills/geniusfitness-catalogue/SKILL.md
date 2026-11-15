@@ -19,8 +19,20 @@ requirements or variant-specific evidence matter. Inspect `fitness_catalog_varia
 explicitly partial: no match means no documented match in that corpus, not that
 the movement does not exist. Pass the person's real equipment inventory or leave
 it unknown; do not silently treat a chair, bench or bar as available. Grouped
-families appear only after their variants are matched. A family's best match
-is not evidence that every sibling has the same role or equipment requirements.
+families or versioned discovery groups appear only after their variants are
+matched. A group's best match is not evidence that every sibling has the same
+role or equipment requirements.
+
+When present, `discoveryGroupingVersion` and `discoveryGroups` describe display
+grouping for this page only. `discoveryGroupId` is separate from the stable
+historical `familyId` and exact `catalogueKey`; never replace either identity with
+a group ID. Select and import the exact variant. Inspect its own intention,
+equipment, muscle evidence and counting rule. `expandVariants` exposes each
+matching variant separately; it does not sum their scores or make their doses
+interchangeable. A `discovery_block` cursor keeps a display group together, uses
+the same ordinary request quota and becomes stale when its grouping version
+changes. Keep filters and page size unchanged for continuation; restart after a
+version refusal. No automatic crawl or extra profile read.
 
 For a qualified personal import, read [reviewed import](../../docs/CATALOGUE_IMPORT.md)
 and use `fitness_catalogue_import_preview` then `fitness_catalogue_import_confirm`.
