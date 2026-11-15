@@ -60,3 +60,12 @@ with `fitness_recurring_session_skip_confirm`. A `materialized` result instead
 identifies the existing exact task for the ordinary session preview; it is not a
 skip receipt or automatic consent. Follow the [recurring boundary](SESSION_SKIP.md#one-next-recurring-session),
 including immutable unknown-result recovery and normal per-call quotas.
+
+For a precise movement/variant change in your own inactive Sets workout, use
+`fitness_exercise_replacement_preview` then `fitness_exercise_replacement_confirm`.
+See [the exact replacement workflow](TRAINING.md#replace-one-exercise-with-an-explicit-prescription-reset).
+Both personal exercise definitions must already exist. The before/after review
+must disclose that **all target sets are cleared**; the slot then requires a new
+prescription. This is not a generic slot update, a student-planning action or
+permission to transfer an old dose. Local recovery reuses the saved typed journal;
+hosted recovery reuses the exact confirmation.

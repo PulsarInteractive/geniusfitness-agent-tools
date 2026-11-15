@@ -30,3 +30,10 @@ After recovery, read the canonical target and report what is established. A
 server receipt does not prove that a phone has rendered the result. The existing
 application sync handles catch-up; do not create a polling loop or repeatedly
 send the write to force a screen update.
+
+For exact exercise replacement, preserve `action`, the whole `request` including
+`requestId`, `epoch`, `expectedRevision`, `preparedAt` and `previewKey`. The local
+journal dispatches `exercise_replacement`; hosted MCP must resend the unchanged
+body to `fitness_exercise_replacement_confirm`. An old receipt remains historical
+and still reports `requires_configuration`; it is not permission to reset again
+or transfer/recreate the old sets. Never fall back to generic slot CRUD.

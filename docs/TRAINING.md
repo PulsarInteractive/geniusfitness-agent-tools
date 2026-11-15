@@ -270,3 +270,68 @@ separate location permission; reading these targets grants no GPS access.
 
 Coach/CLI/MCP should use normal bounded workout and run reads, followed by exact
 commands. Never crawl the complete history or perform an unmetered nested search.
+
+## Replace one exercise with an explicit prescription reset
+
+Use `fitness_exercise_replacement_preview` and
+`fitness_exercise_replacement_confirm` (CLI `workouts replace-exercise-preview`
+and `workouts replace-exercise-confirm`) for an exact movement or variant change.
+This flow supports one slot of an inactive **Sets** workout owned by the connected
+account. It requires `programs:read` and `programs:write` on that program and
+`exercises:read` on the owner's personal library. It does not edit a student's
+planning, replace a movement during a live session, or grant access to a different
+account. No AI or Premium subscription is implied by this manual operation;
+current server activation and grants still apply.
+
+1. Read the selected program, workout and slot. Read the existing and desired
+   personal exercise definitions. Use their actual IDs, not catalogue keys or a
+   family label. If the desired variant is absent, use the reviewed catalogue
+   import workflow separately. Importing and replacement are two operations:
+   a failed replacement does not authorize deleting the imported definition.
+2. Choose and retain one UUID `requestId`. Preview with the complete request:
+
+   ```json
+   {
+     "requestId": "00000000-0000-4000-8000-000000000001",
+     "scope": "project:PROGRAM_ID",
+     "trainingId": "WORKOUT_ID",
+     "slotId": "SLOT_ID",
+     "oldExerciseId": "EXISTING_PERSONAL_ID",
+     "newExerciseId": "NEW_PERSONAL_ID",
+     "locale": "en"
+   }
+   ```
+
+   Use a fresh UUID rather than the illustrative value. `locale` is `en` or `fr`;
+   it affects presentation, never identities, units or source data. This one
+   read-only POST creates no operation journal, slot, exercise or prescription.
+
+3. Inspect `state`, `reason`, and `diff`. Only `state: "review"` is confirmable.
+   An unchanged identity needs no write. A blocked active session, duplicate,
+   unsupported definition or unknown source is not permission to bypass the flow
+   with `workout.exercise.update` or another tool.
+4. Explain the change: the selected exercise and any copied definition change;
+   **all `targetSets` are cleared and require configuration**. Slot identity,
+   workout, order, between-set rest and recorded history are retained. Per-set
+   rest and old set types are cleared along with the old prescription. A different
+   movement never proves an equivalent weight, repetition count, duration or
+   distance, even when both names or muscle targets are similar.
+5. After the user has authorized that exact reset, submit `action: "confirm"`,
+   the unchanged `request`, `epoch`, `expectedRevision`, `preparedAt`, and the
+   returned `key` renamed to `previewKey`. Do not wrap it in `AgentCommand` or
+   add owner, authority, snapshot or dose fields. A received replacement has
+   `state: "replaced"` and `prescriptionStatus: "requires_configuration"`.
+6. Read the canonical slot once to establish its current state. Configure the new
+   sets only under a separately explicit instruction, using the new revision and
+   supported tracking/unit rules. Replacement does not make the workout ready to
+   start, complete activity or award XP.
+
+Local CLI and stdio MCP persist the full confirmation in the existing journal as
+`exercise_replacement`, keyed by `request.requestId`. After an uncertain reply,
+use `commands inspect/retry` or `fitness_inspect_operation/fitness_retry_command`.
+Hosted MCP has no local journal: retain the same complete confirmation and resend
+it through `fitness_exercise_replacement_confirm`. Never refresh its UUID, time,
+preview or source automatically, including after expiry. The server distinguishes
+an expired first attempt from a committed receipt replay. A definitive conflict
+requires fresh reads and a newly reviewed operation; a historical receipt is not
+current permission or evidence of what another device displays.

@@ -1,3 +1,8 @@
+import {
+  exerciseReplacementRequestSchema,
+  exerciseReplacementConfirmationSchema,
+  previewExerciseReplacement,
+} from './exercise-replacement.mjs';
 import remoteTools from '../remote/tool-catalog.json' with { type: 'json' };
 import {
   catalogueImportQuerySchema,
@@ -81,7 +86,7 @@ import { changesSchema, watchSchema, readChanges, watchChanges } from './changes
  */
 export function createMcpServer(client) {
   const server = new McpServer(
-    { name: 'geniusfitness', version: '0.1.0-beta.12' },
+    { name: 'geniusfitness', version: '0.1.0-beta.13' },
     {
       instructions:
         subscriptionGuidance.instructions +
@@ -140,6 +145,20 @@ export function createMcpServer(client) {
     async () => agentPresentation(await client.get('me')),
   );
   for (const [name, schema, run, write, destructive] of [
+    [
+      'fitness_exercise_replacement_preview',
+      exerciseReplacementRequestSchema,
+      (input) => previewExerciseReplacement(client, input),
+      false,
+      false,
+    ],
+    [
+      'fitness_exercise_replacement_confirm',
+      exerciseReplacementConfirmationSchema,
+      (input) => new CommandJournal(client).confirmExerciseReplacement(input),
+      true,
+      true,
+    ],
     [
       'fitness_exercise_media',
       exerciseMediaReadSchema,

@@ -3072,5 +3072,151 @@
     "write": true,
     "destructive": false,
     "idempotent": true
+  },
+  {
+    "name": "fitness_exercise_replacement_preview",
+    "title": "Review one exact workout exercise replacement",
+    "description": "Review replacing one slot in an inactive Sets workout owned by the connected account, using two existing personal exercise IDs. Requires programs:read and programs:write on the exact program plus personal exercises:read. Choose one requestId UUID and retain it. The preview changes nothing. Inspect state/reason and the exact before/after diff: confirmation clears every target set and requires a new prescription; no weight, repetitions, duration or distance is transferred. A matching catalogue variant must first be imported separately if no suitable personal definition exists. No student planning, active-session replacement, exercise creation or automatic confirmation.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "enum": ["fr", "en"],
+          "type": "string"
+        },
+        "newExerciseId": {
+          "maxLength": 40,
+          "minLength": 1,
+          "type": "string"
+        },
+        "oldExerciseId": {
+          "maxLength": 40,
+          "minLength": 1,
+          "type": "string"
+        },
+        "requestId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "scope": {
+          "maxLength": 256,
+          "minLength": 9,
+          "pattern": "^project:.+$",
+          "type": "string"
+        },
+        "slotId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "trainingId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "newExerciseId",
+        "oldExerciseId",
+        "requestId",
+        "scope",
+        "slotId",
+        "trainingId"
+      ],
+      "type": "object"
+    },
+    "scopes": ["programs:read", "programs:write", "exercises:read"],
+    "route": "exercise-replacement/preview",
+    "write": false,
+    "destructive": false,
+    "idempotent": true
+  },
+  {
+    "name": "fitness_exercise_replacement_confirm",
+    "title": "Confirm an exercise replacement and clear its prescription",
+    "description": "Confirm only the exact reviewed replacement after explaining that all targetSets will be cleared and the slot will require configuration. Pass action:confirm, the unchanged request including requestId, epoch, expectedRevision, preparedAt and key as previewKey. Preserves slot/routine/order/rest and recorded history; replaces the selected exercise and its copied snapshot, never proves dose equivalence. Requires the same current program read/write and personal exercise read grants. Local CLI/stdio MCP journals this typed confirmation; hosted MCP has no local journal, so retain the full body. Retry an uncertain result unchanged through this same protocol; never refresh its preview, UUID or timestamp. Historical receipts do not establish current state. No generic-command fallback or automatic prescription after replacement.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": ["confirm"],
+          "type": "string"
+        },
+        "epoch": {
+          "maxLength": 128,
+          "type": "string"
+        },
+        "expectedRevision": {
+          "maxLength": 128,
+          "type": "string"
+        },
+        "preparedAt": {
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "previewKey": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "request": {
+          "additionalProperties": false,
+          "properties": {
+            "locale": {
+              "enum": ["fr", "en"],
+              "type": "string"
+            },
+            "newExerciseId": {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            "oldExerciseId": {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            "requestId": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "scope": {
+              "maxLength": 256,
+              "minLength": 9,
+              "pattern": "^project:.+$",
+              "type": "string"
+            },
+            "slotId": {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            "trainingId": {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "locale",
+            "newExerciseId",
+            "oldExerciseId",
+            "requestId",
+            "scope",
+            "slotId",
+            "trainingId"
+          ],
+          "type": "object"
+        }
+      },
+      "required": ["action", "epoch", "expectedRevision", "preparedAt", "previewKey", "request"],
+      "type": "object"
+    },
+    "scopes": ["programs:read", "programs:write", "exercises:read"],
+    "route": "exercise-replacement/confirm",
+    "write": true,
+    "destructive": true,
+    "idempotent": true
   }
 ]

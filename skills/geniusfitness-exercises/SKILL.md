@@ -45,3 +45,10 @@ For saved translations, use [localization](../geniusfitness-localization/SKILL.m
 after saving and reading the source. The service supplies the fingerprint;
 translation entries retain their language and source version without changing
 exercise identity, tracking units or muscle declarations.
+
+Changing one workout's movement is different from editing a library definition
+shared by other workouts. Use the dedicated
+[slot replacement workflow](../../docs/TRAINING.md#replace-one-exercise-with-an-explicit-prescription-reset)
+for the former, with exact personal IDs and an explicitly approved prescription
+reset. Importing a selected catalogue variant and replacing a slot are separate
+operations; neither failure authorizes deleting the other operation's result.

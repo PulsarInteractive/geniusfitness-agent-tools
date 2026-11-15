@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.0-beta.13 — 2026-11-15
+
+- Preview and explicitly confirm an exact personal exercise replacement through
+  the CLI and MCP. Inspect the before/after review and retain its immutable UUID.
+- Clear the old set prescription instead of transferring its load or repetitions
+  to a different movement. Reconfigure the new exercise separately.
+- Recover uncertain confirmations from the durable command journal; verify the
+  account, profile, slot, exercise and receipt before reporting success.
+- Explain owned-program and personal-library permissions, localized reviews,
+  catalogue import before replacement, and safe recovery in the training guides.
+
+Requires the matching server replacement endpoints. No automated exercise
+selection, student-program editing or feature activation is added.
+
 ## 0.1.0-beta.12 — 2026-11-15
 
 - Read canonical Push loads and adjustment history with their exact kilogram

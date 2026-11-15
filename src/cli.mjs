@@ -1,3 +1,4 @@
+import { previewExerciseReplacement } from './exercise-replacement.mjs';
 import { checkUpdate, installUpdate, maybeNotifyUpdate } from './update.mjs';
 import { previewRecurringSessionSkip } from './recurring-session-skip.mjs';
 import { previewSessionSkip } from './session-skip.mjs';
@@ -125,6 +126,16 @@ export const commands = {
     summary:
       'Read one v2 catalogue page with FR/EN text search, grouped variants and explicit metadata coverage.',
     options: ['query', 'equipment', 'muscle', 'locale', 'expand-variants', 'cursor'],
+  },
+  'workouts replace-exercise-preview': {
+    summary:
+      'Review an exact personal workout slot replacement and the mandatory prescription reset.',
+    options: ['file'],
+  },
+  'workouts replace-exercise-confirm': {
+    summary:
+      'Journal the reviewed replacement, clear its target sets and require new prescription configuration.',
+    options: ['file'],
   },
   'workouts copy-preview': {
     summary:
@@ -488,6 +499,12 @@ export async function main(
       );
     } else if (command === 'sessions skip-preview') {
       data = await previewSessionSkip(client, await readCommandFile(options.file));
+    } else if (command === 'workouts replace-exercise-preview') {
+      data = await previewExerciseReplacement(client, await readCommandFile(options.file));
+    } else if (command === 'workouts replace-exercise-confirm') {
+      data = await new CommandJournal(client).confirmExerciseReplacement(
+        await readCommandFile(options.file),
+      );
     } else if (command === 'catalog import-preview') {
       data = await previewCatalogueImport(client, await readCommandFile(options.file));
     } else if (command === 'catalog import-confirm') {

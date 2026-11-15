@@ -46,3 +46,11 @@ uncertain reply.
 Copying or syncing a coach workout needs the reviewed comparison and current
 Coach/student planning rights. Read [the copy workflow](../../docs/TRAINING.md#copy-and-update-a-prepared-coach-workout)
 before applying it. Preserve student adaptations identified by the comparison.
+
+For a movement or variant replacement in your own inactive Sets workout, follow
+[the exact replacement protocol](../../docs/TRAINING.md#replace-one-exercise-with-an-explicit-prescription-reset).
+Use its dedicated preview and confirmation, with two existing personal exercise
+IDs. Disclose that every target set is cleared and needs configuration; obtain
+explicit authorization for that reset. Never carry an old dose, bypass a blocked
+preview through generic CRUD, or prescribe new sets automatically. The existing
+immutable journal keys recovery by `request.requestId`.

@@ -1,4 +1,8 @@
 import {
+  validateExerciseReplacementConfirmation,
+  validExerciseReplacementReceipt,
+} from './exercise-replacement.mjs';
+import {
   validateRecurringSessionSkipConfirmation,
   validRecurringSessionSkipReceipt,
 } from './recurring-session-skip.mjs';
@@ -247,6 +251,12 @@ const receiptSchema = z
 // Typed confirmations share the original durable journal and identity lock.
 // The discriminator prevents reusing a UUID through a different endpoint.
 const confirmationProtocols = {
+  exercise_replacement: {
+    validate: validateExerciseReplacementConfirmation,
+    validReceipt: validExerciseReplacementReceipt,
+    operationId: (input) => input.request.requestId,
+    path: '/api/agents/v1/exercise-replacement/confirm',
+  },
   catalogue_import: {
     validate: validateCatalogueImportRequest,
     validReceipt: validCatalogueImportReceipt,
@@ -346,6 +356,9 @@ export class CommandJournal {
    * operation journal own both command kinds. No synthetic AgentCommand. */
   async confirmSessionSkip(value) {
     return this.#execute(value, 'session_skip');
+  }
+  async confirmExerciseReplacement(value) {
+    return this.#execute(value, 'exercise_replacement');
   }
   async confirmCatalogueImport(value) {
     return this.#execute(value, 'catalogue_import');

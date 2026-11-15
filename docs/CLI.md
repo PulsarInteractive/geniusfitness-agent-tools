@@ -117,3 +117,23 @@ automatic update requests. Set `GENIUSFITNESS_NO_UPDATE_CHECK=1` to disable
 notices; an explicit `update check` remains available. Tiny attempt markers expire
 after the current and preceding UTC days. An interrupted check cannot block the
 next day’s discovery.
+
+### Replace an exercise in your workout
+
+Prepare the exact JSON request described in
+[exercise replacement](TRAINING.md#replace-one-exercise-with-an-explicit-prescription-reset):
+
+```sh
+geniusfitness workouts replace-exercise-preview --file replacement-request.json --json
+# Review the returned diff and explicitly authorize clearing the old target sets.
+geniusfitness workouts replace-exercise-confirm --file replacement-confirmation.json --json
+geniusfitness commands inspect --operation REQUEST_UUID --json
+# Only if an attempted confirmation has an uncertain outcome:
+geniusfitness commands retry --operation REQUEST_UUID --json
+```
+
+Confirmation takes `action: "confirm"`, the original `request`, `epoch`,
+`expectedRevision`, `preparedAt` and `previewKey` from the preview. It is a typed
+protocol, not a generic command file. The changed slot requires a newly configured
+prescription; no dose is transferred. A preview never confirms itself and a retry
+never generates a new UUID or refreshes an expired preview.
