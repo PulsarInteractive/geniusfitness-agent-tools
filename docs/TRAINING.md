@@ -48,6 +48,29 @@ movement. It never supplies a target dose or a performed side. Do not multiply
 recorded repetitions or weight, or split recorded time, to fill gaps.
 See [the five counting rules](CUSTOM_EXERCISES.md#what-one-repetition-or-duration-means).
 
+## Read the unit of a saved prescription
+
+For each `workoutExercises` record, keep `massFormat` with `targetSets`.
+`massFormat: "kg-v1"` means every stored set weight is in kg, even when the
+personal exercise or copied definition still has `defaultUnit: "lb"`. For example,
+`{"w":20}` with that marker is 20 kg. Convert only for the requested display unit;
+do not convert the stored number from lb a second time.
+
+When the marker is absent, use the explicitly recorded legacy unit from the
+copied `exerciseSnapshot`, or from the referenced personal definition when there
+is no copy. An unknown unit, invalid snapshot, `massFormat: null` or unrecognized
+marker does not establish a weight unit. Keep the original value and explain
+that its unit is unavailable. The user's preferred display unit cannot fill
+that gap.
+
+This client exposes the marker for reading. The current
+`workout.exercise.create` and `workout.exercise.update` contracts do not accept
+`massFormat`; they do not provide a new canonical-weight write protocol. For a
+marked slot, use the supported application flow for dose or movement changes.
+Rest and ordering remain available under the existing command rules. Do not
+remove a marker or retry a failed dose change without it. Read current command
+help before preparing a write, and preserve the exact saved command on retry.
+
 ## Change a workout safely
 
 - `program.create` creates a program with a new UUID. Use that UUID as `id`,

@@ -2,15 +2,19 @@
 
 ## Unreleased
 
+- Expose the saved prescription `massFormat` in workout-exercise reads and explain
+  how canonical kg values differ from legacy definition units. This adds no
+  canonical-weight write permission.
+
 - Clarify current exercise translations, per-field language fallback and unchanged
   source text in agent guidance. Reading never generates a translation.
 - Distinguish legacy and reviewed catalogue pagination, precise-location consent,
   and conditional ChatGPT file imports. Document shared media capacity and both
   source-image limits and server compression.
 
-These instruction updates do not enable hosted file import, change a server
-contract or publish a new package. Existing beta.11 acceptance remains attached
-to its previously inspected archive.
+These changes do not enable hosted file import or publish a new package. The
+read-field addition requires the matching server projection. Existing beta.11
+acceptance remains attached to its previously inspected archive.
 
 ## 0.1.0-beta.11 — 2026-11-15
 

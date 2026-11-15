@@ -1135,6 +1135,7 @@ export default {
         "training",
         "element",
         "targetSets",
+        "massFormat",
         "restSeconds",
         "order",
         "exerciseSnapshot",

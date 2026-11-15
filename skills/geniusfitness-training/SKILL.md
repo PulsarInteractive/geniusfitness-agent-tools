@@ -25,6 +25,13 @@ completed activity. Preserve the exercise’s explicit counting rule when prepar
 sets; read [counting meanings](../../docs/CUSTOM_EXERCISES.md#what-one-repetition-or-duration-means)
 before comparing an alternating, per-side or bilateral prescription.
 
+For saved weights, `massFormat: "kg-v1"` takes precedence over a definition's
+legacy `defaultUnit`. An absent marker needs an explicit legacy unit; an unknown
+marker or source stays unknown. Read [prescription units](../../docs/TRAINING.md#read-the-unit-of-a-saved-prescription)
+before interpreting or changing weights. The current agent commands expose this
+marker for reading only; use the supported app flow for dose or movement edits
+on a marked slot.
+
 Apply the exact requested edit under current permissions and revisions. If the
 service supplies a typed preview/confirmation flow, use that flow rather than
 bypassing its checks with a generic command. A request to improve one exercise
