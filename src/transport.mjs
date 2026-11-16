@@ -90,7 +90,9 @@ export class Transport {
     }
     if (
       (bytes !== undefined || binary) &&
-      (!/^\/api\/agents\/v1\/exercise-media\/[a-fA-F0-9-]{36}\/content$/.test(url.pathname) ||
+      (!/^\/api\/agents\/v1\/(?:exercise-media|feedback\/media)\/[a-fA-F0-9-]{36}\/content$/.test(
+        url.pathname,
+      ) ||
         (bytes !== undefined &&
           (!Buffer.isBuffer(bytes) || bytes.length > maxExerciseUploadBytes)) ||
         (bytes !== undefined && (json !== undefined || form)))

@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.1.0-beta.14 — 2026-11-16
+
+Release candidate; not yet published. Requires matching feedback server support
+and an explicitly consented feedback grant on the connected account.
+
+- Prepare and submit approved private bug reports from CLI, local MCP and the
+  hosted connector. Free accounts receive delivery receipts; Premium and Coach
+  also support feature requests, history, status and public team replies.
+- Reuse the existing durable operation journal for exact retries and account,
+  session and connection identity checks. Keep preparation, received reports,
+  image reservations and completed image transfers distinct.
+- Attach up to three authorized screenshots through bounded local transfer or
+  the supported ChatGPT file import. Every channel validates source images up
+  to 4 MB and compresses them server-side to WebP, at most 1080 px and 1 MB.
+- Add a dedicated feedback skill, hosted workflow and complete CLI guide.
+  Agents may offer a useful report once, send only after user approval or an
+  explicit reporting request, and never automatically include full chat,
+  health, location or diagnostic logs.
+- Discover feedback configuration without expanding access. Effective rights
+  remain false without consent; receipt recovery requires `feedback:write`.
+  Preserve optional nullable context values and the `received` status.
+
+This candidate does not publish the package, activate a service or expand an
+existing connection. Hosted integration acceptance remains a separate gate.
+
 ## 0.1.0-beta.13 — 2026-11-15
 
 This version is unpublished. The current reader-compatibility iteration follows

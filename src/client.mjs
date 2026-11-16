@@ -282,6 +282,22 @@ export class AgentClient {
       return { connected: false, revoked: true };
     }, this.transport.signal);
   }
+  async feedbackRead(resource = '', query) {
+    if (
+      typeof resource !== 'string' ||
+      !/^(?:capabilities|(?:receipts|detail)\/[a-fA-F0-9-]{36})?$/.test(resource)
+    ) {
+      fail(
+        'invalid_arguments',
+        'Use feedback capabilities, one exact request or command ID, or a bounded list.',
+      );
+    }
+    const token = await this.accessToken();
+    return this.transport.request(`/api/agents/v1/feedback${resource ? '/' + resource : ''}`, {
+      token,
+      query,
+    });
+  }
   async exerciseMedia(exerciseId) {
     if (typeof exerciseId !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(exerciseId)) {
       fail('invalid_arguments', 'Use an exact personal exercise ID.');

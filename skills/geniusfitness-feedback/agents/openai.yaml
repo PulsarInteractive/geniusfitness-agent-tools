@@ -1,0 +1,4 @@
+interface:
+  display_name: 'GeniusFitness Feedback'
+  short_description: 'Report bugs and suggest useful improvements'
+  default_prompt: 'Use $geniusfitness-feedback to prepare the requested private feedback, obtain approval when needed, and preserve the exact submission receipt.'

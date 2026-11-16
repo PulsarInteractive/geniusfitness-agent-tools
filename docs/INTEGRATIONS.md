@@ -45,6 +45,10 @@ The `skills/` directory contains portable workflow instructions:
 | `geniusfitness-localization` | Preserve meaning and known weight units across languages           |
 | `geniusfitness-recovery`     | Recover the original operation after failure or uncertainty        |
 
+`geniusfitness-feedback` covers approved private bug reports, Premium feature
+suggestions, screenshots and support replies. Its hosted equivalent is
+`fitness_workflow` with `topic: feedback`; see [Feedback](FEEDBACK.md).
+
 Install them through your agent client’s supported skill mechanism. The plugin
 manifest combines the skills with a local stdio MCP configuration. It does not
 claim approval in a hosted integration directory or provide a remote MCP URL.

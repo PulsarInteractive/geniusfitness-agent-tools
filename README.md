@@ -49,6 +49,7 @@ geniusfitness mcp --context default
 [Setup examples](https://github.com/PulsarInteractive/geniusfitness-agent-tools/blob/main/docs/INTEGRATIONS.md)
 · [Training workflow](https://github.com/PulsarInteractive/geniusfitness-agent-tools/blob/main/docs/TRAINING.md)
 · [Permissions and limits](https://github.com/PulsarInteractive/geniusfitness-agent-tools/blob/main/docs/LIMITS.md)
+· [Private feedback](docs/FEEDBACK.md)
 · [Agent skills](https://github.com/PulsarInteractive/geniusfitness-agent-tools/tree/main/skills)
 
 ## Documentation

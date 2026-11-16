@@ -1,3 +1,10 @@
+import {
+  readFeedbackCapabilities,
+  readFeedbackPage,
+  readFeedbackDetail,
+  readFeedbackReceipt,
+} from './feedback.mjs';
+import { prepareFeedbackImage, uploadFeedbackImage } from './feedback-media-transfer.mjs';
 import { previewExerciseReplacement } from './exercise-replacement.mjs';
 import { checkUpdate, installUpdate, maybeNotifyUpdate } from './update.mjs';
 import { previewRecurringSessionSkip } from './recurring-session-skip.mjs';
@@ -36,6 +43,47 @@ import { readChanges, watchChanges } from './changes.mjs';
 import { fail, safeError, exitCode } from './errors.mjs';
 
 export const commands = {
+  'feedback capabilities': {
+    summary: 'Read private feedback eligibility, current epoch and image limits.',
+    options: [],
+  },
+  'feedback prepare': {
+    summary:
+      'Save an immutable draft from JSON without sending. Reads current epoch once if omitted.',
+    options: ['file'],
+  },
+  'feedback submit': {
+    summary: 'Send exact approved feedback JSON with its saved command and draft IDs.',
+    options: ['file'],
+  },
+  'feedback list': {
+    summary: 'Read one bounded page of your Premium feedback.',
+    options: ['status', 'type', 'after'],
+  },
+  'feedback show': {
+    summary: 'Read one exact private feedback request and public team replies.',
+    options: ['id'],
+  },
+  'feedback receipt': {
+    summary: 'Recover delivery by exact command ID, including Free bug reports.',
+    options: ['id'],
+  },
+  'feedback reply': {
+    summary: 'Send one approved Premium reply from immutable JSON.',
+    options: ['file'],
+  },
+  'feedback media-prepare': {
+    summary: 'Inspect one local screenshot up to 4 MB and prepare metadata; no network.',
+    options: ['draftId', 'expectedEpoch', 'file'],
+  },
+  'feedback media-open': {
+    summary: 'Reserve one screenshot from prepared JSON before sending feedback.',
+    options: ['file'],
+  },
+  'feedback media-upload': {
+    summary: 'Upload exact reserved bytes for server compression or replay a confirmed receipt.',
+    options: ['operation', 'file'],
+  },
   'update check': {
     summary: 'Check the official npm release without changing your installation.',
     options: ['channel'],
@@ -408,7 +456,40 @@ export async function main(
     const store = new CredentialStore({ context: options.context, directory });
     const client = new AgentClient(new Transport(origin, { fetchImpl, signal }), store);
     let data;
-    if (command === 'exercise-media list') {
+    if (command === 'feedback capabilities') {
+      data = await readFeedbackCapabilities(client);
+    } else if (command === 'feedback prepare') {
+      data = await new CommandJournal(client).prepareFeedback(await readCommandFile(options.file));
+    } else if (command === 'feedback submit') {
+      data = await new CommandJournal(client).submitFeedback(await readCommandFile(options.file));
+    } else if (command === 'feedback list') {
+      data = await readFeedbackPage(client, {
+        status: options.status,
+        type: options.type,
+        after: options.after,
+      });
+    } else if (command === 'feedback show') {
+      data = await readFeedbackDetail(client, { id: options.id });
+    } else if (command === 'feedback receipt') {
+      data = await readFeedbackReceipt(client, { id: options.id });
+    } else if (command === 'feedback reply') {
+      data = await new CommandJournal(client).replyFeedback(await readCommandFile(options.file));
+    } else if (command === 'feedback media-prepare') {
+      data = await prepareFeedbackImage({
+        draftId: options.draftId,
+        expectedEpoch: options.expectedEpoch,
+        file: options.file,
+      });
+    } else if (command === 'feedback media-open') {
+      data = await new CommandJournal(client).openFeedbackMedia(
+        await readCommandFile(options.file),
+      );
+    } else if (command === 'feedback media-upload') {
+      data = await uploadFeedbackImage(client, {
+        operationId: options.operation,
+        file: options.file,
+      });
+    } else if (command === 'exercise-media list') {
       data = await readExerciseMedia(client, { exerciseId: options.exerciseId });
     } else if (command === 'exercise-media prepare') {
       data = await prepareExerciseImage({

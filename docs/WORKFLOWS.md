@@ -11,6 +11,9 @@
 | Recover an interrupted edit            | `recovery`   | Preserve the exact request; read back; reconcile a revision conflict                                                            |
 | Connect or fix missing permissions     | `connection` | Correct account, consent and reconnect                                                                                          |
 
+Use `feedback` for private bug reports, Premium suggestions, authorized screenshots
+and support follow-up. See [Feedback](FEEDBACK.md) for approval and retry rules.
+
 Additional focused topics are `training` for workout contents, `custom-exercises`
 for personal guidance and declared muscles, `media` for private images,
 `localization` for language and units, and `progress-selection` for the personal

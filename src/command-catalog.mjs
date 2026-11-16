@@ -3306,6 +3306,8 @@ export default {
   },
   "grants": {
     "permissions": [
+      "feedback:read",
+      "feedback:write",
       "location:read",
       "location:write",
       "programs:read",

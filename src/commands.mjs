@@ -1,4 +1,15 @@
 import {
+  feedbackDraftSchema,
+  prepareFeedbackCommand,
+  readFeedbackCapabilities,
+  validateFeedbackCreate,
+  validateFeedbackReply,
+  validateFeedbackUpload,
+  validFeedbackReceipt,
+  validFeedbackReply,
+  validFeedbackMediaSession,
+} from './feedback.mjs';
+import {
   validateExerciseReplacementConfirmation,
   validExerciseReplacementReceipt,
 } from './exercise-replacement.mjs';
@@ -251,6 +262,25 @@ const receiptSchema = z
 // Typed confirmations share the original durable journal and identity lock.
 // The discriminator prevents reusing a UUID through a different endpoint.
 const confirmationProtocols = {
+  feedback_submit: {
+    validate: validateFeedbackCreate,
+    validReceipt: validFeedbackReceipt,
+    operationId: (input) => input.commandId,
+    path: '/api/agents/v1/feedback',
+  },
+  feedback_reply: {
+    validate: validateFeedbackReply,
+    validReceipt: validFeedbackReply,
+    operationId: (input) => input.request.commandId,
+    path: (input) => `/api/agents/v1/feedback/${input.id}/reply`,
+    body: (input) => input.request,
+  },
+  feedback_media_open: {
+    validate: validateFeedbackUpload,
+    validReceipt: validFeedbackMediaSession,
+    operationId: (input) => input.id,
+    path: '/api/agents/v1/feedback/media/uploads',
+  },
   exercise_replacement: {
     validate: validateExerciseReplacementConfirmation,
     validReceipt: validExerciseReplacementReceipt,
@@ -366,22 +396,56 @@ export class CommandJournal {
   async confirmRecurringSessionSkip(value) {
     return this.#execute(value, 'recurring_session_skip');
   }
+  async prepareFeedback(draft) {
+    const value = checked(feedbackDraftSchema, draft);
+    const identity = binding(await this.client.session());
+    if (!value.expectedEpoch) {
+      value.expectedEpoch = (await readFeedbackCapabilities(this.client)).epoch;
+    }
+    if (canonical(binding(await this.client.session())) !== canonical(identity)) {
+      fail('operation_identity_mismatch', 'The connection changed while preparing feedback.');
+    }
+    const prepared = prepareFeedbackCommand(value),
+      store = this.store(prepared.command.commandId);
+    await store.locked(
+      () =>
+        store.write({
+          formatVersion: 1,
+          protocol: 'feedback_submit',
+          binding: identity,
+          input: prepared.command,
+          state: 'prepared',
+        }),
+      this.client.transport.signal,
+    );
+    return prepared;
+  }
+  async submitFeedback(value) {
+    return this.#execute(value, 'feedback_submit');
+  }
+  async replyFeedback(value) {
+    return this.#execute(value, 'feedback_reply');
+  }
+  async openFeedbackMedia(value) {
+    return this.#execute(value, 'feedback_media_open');
+  }
   async openExerciseMedia(value) {
     return this.#execute(value, 'exercise_media_open');
   }
   async changeExerciseMedia(value) {
     return this.#execute(value, 'exercise_media_change');
   }
-  async #exerciseMediaUploadRow(store) {
+  async #mediaUploadRow(store, protocol = 'exercise_media_open') {
     const identity = binding(await this.client.session());
     const row = await store.read();
     if (
       !row ||
       row.formatVersion !== 1 ||
-      row.input?.request?.id !== store.context ||
-      row.protocol !== 'exercise_media_open' ||
+      (protocol === 'feedback_media_open' ? row.input?.id : row.input?.request?.id) !==
+        store.context ||
+      row.protocol !== protocol ||
       row.state !== 'confirmed' ||
-      !validExerciseMediaSession(row.receipt, row.input)
+      !confirmationProtocols[protocol].validReceipt(row.receipt, row.input)
     ) {
       fail(
         'operation_not_found',
@@ -401,7 +465,7 @@ export class CommandJournal {
       return null;
     }
     if (
-      !validExerciseMediaSession(row.uploadReceipt, row.input) ||
+      !confirmationProtocols[row.protocol].validReceipt(row.uploadReceipt, row.input) ||
       row.uploadReceipt.state !== 'ready'
     ) {
       fail(
@@ -412,16 +476,25 @@ export class CommandJournal {
     return row.uploadReceipt;
   }
   #requireCurrentMediaSize(row) {
-    if (row.input.request.size > maxExerciseUploadBytes) {
+    if (
+      (row.protocol === 'feedback_media_open' ? row.input : row.input.request).size >
+      maxExerciseUploadBytes
+    ) {
       fail('exercise_media_too_large', oversizedExerciseUploadMessage, { status: 413 });
     }
   }
   /** A confirmed upload can be replayed without reopening the source file.
    * The same identity and receipt checks still apply; no HTTP request is made. */
   async confirmedExerciseMediaUpload(id) {
+    return this.#confirmedMediaUpload(id, 'exercise_media_open');
+  }
+  async confirmedFeedbackMediaUpload(id) {
+    return this.#confirmedMediaUpload(id, 'feedback_media_open');
+  }
+  async #confirmedMediaUpload(id, protocol) {
     const store = this.store(id);
     return store.locked(async () => {
-      const { row } = await this.#exerciseMediaUploadRow(store);
+      const { row } = await this.#mediaUploadRow(store, protocol);
       const receipt = this.#confirmedMediaReceipt(row);
       if (!receipt) {
         this.#requireCurrentMediaSize(row);
@@ -432,19 +505,26 @@ export class CommandJournal {
   /** Binary transfer uses the already-confirmed immutable reservation. It
    * never renews an uncertain reservation or retries another request silently. */
   async uploadExerciseMediaBytes(id, bytes, sha256) {
+    return this.#uploadMediaBytes(id, bytes, sha256, 'exercise_media_open');
+  }
+  async uploadFeedbackMediaBytes(id, bytes, sha256) {
+    return this.#uploadMediaBytes(id, bytes, sha256, 'feedback_media_open');
+  }
+  async #uploadMediaBytes(id, bytes, sha256, protocol) {
     const store = this.store(id);
     return store.locked(async () => {
-      const { identity, row } = await this.#exerciseMediaUploadRow(store);
+      const { identity, row } = await this.#mediaUploadRow(store, protocol);
       const confirmed = this.#confirmedMediaReceipt(row);
       if (confirmed) {
         return confirmed;
       }
       this.#requireCurrentMediaSize(row);
+      const source = protocol === 'feedback_media_open' ? row.input : row.input.request;
       if (
         !Buffer.isBuffer(bytes) ||
-        bytes.length !== row.input.request.size ||
-        sha256 !== row.input.request.sha256 ||
-        createHash('sha256').update(bytes).digest('hex') !== row.input.request.sha256
+        bytes.length !== source.size ||
+        sha256 !== source.sha256 ||
+        createHash('sha256').update(bytes).digest('hex') !== source.sha256
       ) {
         fail(
           'idempotency_mismatch',
@@ -464,7 +544,10 @@ export class CommandJournal {
           token: session.access_token,
           bytes,
         });
-        if (!validExerciseMediaSession(result, row.input) || result.state !== 'ready') {
+        if (
+          !confirmationProtocols[protocol].validReceipt(result, row.input) ||
+          result.state !== 'ready'
+        ) {
           fail(
             'invalid_response',
             'The photo upload receipt is invalid. Retry the same bytes and reservation.',

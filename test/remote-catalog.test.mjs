@@ -41,6 +41,10 @@ test('remote catalogue has bounded explicit schemas and honest write annotations
           'fitness_recurring_session_skip_confirm',
           'fitness_exercise_media_open',
           'fitness_exercise_media_import',
+          'fitness_feedback_submit',
+          'fitness_feedback_reply',
+          'fitness_feedback_media_open',
+          'fitness_feedback_media_import',
         ].includes(tool.name),
       );
     }
