@@ -12,7 +12,7 @@
 | Connect or fix missing permissions     | `connection` | Correct account, consent and reconnect                                                                                          |
 
 Use `feedback` for private bug reports, Premium suggestions, authorized screenshots
-and support follow-up. See [Feedback](FEEDBACK.md) for approval and retry rules.
+and decision tracking. See [Feedback](FEEDBACK.md) for approval and retry rules.
 
 Additional focused topics are `training` for workout contents, `custom-exercises`
 for personal guidance and declared muscles, `media` for private images,

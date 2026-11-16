@@ -12,7 +12,7 @@ problem, or read unrelated health/program data to enrich a report.
 
 Free accounts can report bugs and receive a submission receipt. Premium and
 Coach accounts can also suggest features, read their retained feedback and its
-status, and respond to the support team. These are current server checks, not
+status, resolution and optional final decision message. These are current server checks, not
 permissions inferred from an old receipt. Coach includes Premium. Existing
 connections may require reconnection for `feedback:read` or `feedback:write`;
 never suggest that a CLI login repairs a ChatGPT connection.
@@ -56,8 +56,8 @@ available.
 Choose one draft UUID and current epoch, then upload authorized screenshots
 before preparing the final submission. Put ready asset IDs into `attachments`
 and the same `draftId` into the final draft. Never add attachments by changing a
-saved submission after an uncertain send. For Premium replies, the existing
-request ID is the upload draft ID and the three-image limit covers the thread.
+saved submission after an uncertain send. Images belong to the original report;
+existing requests cannot receive additional images.
 See [the exact workflow](../../docs/FEEDBACK.md).
 
 ## Send once and report precisely
@@ -71,10 +71,16 @@ evidence of sending, not a fresh status read or ongoing authorization.
 
 Only a server receipt confirms submission. Distinguish prepared, received and
 attachment-ready states. Follow Premium status on request with bounded pages.
-“Retained for later” closes the current support discussion without promising a
-delivery date or calling the feature implemented. Do not expose or attempt to
+The team closes a request as resolved, retained for later or declined, optionally
+attaching a custom final message. “Retained for later” does not promise a delivery
+date or call the feature implemented. Feedback is not a conversation: no user
+replies or independent support messages. `canReply` is always false; the legacy
+`messages` array contains at most the final team message. Closure can send a
+confirmation push if notifications are permitted; do not promise a push for
+intermediate status changes. Do not expose or attempt to
 follow internal notes, priorities, assignees or another user’s duplicate report.
 
-Sending a support reply requires both `feedback:read` and `feedback:write`,
-because its receipt includes the current public conversation. Sending a new
-report and recovering its delivery receipt require only `feedback:write`.
+History and decision reads require `feedback:read`; sending a new report and
+recovering its delivery receipt require `feedback:write`. Older reply journals
+can be inspected but cannot be retried: `feedback_conversation_disabled` is a
+definitive refusal, not a reason to try another route or create a duplicate.

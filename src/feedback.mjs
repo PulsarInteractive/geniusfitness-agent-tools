@@ -32,7 +32,6 @@ export const feedbackPageSchema = z
     after: z.string().max(2048).optional(),
   })
   .strict();
-export const feedbackReplySchema = feedbackReadSchema.extend({ request: schema('Reply') }).strict();
 export const feedbackUploadSchema = schema('Upload');
 const capabilitiesSchema = schema('Capabilities');
 const receiptSchema = schema('Receipt');
@@ -62,13 +61,6 @@ export function validateFeedbackCreate(input) {
   }
   return value;
 }
-export function validateFeedbackReply(input) {
-  const value = check(feedbackReplySchema, input);
-  if (!value.request.text.trim()) {
-    fail('invalid_arguments', 'Write the reply before sending.');
-  }
-  return value;
-}
 export function validateFeedbackUpload(input) {
   return check(feedbackUploadSchema, input);
 }
@@ -82,15 +74,6 @@ export function validFeedbackReceipt(result, input) {
 }
 export function validFeedbackDetail(result, id) {
   return detailSchema.safeParse(result).success && result.summary.id === id;
-}
-export function validFeedbackReply(result, input) {
-  return (
-    validFeedbackDetail(result, input.id) &&
-    result.epoch === input.request.expectedEpoch &&
-    result.messages.some(
-      (message) => message.id === input.request.commandId && message.author === 'user',
-    )
-  );
 }
 export function validFeedbackMediaSession(result, input) {
   const path = `/api/agents/v1/feedback/media/${input.id}/content`;
@@ -117,7 +100,9 @@ export async function readFeedbackCapabilities(client) {
   if (!capabilitiesSchema.safeParse(result).success) {
     fail('invalid_response', 'Invalid feedback capabilities.');
   }
-  return result;
+  // Tracking is read-only, including while a previous server version still
+  // advertises its retired conversation capability during a rolling update.
+  return { ...result, canReply: false };
 }
 export async function readFeedbackPage(client, input) {
   const query = check(feedbackPageSchema, input);
@@ -137,7 +122,10 @@ export async function readFeedbackDetail(client, input) {
   if (!validFeedbackDetail(result, id)) {
     fail('invalid_response', 'Invalid feedback detail.');
   }
-  return result;
+  // The legacy wire array remains compatible but is not a conversation. Do not
+  // expose historical user messages or older team messages from an old server.
+  const finalMessage = result.messages.filter((message) => message.author === 'team').at(-1);
+  return { ...result, messages: finalMessage ? [finalMessage] : [] };
 }
 export async function readFeedbackReceipt(client, input) {
   const { id } = check(feedbackReadSchema, input);

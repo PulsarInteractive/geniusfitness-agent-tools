@@ -60,7 +60,7 @@ const summary = (id) => ({
   type: 'BugReport',
   title: 'Watch program stayed old',
   category: 'sync',
-  status: 'waiting_user',
+  status: 'under_review',
   resolution: null,
   source: 'agent',
   createdAt: '2026-11-16T10:00:00Z',
@@ -145,7 +145,7 @@ test('explicit epoch prepares offline, and preparing across a changed connection
   await assert.rejects(journal.prepareFeedback(draft()), { code: 'operation_identity_mismatch' });
 });
 
-test('lost feedback reply reuses immutable saved command; duplicate receipts may identify the original request', async (t) => {
+test('lost feedback response reuses immutable saved command; duplicate receipts may identify the original request', async (t) => {
   const input = command(),
     calls = [],
     originalId = randomUUID();
@@ -191,55 +191,41 @@ test('forged response identities never confirm a submit, and no private or unrel
   }
 });
 
-test('Premium list/detail/reply stay bounded, reject private response data and require the exact reply receipt', async (t) => {
-  const id = randomUUID(),
-    input = {
-      id,
-      request: {
-        commandId: randomUUID(),
-        expectedEpoch: epoch,
-        issuedAt: Date.now(),
-        expectedRevision: '2',
-        text: 'Observed again on the Watch.',
-        attachments: [],
-      },
-    };
+test('Premium decision reads stay bounded and expose only the final team message', async (t) => {
+  const id = randomUUID();
+  const message = (author, text) => ({
+    id: randomUUID(),
+    author,
+    text,
+    createdAt: '2026-11-16T10:00:01Z',
+    attachments: [],
+  });
+  const final = message('team', 'Resolved. The corrected version is available.');
   const calls = [];
   const f = await fixture(t, async (url, options) => {
-    calls.push({
-      path: url.pathname,
-      query: url.search,
-      method: options.method,
-      body: options.body,
-    });
-    if (options.method === 'POST') {
-      return Response.json(
-        detail(id, [
-          {
-            id: input.request.commandId,
-            author: 'user',
-            text: input.request.text,
-            createdAt: '2026-11-16T10:00:01Z',
-            attachments: [],
-          },
-        ]),
-      );
-    }
+    calls.push({ path: url.pathname, method: options.method });
     return Response.json(
-      url.pathname.includes('/detail/') ? detail(id) : { entries: [summary(id)], next: null },
+      url.pathname.includes('/detail/')
+        ? detail(id, [
+            message('team', 'Earlier legacy message'),
+            message('user', 'Old reply'),
+            final,
+          ])
+        : { entries: [summary(id)], next: null },
     );
   });
   assert.equal(
-    (await readFeedbackPage(f.client, { status: 'waiting_user', type: 'BugReport' })).entries
+    (await readFeedbackPage(f.client, { status: 'under_review', type: 'BugReport' })).entries
       .length,
     1,
   );
-  assert.equal((await readFeedbackDetail(f.client, { id })).summary.id, id);
-  const reply = await new CommandJournal(f.client).replyFeedback(input);
-  assert.equal(reply.receipt.messages[0].id, input.request.commandId);
+  const result = await readFeedbackDetail(f.client, { id });
+  assert.equal(result.summary.id, id);
+  assert.deepEqual(result.messages, [final]);
   assert.equal(calls[1].path, `/api/agents/v1/feedback/detail/${id}`);
-  assert.equal(calls[2].path, `/api/agents/v1/feedback/${id}/reply`);
-  assert.deepEqual(JSON.parse(calls[2].body), input.request);
+  assert.ok(calls.every((call) => call.method === 'GET'));
+  f.client.feedbackRead = async () => detail(id, [message('user', 'Old reply only')]);
+  assert.deepEqual((await readFeedbackDetail(f.client, { id })).messages, []);
   await assert.rejects(readFeedbackPage(f.client, { owner: 'student' }), {
     code: 'invalid_arguments',
   });
@@ -250,6 +236,52 @@ test('Premium list/detail/reply stay bounded, reject private response data and r
     next: null,
   });
   await assert.rejects(readFeedbackPage(f.client, {}), { code: 'invalid_response' });
+});
+
+test('retired beta.14 reply journals remain inspectable but cannot transmit on retry', async (t) => {
+  let requests = 0;
+  const f = await fixture(t, async () => {
+    requests++;
+    throw Error('No network expected');
+  });
+  const journal = new CommandJournal(f.client);
+  assert.equal(journal.replyFeedback, undefined);
+  const prepared = await journal.prepareFeedback({ ...draft(), expectedEpoch: epoch });
+  const id = prepared.command.commandId;
+  const store = journal.store(id);
+  const row = await store.read();
+  const legacy = {
+    ...row,
+    protocol: 'feedback_reply',
+    state: 'uncertain',
+    input: {
+      id: randomUUID(),
+      request: {
+        commandId: id,
+        expectedEpoch: epoch,
+        expectedRevision: '2',
+        issuedAt: Date.now(),
+        text: 'Legacy user reply',
+        attachments: [],
+      },
+    },
+  };
+  await store.locked(() => store.write(legacy));
+  assert.equal((await journal.inspect(id)).protocol, 'feedback_reply');
+  await assert.rejects(journal.retry(id), { code: 'feedback_conversation_disabled', status: 403 });
+  assert.deepEqual(await store.read(), legacy);
+  assert.equal(requests, 0);
+});
+
+test('rolling-upgrade capabilities cannot re-enable a feedback conversation', async (t) => {
+  const f = await fixture(t, async () =>
+    Response.json({ ...capabilities(), canRead: true, canReply: true }),
+  );
+  assert.deepEqual(await readFeedbackCapabilities(f.client), {
+    ...capabilities(),
+    canRead: true,
+    canReply: false,
+  });
 });
 
 test('feedback media shares safe source transfer, server-compressed receipt, exact retry and no source persistence', async (t) => {
@@ -348,6 +380,8 @@ test('CLI and actual MCP expose feedback workflow, immutable writes and shared i
     assert.equal(code, 0, stderr);
     return JSON.parse(stdout).data;
   };
+  const help = await run(['help']);
+  assert.doesNotMatch(JSON.stringify(help), /feedback reply/);
   const prepared = await run(['feedback', 'prepare', '--file', file]);
   await writeFile(file, JSON.stringify(prepared.command));
   assert.equal((await run(['feedback', 'submit', '--file', file])).source, 'server');
@@ -361,6 +395,10 @@ test('CLI and actual MCP expose feedback workflow, immutable writes and shared i
   await Promise.all([client.connect(a), server.connect(b)]);
   try {
     const list = (await client.listTools()).tools;
+    assert.equal(
+      list.some((tool) => tool.name === 'fitness_feedback_reply'),
+      false,
+    );
     assert.equal(
       list.find((t) => t.name === 'fitness_feedback_submit').annotations.destructiveHint,
       false,
@@ -399,7 +437,7 @@ test('CLI and actual MCP expose feedback workflow, immutable writes and shared i
 
 test('hosted file tool uses real shared-file input, narrow grants and closed public schemas', async () => {
   const subset = tools.filter((t) => t.name.startsWith('fitness_feedback_'));
-  assert.equal(subset.length, 9);
+  assert.equal(subset.length, 8);
   for (const tool of subset) {
     assert.equal(tool.inputSchema.additionalProperties, false);
     assert.ok(tool.scopes.every((scope) => ['feedback:read', 'feedback:write'].includes(scope)));
@@ -465,10 +503,13 @@ test('scope-free capability discovery reports effective denied rights without gr
   );
 });
 
-test('reply returns conversation detail and therefore advertises both feedback grants', () => {
-  assert.deepEqual(tools.find((tool) => tool.name === 'fitness_feedback_reply').scopes, [
+test('feedback catalog removes replies and keeps submission and decision grants separate', () => {
+  assert.equal(
+    tools.some((tool) => tool.name === 'fitness_feedback_reply'),
+    false,
+  );
+  assert.deepEqual(tools.find((tool) => tool.name === 'fitness_feedback_detail').scopes, [
     'feedback:read',
-    'feedback:write',
   ]);
   assert.deepEqual(tools.find((tool) => tool.name === 'fitness_feedback_submit').scopes, [
     'feedback:write',

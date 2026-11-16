@@ -98,7 +98,7 @@ student work; [progress](../geniusfitness-progress/SKILL.md) for recorded result
 [localization](../geniusfitness-localization/SKILL.md) for language and units;
 [recovery](../geniusfitness-recovery/SKILL.md) for an interrupted operation;
 [feedback](../geniusfitness-feedback/SKILL.md) for an approved bug report,
-Premium suggestion or private support follow-up. Offer useful feedback once,
+Premium suggestion or private decision tracking. Offer useful feedback once,
 never send silently, and never attach health data or a conversation automatically.
 The hosted connector serves corresponding `fitness_workflow` topics without
 requiring the host to install these skill files.

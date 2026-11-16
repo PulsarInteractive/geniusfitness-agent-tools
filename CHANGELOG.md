@@ -1,8 +1,22 @@
 # Changelog
 
+## 0.1.0-beta.15 — 2026-11-16
+
+Release candidate; not yet published. Requires matching feedback server support.
+
+- Simplify feedback to request status and a final decision: resolved, retained
+  for later or declined, with an optional custom final message. No user replies
+  or independent support messages. Closure may send a push when permitted.
+- Remove the reply command and MCP tool. Preserve old reply journals for
+  inspection while refusing retries locally without network transmission.
+- Keep Free bug submission and receipt recovery, Premium/Coach suggestions and
+  decision reads, approved screenshots, and exact submission retries.
+- Document read/write grants and the legacy zero-or-one final message projection;
+  suppress stale conversation capabilities during rolling server upgrades.
+
 ## 0.1.0-beta.14 — 2026-11-16
 
-Release candidate; not yet published. Requires matching feedback server support
+Published under the beta tag. Requires matching feedback server support
 and an explicitly consented feedback grant on the connected account.
 
 - Prepare and submit approved private bug reports from CLI, local MCP and the

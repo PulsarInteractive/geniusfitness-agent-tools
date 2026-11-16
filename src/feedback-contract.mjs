@@ -485,6 +485,8 @@ export default {
     },
     "GeniusFitness.Feedback.FeedbackReply": {
       "additionalProperties": false,
+      "deprecated": true,
+      "description": "Legacy conversation input: new replies are disabled. Read the status and final support decision instead.",
       "properties": {
         "attachments": {
           "items": {

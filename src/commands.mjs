@@ -3,10 +3,8 @@ import {
   prepareFeedbackCommand,
   readFeedbackCapabilities,
   validateFeedbackCreate,
-  validateFeedbackReply,
   validateFeedbackUpload,
   validFeedbackReceipt,
-  validFeedbackReply,
   validFeedbackMediaSession,
 } from './feedback.mjs';
 import {
@@ -269,11 +267,9 @@ const confirmationProtocols = {
     path: '/api/agents/v1/feedback',
   },
   feedback_reply: {
-    validate: validateFeedbackReply,
-    validReceipt: validFeedbackReply,
-    operationId: (input) => input.request.commandId,
-    path: (input) => `/api/agents/v1/feedback/${input.id}/reply`,
-    body: (input) => input.request,
+    // Keep beta.14 journals inspectable without providing a write route.
+    retired: true,
+    operationId: (input) => input?.request?.commandId,
   },
   feedback_media_open: {
     validate: validateFeedbackUpload,
@@ -422,9 +418,6 @@ export class CommandJournal {
   }
   async submitFeedback(value) {
     return this.#execute(value, 'feedback_submit');
-  }
-  async replyFeedback(value) {
-    return this.#execute(value, 'feedback_reply');
   }
   async openFeedbackMedia(value) {
     return this.#execute(value, 'feedback_media_open');
@@ -577,6 +570,17 @@ export class CommandJournal {
     }, this.client.transport.signal);
   }
   async #execute(value, protocol, historicalReceipt = false) {
+    if (protocol && confirmationProtocols[protocol]?.retired) {
+      fail(
+        'feedback_conversation_disabled',
+        'Feedback has no conversation. Read the request status, resolution and optional final decision message instead.',
+        {
+          status: 403,
+          remediation: 'Keep the saved operation for inspection; do not resend it.',
+          execution: 'not_started',
+        },
+      );
+    }
     const typed = protocol ? confirmationProtocols[protocol] : null,
       input =
         historicalReceipt && protocol === 'exercise_media_open'

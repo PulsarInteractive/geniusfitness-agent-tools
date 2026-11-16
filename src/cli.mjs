@@ -61,16 +61,13 @@ export const commands = {
     options: ['status', 'type', 'after'],
   },
   'feedback show': {
-    summary: 'Read one exact private feedback request and public team replies.',
+    summary:
+      'Read one exact private request, its status, resolution and optional final decision message.',
     options: ['id'],
   },
   'feedback receipt': {
     summary: 'Recover delivery by exact command ID, including Free bug reports.',
     options: ['id'],
-  },
-  'feedback reply': {
-    summary: 'Send one approved Premium reply from immutable JSON.',
-    options: ['file'],
   },
   'feedback media-prepare': {
     summary: 'Inspect one local screenshot up to 4 MB and prepare metadata; no network.',
@@ -472,8 +469,6 @@ export async function main(
       data = await readFeedbackDetail(client, { id: options.id });
     } else if (command === 'feedback receipt') {
       data = await readFeedbackReceipt(client, { id: options.id });
-    } else if (command === 'feedback reply') {
-      data = await new CommandJournal(client).replyFeedback(await readCommandFile(options.file));
     } else if (command === 'feedback media-prepare') {
       data = await prepareFeedbackImage({
         draftId: options.draftId,
