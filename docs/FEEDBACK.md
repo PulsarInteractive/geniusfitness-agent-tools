@@ -117,7 +117,7 @@ geniusfitness feedback show --id REQUEST_UUID --json
 
 Read one bounded page at a time and preserve `next` as the `--after` cursor when
 more results are needed. Do not poll in the background. The team closes a
-request as resolved (`resolved`), retained for later (`remembered`) or declined
+request as resolved (`delivered`), retained for later (`remembered`) or declined
 (`declined`), optionally attaching a custom final message to that decision.
 “Retained for later” does not promise a delivery date or mean implemented.
 Feedback is request tracking, not a conversation: there is no user reply or
