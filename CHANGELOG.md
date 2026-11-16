@@ -2,7 +2,7 @@
 
 ## 0.1.0-beta.15 — 2026-11-16
 
-Release candidate; not yet published. Requires matching feedback server support.
+Published under the beta tag. Requires matching feedback server support.
 
 - Simplify feedback to request status and a final decision: resolved, retained
   for later or declined, with an optional custom final message. No user replies
