@@ -65,10 +65,14 @@ test('CLI and MCP preserve changing server capabilities, including older service
         stderr: { write: (s) => (err += s) },
       });
       assert.equal(code, 0, err);
-      assert.deepEqual(JSON.parse(out).data, value);
+      const { feedback, ...live } = JSON.parse(out).data;
+      assert.deepEqual(live, value);
+      assert.equal(feedback.capabilitiesTool, 'fitness_feedback_capabilities');
+      assert.equal(Object.hasOwn(feedback, 'canReportBug'), false);
+      assert.equal(Object.hasOwn(feedback, 'canRequestFeature'), false);
       const result = await client.callTool({ name: 'fitness_capabilities', arguments: {} });
       assert.notEqual(result.isError, true);
-      assert.deepEqual(result.structuredContent.data, value);
+      assert.deepEqual(result.structuredContent.data, { ...value, feedback });
       assert.equal(calls - before, 2, 'one bounded authenticated read per surface');
     }
   } finally {
