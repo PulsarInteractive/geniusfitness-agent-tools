@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-beta.16 — 2026-11-18
+
+- Discover private bug reports and feature requests from the general capabilities command. Check the connected account before preparing a report.
+- Recover missing feedback tools in existing ChatGPT connections and distinguish a missing personal grant from plan eligibility.
+- Explain how to move a weekly rule and check the dates of previously created sessions.
+
 ## 0.1.0-beta.15 — 2026-11-16
 
 Published under the beta tag. Requires matching feedback server support.
