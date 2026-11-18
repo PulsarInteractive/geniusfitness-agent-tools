@@ -106,3 +106,14 @@ screen update are different observations: the assistant should verify the change
 record, and should not claim to have seen your screen unless it actually did.
 
 See [Coach Push proposals](COACH_PUSH.md) for exact-occurrence intent, athlete confirmation and safe command recovery.
+
+## If ChatGPT cannot find bug reports or feature requests
+
+Select **@GeniusFitness** and ask whether this connection can report a bug or suggest a
+feature. The live check is `fitness_feedback_capabilities`. Product feedback
+uses dedicated tools outside the list of project or training commands.
+
+1. If that tool is missing, open **Plugins → GeniusFitness → Settings → Manage app → Refresh tools**, then select the plugin in a new chat.
+2. If the tool returns `canReportBug: false`, review the selected account and its personal `feedback:write` grant. Reconnect in ChatGPT if you want to authorize that access.
+3. If `canReportBug` is true and `canRequestFeature` is false, this account can report bugs. Feature requests require a paid plan.
+4. Ask to prepare a report. Review its contents and selected attachments, then approve sending. The returned receipt identifies the submission.

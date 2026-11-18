@@ -3,6 +3,8 @@ name: geniusfitness-feedback
 description: 'Prepare and send a GeniusFitness bug report or Premium feature suggestion with the user’s approval, attach authorized screenshots, and follow the connected owner’s Premium feedback status.'
 ---
 
+Use `fitness_feedback_capabilities` for « signaler un bug », « proposer une fonctionnalité », bug reports and feature requests. If the feedback tools are missing from ChatGPT, refresh tools in the plugin settings and open a new chat. If the tools are present but personal feedback access is missing, reconnect with the owner’s feedback:write grant. The general command list covers a different protocol. Read `canReportBug` and `canRequestFeature` independently before advising the user.
+
 # Useful, private GeniusFitness feedback
 
 Read `fitness_workflow` with `topic: feedback` before using the feedback tools.

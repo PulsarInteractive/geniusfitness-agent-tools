@@ -15,7 +15,7 @@
   {
     "name": "fitness_capabilities",
     "title": "Available actions",
-    "description": "Read current connection/profile permissions and subscription eligibility. Commands list the account ceiling, not permission on a specific athlete. Collections describe schemas; check their permission against permissions. Target membership, coach control, consent, activation and revisions are rechecked at execution. Static command help is not authorization.",
+    "description": "Read current connection/profile permissions and subscription eligibility. Commands list the account ceiling, not permission on a specific athlete. Collections describe schemas; check their permission against permissions. Target membership, coach control, consent, activation and revisions are rechecked at execution. Static command help is not authorization. For a bug report or feature request about GeniusFitness, call fitness_feedback_capabilities even when no feedback command appears in commands.",
     "inputSchema": {
       "type": "object",
       "properties": {},
@@ -3223,7 +3223,7 @@
   {
     "name": "fitness_feedback_capabilities",
     "title": "Feedback access",
-    "description": "Read current feedback eligibility, account epoch and image limits before preparing a report. Free permits bug submission and receipts; Premium/Coach also permit suggestions and private status/decision tracking. canReply is always false: feedback is not a conversation. No student access.",
+    "description": "Check whether this account can report a bug or submit a feature request to GeniusFitness support. Read current feedback eligibility, account epoch and image limits before preparing a report. Free permits bug submission and receipts; Premium/Coach also permit suggestions and private status/decision tracking. canReply is always false: feedback is not a conversation. No student access.",
     "inputSchema": {
       "type": "object",
       "additionalProperties": false,
@@ -3380,7 +3380,7 @@
     "route": "feedback-prepare",
     "write": false,
     "destructive": false,
-    "idempotent": true
+    "idempotent": false
   },
   {
     "name": "fitness_feedback_submit",

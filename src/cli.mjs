@@ -1,3 +1,4 @@
+import { withFeedbackDiscovery } from './presentation.mjs';
 import {
   readFeedbackCapabilities,
   readFeedbackPage,
@@ -606,7 +607,7 @@ export async function main(
     } else if (command === 'whoami' || command === 'auth status') {
       data = await client.get('me');
     } else if (command === 'capabilities') {
-      data = await client.get('capabilities');
+      data = withFeedbackDiscovery(await client.get('capabilities'));
     } else if (command === 'programs list') {
       data = await client.get('programs', {
         after: options.after,

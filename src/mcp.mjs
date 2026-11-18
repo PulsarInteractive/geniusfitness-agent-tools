@@ -50,7 +50,7 @@ import {
   readReviewedCatalogueDetail,
 } from './reviewed-catalogue.mjs';
 import subscriptionGuidance from '../remote/subscription-guidance.json' with { type: 'json' };
-import { agentPresentation } from './presentation.mjs';
+import { agentPresentation, withFeedbackDiscovery } from './presentation.mjs';
 import { pushResultsSchema, readPushResults } from './push-results.mjs';
 import { pushAdjustmentsSchema, readPushAdjustments } from './push-adjustments.mjs';
 import { progressSelectionSchema, readProgressSelection } from './progress-selection.mjs';
@@ -326,9 +326,9 @@ export function createMcpServer(client) {
   );
   register(
     'fitness_capabilities',
-    'Read current connection/profile permissions and subscription eligibility. Commands list the account ceiling, not permission on a specific athlete. Collections describe schemas; check their permission against permissions. Target membership, coach control, consent, activation and revisions are rechecked at execution. Static command help is not authorization.',
+    'Read current connection/profile permissions and subscription eligibility. Commands list the account ceiling, not permission on a specific athlete. Collections describe schemas; check their permission against permissions. Target membership, coach control, consent, activation and revisions are rechecked at execution. Static command help is not authorization. For a bug report or feature request about GeniusFitness, call fitness_feedback_capabilities even when no feedback command appears in commands.',
     z.object({}).strict(),
-    async () => agentPresentation(await client.get('capabilities')),
+    async () => withFeedbackDiscovery(agentPresentation(await client.get('capabilities'))),
   );
   register(
     'fitness_programs',

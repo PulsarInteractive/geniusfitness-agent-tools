@@ -64,3 +64,5 @@ path. Read bounded relevant pages only; normal quotas apply to every call.
 The same local journal dispatches recurring confirmations; hosted MCP resends
 the unchanged confirmation. Neither path automatically refreshes an unknown
 outcome, replaces its UUID or uses old receipts as current state or authority.
+
+When changing a recurring workout day, read the exact schedule and its bounded planning records before and after the change. Set the intended weekly day, local start and known timezone. Previously generated sessions have their own IDs, dates and status: changing the rule does not move them. Distinguish past, completed and future New sessions. If a specific future occurrence should also move, show its date and obtain the requested scope of that edit. Never delete historical sessions or infer a sync failure from an old New row alone.

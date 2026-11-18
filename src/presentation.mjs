@@ -10,3 +10,19 @@ export function agentPresentation(value) {
   }
   return result;
 }
+
+/** Product feedback uses dedicated tools outside the generic command registry. */
+export function withFeedbackDiscovery(capabilities) {
+  return {
+    ...capabilities,
+    feedback: {
+      types: ['BugReport', 'FeatureRequest'],
+      capabilitiesTool: 'fitness_feedback_capabilities',
+      workflowTopic: 'feedback',
+      prepareTool: 'fitness_feedback_prepare',
+      submitTool: 'fitness_feedback_submit',
+      guidance:
+        'Check the dedicated capabilities tool for current permissions. If it is missing in ChatGPT, refresh tools in the plugin settings and open a new chat.',
+    },
+  };
+}
